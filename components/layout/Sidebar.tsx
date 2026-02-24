@@ -56,7 +56,7 @@ export default function Sidebar() {
             <Link
               href={href}
               onClick={() => setMobileOpen(false)}
-              className={`flex items-center gap-3 rounded-xl px-3 py-2 text-base font-medium transition-colors ${
+              className={`flex items-center gap-3 rounded-2xl px-3 py-2 text-base font-medium transition-colors ${
                 isActive(href)
                   ? "bg-card text-white"
                   : "text-muted-foreground hover:bg-card hover:text-foreground"

@@ -1,7 +1,225 @@
 {
-  "vehicleTypes": [],
-  "customers": [],
-  "vehicles": [],
+  "vehicleTypes": [
+    {
+      "id": "vt-1",
+      "name": "Sedán",
+      "description": "Automóvil de 4 puertas",
+      "status": "active",
+      "createdAt": "2025-01-01T00:00:00Z",
+      "updatedAt": "2025-01-01T00:00:00Z"
+    },
+    {
+      "id": "vt-2",
+      "name": "SUV",
+      "description": "Vehículo utilitario deportivo",
+      "status": "active",
+      "createdAt": "2025-01-01T00:00:00Z",
+      "updatedAt": "2025-01-01T00:00:00Z"
+    },
+    {
+      "id": "vt-3",
+      "name": "Camioneta",
+      "description": "Pickup o camioneta de carga",
+      "status": "active",
+      "createdAt": "2025-01-01T00:00:00Z",
+      "updatedAt": "2025-01-01T00:00:00Z"
+    },
+    {
+      "id": "vt-4",
+      "name": "Hatchback",
+      "description": "Compacto con maletero integrado",
+      "status": "active",
+      "createdAt": "2025-01-01T00:00:00Z",
+      "updatedAt": "2025-01-01T00:00:00Z"
+    },
+    {
+      "id": "vt-5",
+      "name": "Minivan",
+      "description": "Vehículo familiar amplio",
+      "status": "active",
+      "createdAt": "2025-01-01T00:00:00Z",
+      "updatedAt": "2025-01-01T00:00:00Z"
+    }
+  ],
+  "customers": [
+    {
+      "id": "c-1",
+      "firstName": "Carlos",
+      "lastName": "Mendoza",
+      "phone": "555-1001",
+      "email": "carlos@example.com",
+      "status": "active",
+      "createdAt": "2025-01-10T00:00:00Z",
+      "updatedAt": "2025-01-10T00:00:00Z"
+    },
+    {
+      "id": "c-2",
+      "firstName": "Ana",
+      "lastName": "García",
+      "phone": "555-1002",
+      "email": "ana@example.com",
+      "status": "active",
+      "createdAt": "2025-01-11T00:00:00Z",
+      "updatedAt": "2025-01-11T00:00:00Z"
+    },
+    {
+      "id": "c-3",
+      "firstName": "Luis",
+      "lastName": "Torres",
+      "phone": "555-1003",
+      "email": "luis@example.com",
+      "status": "active",
+      "createdAt": "2025-01-12T00:00:00Z",
+      "updatedAt": "2025-01-12T00:00:00Z"
+    },
+    {
+      "id": "c-4",
+      "firstName": "María",
+      "lastName": "López",
+      "phone": "555-1004",
+      "email": "maria@example.com",
+      "status": "active",
+      "createdAt": "2025-01-13T00:00:00Z",
+      "updatedAt": "2025-01-13T00:00:00Z"
+    },
+    {
+      "id": "c-5",
+      "firstName": "Pedro",
+      "lastName": "Ramírez",
+      "phone": "555-1005",
+      "email": "pedro@example.com",
+      "status": "active",
+      "createdAt": "2025-01-14T00:00:00Z",
+      "updatedAt": "2025-01-14T00:00:00Z"
+    }
+  ],
+  "vehicles": [
+    {
+      "id": "v-1",
+      "plate": "ABC-1234",
+      "color": "Blanco",
+      "brand": "Toyota",
+      "model": "Corolla",
+      "vehicleTypeId": "vt-1",
+      "ownerIds": [
+        "c-1"
+      ],
+      "status": "active",
+      "createdAt": "2025-02-01T00:00:00Z",
+      "updatedAt": "2026-02-24T07:49:42.479Z"
+    },
+    {
+      "id": "v-2",
+      "plate": "XYZ-5678",
+      "color": "Negro",
+      "brand": "Ford",
+      "model": "Explorer",
+      "vehicleTypeId": "vt-2",
+      "ownerIds": [
+        "c-2"
+      ],
+      "status": "active",
+      "createdAt": "2025-02-02T00:00:00Z",
+      "updatedAt": "2025-02-02T00:00:00Z"
+    },
+    {
+      "id": "v-3",
+      "plate": "LMN-9012",
+      "color": "Rojo",
+      "brand": "Chevrolet",
+      "model": "Silverado",
+      "vehicleTypeId": "vt-3",
+      "ownerIds": [
+        "c-3"
+      ],
+      "status": "active",
+      "createdAt": "2025-02-03T00:00:00Z",
+      "updatedAt": "2025-02-03T00:00:00Z"
+    },
+    {
+      "id": "v-4",
+      "plate": "PQR-3456",
+      "color": "Azul",
+      "brand": "Honda",
+      "model": "Civic",
+      "vehicleTypeId": "vt-4",
+      "ownerIds": [
+        "c-1",
+        "c-4"
+      ],
+      "status": "active",
+      "createdAt": "2025-02-04T00:00:00Z",
+      "updatedAt": "2025-02-04T00:00:00Z"
+    },
+    {
+      "id": "v-5",
+      "plate": "STU-7890",
+      "color": "Gris",
+      "brand": "Kia",
+      "model": "Carnival",
+      "vehicleTypeId": "vt-5",
+      "ownerIds": [
+        "c-5"
+      ],
+      "status": "inactive",
+      "createdAt": "2025-02-05T00:00:00Z",
+      "updatedAt": "2025-02-05T00:00:00Z"
+    },
+    {
+      "id": "v-6",
+      "plate": "VWX-2345",
+      "color": "Plata",
+      "brand": "Nissan",
+      "model": "Sentra",
+      "vehicleTypeId": "vt-1",
+      "ownerIds": [
+        "c-2"
+      ],
+      "status": "active",
+      "createdAt": "2025-02-06T00:00:00Z",
+      "updatedAt": "2025-02-06T00:00:00Z"
+    },
+    {
+      "id": "v-7",
+      "plate": "EFG-6789",
+      "color": "Verde",
+      "brand": "Jeep",
+      "model": "Wrangler",
+      "vehicleTypeId": "vt-2",
+      "ownerIds": [
+        "c-3"
+      ],
+      "status": "active",
+      "createdAt": "2025-02-07T00:00:00Z",
+      "updatedAt": "2025-02-07T00:00:00Z"
+    },
+    {
+      "id": "v-8",
+      "plate": "HIJ-0123",
+      "color": "Negro",
+      "brand": "BMW",
+      "model": "X5",
+      "vehicleTypeId": "vt-2",
+      "ownerIds": [
+        "c-4"
+      ],
+      "status": "active",
+      "createdAt": "2025-02-08T00:00:00Z",
+      "updatedAt": "2025-02-08T00:00:00Z"
+    },
+    {
+      "id": "v-1771917755502",
+      "plate": "bdd-198",
+      "brand": "Subaru",
+      "model": "XV",
+      "color": "gris",
+      "vehicleTypeId": "vt-2",
+      "status": "active",
+      "ownerIds": [],
+      "createdAt": "2026-02-24T07:22:35.502Z",
+      "updatedAt": "2026-02-24T07:22:35.502Z"
+    }
+  ],
   "services": [],
   "servicePricings": [],
   "promotions": [],

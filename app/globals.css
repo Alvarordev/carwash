@@ -48,7 +48,7 @@
 }
 
 :root {
-  --radius: 18px;
+  --radius: 16px;
 
   /* Base */
   --background: oklch(0.204 0.004 106.847);    /* #171715 */
