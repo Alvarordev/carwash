@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { toast } from "sonner";
-import { Plus, Search, EditPencil, Trash, Group, FilterList, Xmark } from "iconoir-react";
+import { Plus, Search, EditPencil, Trash, Group, FilterList } from "iconoir-react";
 import {
   Table,
   TableBody,
@@ -139,53 +139,58 @@ export default function CustomersTable() {
 
   return (
     <div className="flex flex-col gap-6">
-      <h1 className="text-[28px] font-semibold tracking-tight text-foreground pb-4">
-        Gestión de Clientes
-      </h1>
+      <div className="flex w-full justify-between items-center">
+        <h1 className="text-3xl font-semibold tracking-tight text-foreground pb-4 w-full">
+          Gestión de Clientes
+        </h1>
 
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex flex-1 flex-wrap items-center gap-2">
-          <div className="relative flex-1 min-w-48 max-w-xs">
+        <div className="flex gap-4 w-full justify-end items-center">
+          <div className="relative flex-1 min-w-48 max-w-xs flex">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Buscar nombre, teléfono, email..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="pl-9 bg-card border-border rounded-md"
+              className="pl-9 bg-card border-border rounded-sm"
             />
+          </div>
+          <Button
+            onClick={handleOpenCreate}
+            className="bg-primary text-foreground px-6 font-semibold gap-1 shrink-0 rounded-sm cursor-pointer transition-all"
+            size="lg"
+          >
+            <Plus className="size-5 stroke-2" />
+            Nuevo cliente
+          </Button>
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between bg-card/80 border border-border px-4 py-5 rounded-sm">
+        <div className="flex flex-1 flex-wrap items-center gap-2">
+          <div className="flex items-center mr-4">
+            <FilterList className="size-4 mr-1.5 text-muted-foreground shrink-0" />
+            <p>Filters:</p>
           </div>
 
           <Select value={filterStatus} onValueChange={setFilterStatus}>
-            <SelectTrigger className="w-36 bg-card border-border rounded-md">
-              <FilterList className="h-3.5 w-3.5 mr-1.5 text-muted-foreground shrink-0" />
+            <SelectTrigger className="w-36 bg-background border-border rounded-sm">
               <SelectValue placeholder="Estado" />
             </SelectTrigger>
-            <SelectContent className="bg-popover border-border rounded-md">
+            <SelectContent className="bg-background border-border rounded-sm">
               <SelectItem value="all">Todos</SelectItem>
               <SelectItem value="active">Activo</SelectItem>
               <SelectItem value="inactive">Inactivo</SelectItem>
             </SelectContent>
           </Select>
-
-          {hasActiveFilters && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={clearFilters}
-              className="text-muted-foreground hover:text-foreground gap-1.5 rounded-md"
-            >
-              <Xmark className="h-3.5 w-3.5" />
-              Limpiar
-            </Button>
-          )}
         </div>
 
         <Button
-          onClick={handleOpenCreate}
-          className="bg-primary text-background px-6 font-semibold hover:text-foreground gap-1 shrink-0 rounded-2xl cursor-pointer transition-all"
+          variant="ghost"
+          size="sm"
+          onClick={clearFilters}
+          className="text-primary font-semibold hover:text-foreground gap-1.5 rounded-md cursor-pointer"
         >
-          <Plus className="size-5 stroke-2" />
-          Nuevo cliente
+          Limpiar Filtros
         </Button>
       </div>
 
@@ -260,7 +265,7 @@ export default function CustomersTable() {
                 return (
                   <TableRow
                     key={customer.id}
-                    className="border-border bg-[#24262A] hover:bg-card/40 transition-colors"
+                    className="border-border bg-card/80 hover:bg-card/40 transition-colors"
                   >
                     <TableCell className="pl-4">
                       <span className="font-medium text-white">
