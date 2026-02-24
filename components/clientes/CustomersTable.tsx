@@ -25,7 +25,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useCustomers } from "@/lib/hooks/useCustomers";
 import { useVehicles } from "@/lib/hooks/useVehicles";
 import type { Customer } from "@/lib/types";
-import type { CustomerFormData } from "@/lib/schemas/customer";
+import { customerSchema, DOC_TYPES, type CustomerFormData } from "@/lib/schemas/customer";
 import CustomerFormDialog from "./CustomerFormDialog";
 import DeleteCustomerDialog from "./DeleteCustomerDialog";
 
@@ -198,7 +198,9 @@ export default function CustomersTable() {
         <Table>
           <TableHeader>
             <TableRow className="border-border bg-card/20">
-              <TableHead className="text-white font-medium pl-4">Nombre</TableHead>
+              <TableHead className="text-white font-medium pl-4">Tipo Doc.</TableHead>
+              <TableHead className="text-white font-medium">Nro. Doc.</TableHead>
+              <TableHead className="text-white font-medium">Nombre</TableHead>
               <TableHead className="text-white font-medium hidden sm:table-cell">Teléfono</TableHead>
               <TableHead className="text-white font-medium hidden md:table-cell">Email</TableHead>
               <TableHead className="text-white font-medium hidden lg:table-cell">Vehículos</TableHead>
@@ -210,6 +212,8 @@ export default function CustomersTable() {
             {loading ? (
               Array.from({ length: 5 }).map((_, i) => (
                 <TableRow key={i} className="border-border bg-card">
+                  <TableCell><Skeleton className="h-4 w-20 bg-muted" /></TableCell>
+                  <TableCell><Skeleton className="h-4 w-24 bg-muted" /></TableCell>
                   <TableCell><Skeleton className="h-4 w-36 bg-muted" /></TableCell>
                   <TableCell className="hidden sm:table-cell"><Skeleton className="h-4 w-24 bg-muted" /></TableCell>
                   <TableCell className="hidden md:table-cell"><Skeleton className="h-4 w-40 bg-muted" /></TableCell>
@@ -225,7 +229,7 @@ export default function CustomersTable() {
               ))
             ) : error ? (
               <TableRow className="bg-card">
-                <TableCell colSpan={6} className="text-center py-12">
+                <TableCell colSpan={8} className="text-center py-12">
                   <div className="flex flex-col items-center gap-3 text-muted-foreground">
                     <Group className="h-10 w-10 opacity-30" />
                     <p className="text-sm text-white">Error al cargar los clientes.</p>
@@ -237,7 +241,7 @@ export default function CustomersTable() {
               </TableRow>
             ) : filtered.length === 0 ? (
               <TableRow className="bg-card">
-                <TableCell colSpan={6} className="text-center py-12">
+                <TableCell colSpan={8} className="text-center py-12">
                   <div className="flex flex-col items-center gap-3 text-muted-foreground">
                     <Group className="h-10 w-10 opacity-30" />
                     <p className="text-sm text-white">
@@ -262,12 +266,25 @@ export default function CustomersTable() {
             ) : (
               filtered.map((customer) => {
                 const vehicleCount = getVehicleCount(customer.id);
+                const docTypeLabel = customer.docType
+                  ? DOC_TYPES.find((d) => d.value === customer.docType)?.label ?? customer.docType
+                  : null;
                 return (
                   <TableRow
                     key={customer.id}
                     className="border-border bg-card/80 hover:bg-card/40 transition-colors"
                   >
                     <TableCell className="pl-4">
+                      <span className="text-sm text-white">
+                        {docTypeLabel ?? <span className="text-muted-foreground italic">—</span>}
+                      </span>
+                    </TableCell>
+                    <TableCell>
+                      <span className="font-mono text-sm text-white">
+                        {customer.docNumber ?? <span className="text-muted-foreground italic">—</span>}
+                      </span>
+                    </TableCell>
+                    <TableCell>
                       <span className="font-medium text-white">
                         {customer.firstName} {customer.lastName}
                       </span>
