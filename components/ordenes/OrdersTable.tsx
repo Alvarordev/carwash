@@ -185,7 +185,7 @@ export default function OrdersTable() {
                   <TableCell>
                     <div className="flex items-center justify-end gap-2" onClick={(e) => e.stopPropagation()}>
                       <Button size="sm" asChild>
-                        <Link href={`/dashboard/ordenes/${order.id}`} className="flex items-center gap-1">
+                        <Link href={`/ordenes/${order.id}`} className="flex items-center gap-1">
                           <Eye className="h-3.5 w-3.5" />Ver
                         </Link>
                       </Button>
