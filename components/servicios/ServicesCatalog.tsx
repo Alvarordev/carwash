@@ -1,0 +1,194 @@
+"use client";
+
+import { useState } from "react";
+import { toast } from "sonner";
+import { Plus } from "iconoir-react";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useServices } from "@/lib/hooks/useServices";
+import type { Service, ServiceCategory } from "@/lib/types";
+import type { ServiceFormData } from "@/lib/schemas/service";
+import ServiceCard from "./ServiceCard";
+import ServiceFormDialog from "./ServiceFormDialog";
+import DeleteServiceDialog from "./DeleteServiceDialog";
+
+const FILTERS = [
+  { value: "all", label: "Todos los servicios" },
+  { value: "exterior", label: "Exterior" },
+  { value: "interior", label: "Interior y Detalle" },
+  { value: "añadido", label: "Añadidos" },
+] as const;
+
+export default function ServicesCatalog() {
+  const { services, loading, error, createService, updateService, deleteService } = useServices();
+  
+  const [activeFilter, setActiveFilter] = useState<"all" | ServiceCategory>("all");
+  
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [editingService, setEditingService] = useState<Service | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [deletingService, setDeletingService] = useState<Service | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const filteredServices = services.filter((s) => {
+    if (activeFilter === "all") return true;
+    return s.category === activeFilter;
+  });
+
+  const handleOpenCreate = () => {
+    setEditingService(null);
+    setDialogOpen(true);
+  };
+
+  const handleOpenEdit = (service: Service) => {
+    setEditingService(service);
+    setDialogOpen(true);
+  };
+
+  const handleOpenDelete = (service: Service) => {
+    setDeletingService(service);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleFormSubmit = async (data: ServiceFormData) => {
+    setIsSubmitting(true);
+    try {
+      if (editingService) {
+        await updateService(editingService.id, data);
+        toast.success("Servicio actualizado", { description: data.name });
+      } else {
+        await createService(data);
+        toast.success("Servicio creado", { description: data.name });
+      }
+      setDialogOpen(false);
+    } catch {
+      toast.error("Ocurrió un error", { description: "No se pudo guardar el servicio." });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!deletingService) return;
+    setIsDeleting(true);
+    try {
+      await deleteService(deletingService.id);
+      setDeleteDialogOpen(false);
+      setDeletingService(null);
+      toast.success("Servicio eliminado", { description: deletingService.name });
+    } catch {
+      toast.error("No se pudo eliminar el servicio.");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  return (
+    <div className="flex flex-col gap-6">
+      <div className="flex w-full justify-between items-center">
+        <h1 className="text-3xl font-semibold tracking-tight text-foreground pb-4 w-full">
+          Catálogo de Servicios
+        </h1>
+
+        <Button
+          onClick={handleOpenCreate}
+          className="bg-primary text-foreground px-6 font-semibold gap-1 shrink-0 rounded-sm cursor-pointer transition-all"
+          size="lg"
+        >
+          <Plus className="size-5 stroke-2" />
+          Agregar
+        </Button>
+      </div>
+
+      <div className="flex flex-wrap gap-2">
+        {FILTERS.map((filter) => (
+          <Button
+            key={filter.value}
+            variant="outline"
+            onClick={() => setActiveFilter(filter.value as "all" | ServiceCategory)}
+            className={`rounded-sm px-4 h-9 text-sm font-medium transition-all ${
+              activeFilter === filter.value
+                ? "bg-foreground text-background border-foreground"
+                : "bg-transparent border-border text-card hover:bg-muted hover:text-foreground"
+            }`}
+          >
+            {filter.label}
+          </Button>
+        ))}
+      </div>
+
+      <div className="flex flex-col gap-3">
+        {loading ? (
+          Array.from({ length: 3 }).map((_, i) => (
+            <div key={i} className="bg-card/80 rounded-lg border border-border p-4">
+              <div className="flex items-center gap-4">
+                <Skeleton className="w-12 h-12 rounded-full bg-muted" />
+                <div className="flex-1">
+                  <Skeleton className="h-5 w-48 mb-2 bg-muted" />
+                  <Skeleton className="h-4 w-64 bg-muted" />
+                </div>
+                <Skeleton className="h-8 w-20 rounded-md bg-muted" />
+              </div>
+            </div>
+          ))
+        ) : error ? (
+          <div className="bg-card/80 rounded-lg border border-border p-8 text-center">
+            <p className="text-muted-foreground">Error al cargar los servicios.</p>
+            <p className="text-sm text-muted-foreground mt-1">
+              Asegúrate de que json-server esté corriendo en el puerto 3001.
+            </p>
+          </div>
+        ) : filteredServices.length === 0 ? (
+          <div className="bg-card/80 rounded-lg border border-border p-8 text-center">
+            <p className="text-muted-foreground">
+              {activeFilter === "all"
+                ? "No hay servicios registrados."
+                : "No hay servicios en esta categoría."}
+            </p>
+            <Button
+              variant="outline"
+              onClick={handleOpenCreate}
+              className="mt-4 border-border"
+            >
+              <Plus className="size-4 mr-2" />
+              Agregar el primero
+            </Button>
+          </div>
+        ) : (
+          filteredServices.map((service) => (
+            <ServiceCard
+              key={service.id}
+              service={service}
+              onEdit={handleOpenEdit}
+              onDelete={handleOpenDelete}
+            />
+          ))
+        )}
+      </div>
+
+      {!loading && !error && filteredServices.length > 0 && (
+        <p className="text-xs text-muted-foreground">
+          Mostrando {filteredServices.length} de {services.length} servicios
+        </p>
+      )}
+
+      <ServiceFormDialog
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        service={editingService}
+        onSubmit={handleFormSubmit}
+        isSubmitting={isSubmitting}
+      />
+
+      <DeleteServiceDialog
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        service={deletingService}
+        onConfirm={handleConfirmDelete}
+        isDeleting={isDeleting}
+      />
+    </div>
+  );
+}

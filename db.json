@@ -230,10 +230,126 @@
       "updatedAt": "2026-02-24T08:18:46.277Z"
     }
   ],
-  "services": [],
-  "servicePricings": [],
+  "services": [
+    {
+      "id": "srv-1",
+      "name": "Lavado de Carrocería",
+      "description": "Lavado completo del exterior del vehículo",
+      "category": "exterior",
+      "status": "active",
+      "createdAt": "2025-01-01T00:00:00Z",
+      "updatedAt": "2025-01-01T00:00:00Z"
+    },
+    {
+      "id": "srv-2",
+      "name": "Lavado de Salón",
+      "description": "Limpieza integral del interior del vehículo",
+      "category": "interior",
+      "status": "active",
+      "createdAt": "2025-01-02T00:00:00Z",
+      "updatedAt": "2025-01-02T00:00:00Z"
+    },
+    {
+      "id": "srv-3",
+      "name": "Encerado",
+      "description": "Aplicación de cera protectora para el brillo",
+      "category": "exterior",
+      "status": "active",
+      "createdAt": "2025-01-03T00:00:00Z",
+      "updatedAt": "2025-01-03T00:00:00Z"
+    },
+    {
+      "id": "srv-4",
+      "name": "Pulido de Faros",
+      "description": "Restauración de faros opacos",
+      "category": "detalle",
+      "status": "active",
+      "createdAt": "2025-01-04T00:00:00Z",
+      "updatedAt": "2025-01-04T00:00:00Z"
+    },
+    {
+      "id": "srv-5",
+      "name": "Ambientación",
+      "description": "Aromatización del interior del vehículo",
+      "category": "añadido",
+      "status": "active",
+      "createdAt": "2025-01-05T00:00:00Z",
+      "updatedAt": "2025-01-05T00:00:00Z"
+    }
+  ],
+  "servicePricings": [
+    {
+      "id": "prc-1",
+      "serviceId": "srv-1",
+      "vehicleTypeId": "vt-1",
+      "price": 30,
+      "status": "active",
+      "createdAt": "2025-01-01T00:00:00Z",
+      "updatedAt": "2025-01-01T00:00:00Z"
+    },
+    {
+      "id": "prc-2",
+      "serviceId": "srv-1",
+      "vehicleTypeId": "vt-2",
+      "price": 40,
+      "status": "active",
+      "createdAt": "2025-01-01T00:00:00Z",
+      "updatedAt": "2025-01-01T00:00:00Z"
+    },
+    {
+      "id": "prc-3",
+      "serviceId": "srv-1",
+      "vehicleTypeId": "vt-3",
+      "price": 50,
+      "status": "active",
+      "createdAt": "2025-01-01T00:00:00Z",
+      "updatedAt": "2025-01-01T00:00:00Z"
+    },
+    {
+      "id": "prc-4",
+      "serviceId": "srv-2",
+      "vehicleTypeId": "vt-1",
+      "price": 50,
+      "status": "active",
+      "createdAt": "2025-01-02T00:00:00Z",
+      "updatedAt": "2025-01-02T00:00:00Z"
+    },
+    {
+      "id": "prc-5",
+      "serviceId": "srv-2",
+      "vehicleTypeId": "vt-2",
+      "price": 60,
+      "status": "active",
+      "createdAt": "2025-01-02T00:00:00Z",
+      "updatedAt": "2025-01-02T00:00:00Z"
+    },
+    {
+      "id": "prc-6",
+      "serviceId": "srv-3",
+      "vehicleTypeId": "vt-1",
+      "price": 80,
+      "status": "active",
+      "createdAt": "2025-01-03T00:00:00Z",
+      "updatedAt": "2025-01-03T00:00:00Z"
+    }
+  ],
   "promotions": [],
-  "staff": [],
+  "staff": [
+    {
+      "id": "s-1771950913988",
+      "firstName": "Juan",
+      "lastName": "Perez",
+      "role": "admin",
+      "phone": "948084074",
+      "email": "juan@gmail.com",
+      "hiredAt": "2026-02-24",
+      "status": "active",
+      "createdAt": "2026-02-24T16:35:13.988Z",
+      "updatedAt": "2026-02-24T16:42:13.037Z",
+      "docType": "dni",
+      "docNumber": "12345678"
+    }
+  ],
   "orders": [],
   "inventory": []
 }
