@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import type { Order } from "@/lib/types/order";
 
@@ -10,23 +10,19 @@ export function useOrders() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [totalCount, setTotalCount] = useState<number>(0);
 
   const fetchOrders = useCallback(async () => {
-    setLoading(true);
     try {
+      setLoading(true);
       const res = await fetch(API_URL);
       if (!res.ok) throw new Error("Error al cargar órdenes");
       const data = (await res.json()) as Order[];
-      if (mounted.current) {
-        setOrders(Array.isArray(data) ? data : []);
-        setTotalCount(Array.isArray(data) ? data.length : 0);
-        setError(null);
-      }
+      setOrders(Array.isArray(data) ? data : []);
+      setError(null);
     } catch (err) {
-      if (mounted.current) setError(err instanceof Error ? err.message : String(err));
+      setError(err instanceof Error ? err.message : String(err));
     } finally {
-      if (mounted.current) setLoading(false);
+      setLoading(false);
     }
   }, []);
 
@@ -34,12 +30,7 @@ export function useOrders() {
     fetchOrders();
   }, [fetchOrders]);
 
-  const mounted = useRef(true);
-  useEffect(() => {
-    return () => {
-      mounted.current = false;
-    };
-  }, []);
+  // No mounted ref checks; hook follows same simple pattern as useVehicles/useCustomers
 
   const updateOrderStatus = useCallback(
     async (id: string | number, newStatus: Order["status"]) => {
@@ -59,25 +50,25 @@ export function useOrders() {
       };
 
       // optimistic update
-      if (mounted.current) setOrders((s) => s.map((o) => (o.id === id ? updated : o)));
+      setOrders((s) => s.map((o) => (o.id === id ? updated : o)));
 
       toast.success(`Estado cambiado a ${newStatus}`, {
         duration: 8000,
         action: {
-          label: "Deshacer",
-          onClick: async () => {
-            if (mounted.current) setOrders(backup);
-            try {
-              await fetch(`${API_URL}/${id}`, {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(prev),
-              });
-              toast.success("Cambio revertido");
-            } catch {
-              toast.error("No se pudo revertir");
-            }
-          },
+            label: "Deshacer",
+            onClick: async () => {
+              setOrders(backup);
+              try {
+                await fetch(`${API_URL}/${id}`, {
+                  method: "PUT",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify(prev),
+                });
+                toast.success("Cambio revertido");
+              } catch {
+                toast.error("No se pudo revertir");
+              }
+            },
         },
       });
 
@@ -90,7 +81,7 @@ export function useOrders() {
         if (!res.ok) throw new Error("Error al actualizar estado");
         // keep optimistic update
       } catch (err) {
-        if (mounted.current) setOrders(backup);
+        setOrders(backup);
         toast.error("No se pudo actualizar el estado");
         throw err;
       }
@@ -120,10 +111,10 @@ export function useOrders() {
         ],
       };
 
-      if (mounted.current) setOrders((s) => s.map((o) => (o.id === id ? updated : o)));
+      setOrders((s) => s.map((o) => (o.id === id ? updated : o)));
 
       const undo = () => {
-        if (mounted.current) setOrders(backup);
+        setOrders(backup);
         (async () => {
           try {
             await fetch(`${API_URL}/${id}`, {
@@ -151,7 +142,7 @@ export function useOrders() {
         });
         if (!res.ok) throw new Error("Error al cancelar orden");
       } catch (err) {
-        if (mounted.current) setOrders(backup);
+        setOrders(backup);
         toast.error("No se pudo cancelar la orden");
         throw err;
       }
@@ -163,7 +154,7 @@ export function useOrders() {
     orders,
     loading,
     error,
-    totalCount,
+    
     fetchOrders,
     updateOrderStatus,
     cancelOrder,

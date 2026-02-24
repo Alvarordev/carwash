@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Search, EditPencil, Eye, Calendar } from "iconoir-react";
@@ -19,21 +19,23 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useOrders } from "@/lib/hooks/useOrders";
 import OrderStatusDialog from "./OrderStatusDialog";
-import type { Order } from "@/lib/types/order";
+import type { Order, OrderItem } from "@/lib/types/order";
 
 export default function OrdersTable() {
   const router = useRouter();
-  const { orders, loading, error, totalCount, fetchOrders, updateOrderStatus, cancelOrder } = useOrders();
+  const { orders, loading, error, updateOrderStatus, cancelOrder } = useOrders();
 
   const [search, setSearch] = useState("");
   const [filterStatus, setFilterStatus] = useState<string>("all");
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
+
+  const clearFilters = () => {
+    setSearch("");
+    setFilterStatus("all");
+  };
 
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingOrder, setEditingOrder] = useState<Order | null>(null);
 
-  const totalPages = Math.max(1, Math.ceil(totalCount / pageSize));
 
   const handleOpenEdit = (order: Order) => {
     setEditingOrder(order);
@@ -49,18 +51,18 @@ export default function OrdersTable() {
     }
   };
 
-  // fetch orders simply (no pagination)
-  useEffect(() => {
-    fetchOrders();
-  }, [fetchOrders]);
-
-  const rows = Array.isArray(orders) ? orders : [];
-
-  // Debug: ensure we received data from the hook
-  if (!loading && !error) {
-    // eslint-disable-next-line no-console
-    console.debug("OrdersTable rows:", rows.length, rows.slice(0, 3));
-  }
+  const filtered = useMemo(() => {
+    const q = search.toLowerCase();
+    return orders.filter((o) => {
+      const matchesSearch =
+        !q ||
+        o.orderNumber?.toLowerCase().includes(q) ||
+        o.customerName?.toLowerCase().includes(q) ||
+        o.vehiclePlate?.toLowerCase().includes(q);
+      const matchesStatus = filterStatus === "all" || o.status === filterStatus;
+      return matchesSearch && matchesStatus;
+    });
+  }, [orders, search, filterStatus]);
 
   return (
     <div className="flex flex-col gap-6">
@@ -102,7 +104,14 @@ export default function OrdersTable() {
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="text-sm text-muted-foreground">(Sin paginación — mostrando todas las órdenes)</div>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={clearFilters}
+            className="text-primary font-semibold hover:text-foreground gap-1.5 rounded-md cursor-pointer"
+          >
+            Limpiar Filtros
+          </Button>
         </div>
       </div>
 
@@ -147,7 +156,7 @@ export default function OrdersTable() {
                   </div>
                 </TableCell>
               </TableRow>
-            ) : rows.length === 0 ? (
+            ) : filtered.length === 0 ? (
               <TableRow className="bg-card">
                 <TableCell colSpan={8} className="text-center py-12">
                   <div className="flex flex-col items-center gap-3 text-muted-foreground">
@@ -156,13 +165,13 @@ export default function OrdersTable() {
                 </TableCell>
               </TableRow>
             ) : (
-              rows.map((order: Order) => (
+              filtered.map((order: Order) => (
                 <TableRow key={order.id} className="border-border bg-card/80 hover:bg-card/40 transition-colors cursor-pointer" onClick={() => router.push(`/dashboard/ordenes/${order.id}`)}>
                   <TableCell className="font-mono text-sm font-medium text-white pl-4">{order.orderNumber}</TableCell>
                   <TableCell>{order.customerName}</TableCell>
                   <TableCell>{order.vehiclePlate} - {order.vehicleMakeModel}</TableCell>
                   <TableCell>
-                    {order.items.map((it: any) => (
+                    {order.items.map((it: OrderItem) => (
                       <span key={it.serviceId} className="inline-block bg-secondary text-xs rounded px-2 py-1 mr-1 mb-1">{it.name}</span>
                     ))}
                   </TableCell>
@@ -192,19 +201,9 @@ export default function OrdersTable() {
         </Table>
       </div>
 
-      {/* DEBUG: show a sample of rows */}
-      {!loading && !error && (
-        <pre className="text-xs text-muted-foreground max-h-40 overflow-auto p-2">{JSON.stringify(rows.slice(0,5), null, 2)}</pre>
+      {!loading && !error && filtered.length > 0 && (
+        <p className="text-xs text-muted-foreground">Mostrando {filtered.length} de {orders.length} órdenes</p>
       )}
-
-      {/* Pagination controls */}
-      <div className="flex items-center justify-between">
-        <p className="text-xs text-muted-foreground">Mostrando página {page} de {totalPages} — {totalCount} órdenes</p>
-        <div className="flex items-center gap-2">
-          <Button size="sm" onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1}>Anterior</Button>
-          <Button size="sm" onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={page === totalPages}>Siguiente</Button>
-        </div>
-      </div>
 
       <OrderStatusDialog open={dialogOpen} onOpenChange={setDialogOpen} order={editingOrder} onConfirm={handleConfirmStatus} />
     </div>
