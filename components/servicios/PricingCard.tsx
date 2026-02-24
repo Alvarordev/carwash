@@ -46,11 +46,11 @@ export default function PricingCard({
   };
 
   return (
-    <div
-      className="flex flex-col items-start justify-center py-4 px-4 rounded-lg bg-card/80 border border-border min-w-32 max-w-64 transition-all duration-200 hover:border-primary/30"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
+      <div
+        className="flex flex-col items-start justify-center py-4 px-4 rounded-xl bg-card border border-border shadow-md min-w-32 max-w-64 transition-all duration-200 hover:border-primary/50 hover:shadow-lg"
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+      >
       <div className="flex items-start justify-between gap-1.5 mb-3 w-full">
         <div className="flex w-full gap-2">
           <Car className="size-5 text-muted-foreground" />
@@ -76,12 +76,14 @@ export default function PricingCard({
           </button>
         </div>
       </div>
-      <div className="w-full flex flex-col">
-        <p className="text-muted-foreground text-xs font-semibold mb-1">Precio Base</p>
+      <div className="w-full flex flex-col gap-2">
+        <div className="flex items-center gap-2 mb-1">
+          <span className="text-xs font-semibold text-muted-foreground">Precio Base</span>
+
+        </div>
         <div className="relative">
-          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm font-medium">
-            S/
-          </span>
+          {/* Emphatic pill for $ sign and Input */}
+          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-primary text-sm font-bold">S/</span>
           <Input
             ref={inputRef}
             type="number"
@@ -91,7 +93,7 @@ export default function PricingCard({
             onChange={(e) => setInputValue(e.target.value)}
             onBlur={handlePriceChange}
             onKeyDown={handleKeyDown}
-            className="pl-8 bg-background border-border text-lg font-semibold text-foreground h-10 "
+            className="pl-8 bg-card border border-primary text-lg font-bold text-foreground h-10 rounded-full shadow-sm focus:border-primary focus:ring-2 focus:ring-primary"
             style={{ appearance: 'textfield' }}
           />
         </div>

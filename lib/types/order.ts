@@ -1,37 +1,49 @@
-import type { UUID, Timestamps } from "./common";
+// order.ts
+// Main type definitions for Order entity in system
 
-export type OrderStatus = "pending" | "completed" | "delivered" | "cancelled";
+export type OrderStatus = "Pendiente" | "En Proceso" | "Cancelado" | "Entregado";
 
 export type OrderItem = {
-  serviceId: UUID;
-  serviceName: string;
-  servicePricingId: UUID;
-  vehicleTypeId: UUID;
-  vehicleTypeName: string;
+  serviceId: string;
+  name: string;
   price: number;
+  quantity: number;
+  subtotal: number;
 };
 
 export type OrderStaffAssignment = {
-  staffId: UUID;
-  staffName: string;
+  staffId: string;
+  name: string;
+  role?: string;
 };
 
-export type Order = {
-  id: UUID;
-  orderNumber: string;
-  vehicleId: UUID;
-  customerId: UUID | null;
+export type OrderStatusHistoryEntry = {
+  status: OrderStatus;
+  at: string; // ISO
+  by?: string;
+  note?: string;
+};
+
+export interface Order {
+  id: string | number;
+  orderNumber: string; // e.g. O-000021 (display)
+  customerId?: string;
+  customerName: string;
+  vehicleId?: string;
+  vehiclePlate: string;
+  vehicleMakeModel: string;
   items: OrderItem[];
-  promotionIds: UUID[];
-  staffAssignments: OrderStaffAssignment[];
-  images: string[];
   subtotal: number;
-  discount: number;
+  discounts?: number;
   total: number;
   status: OrderStatus;
-  notes: string | null;
-  registeredAt: string;
-  completedAt: string | null;
-  deliveredAt: string | null;
-  cancelledAt: string | null;
-} & Timestamps;
+  paymentStatus?: "pendiente" | "pagado" | "parcial";
+  paymentMethod?: string;
+  registeredAt: string; // ISO string
+  updatedAt?: string;
+  cancelReason?: string | null;
+  notes?: string;
+  attachments?: string[]; // urls
+  staff?: OrderStaffAssignment[];
+  statusHistory?: OrderStatusHistoryEntry[];
+}

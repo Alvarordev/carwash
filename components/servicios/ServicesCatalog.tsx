@@ -5,6 +5,8 @@ import { toast } from "sonner";
 import { Plus } from "iconoir-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Card, CardHeader, CardTitle, CardAction, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { useServices } from "@/lib/hooks/useServices";
 import type { Service, ServiceCategory } from "@/lib/types";
 import type { ServiceFormData } from "@/lib/schemas/service";
@@ -19,8 +21,11 @@ const FILTERS = [
   { value: "añadido", label: "Añadidos" },
 ] as const;
 
+import { usePromotions } from '@/lib/hooks/usePromotions';
+
 export default function ServicesCatalog() {
   const { services, loading, error, createService, updateService, deleteService } = useServices();
+  const { promotions } = usePromotions();
   
   const [activeFilter, setActiveFilter] = useState<"all" | ServiceCategory>("all");
   
@@ -91,7 +96,6 @@ export default function ServicesCatalog() {
         <h1 className="text-3xl font-semibold tracking-tight text-foreground pb-4 w-full">
           Catálogo de Servicios
         </h1>
-
         <Button
           onClick={handleOpenCreate}
           className="bg-primary text-foreground px-6 font-semibold gap-1 shrink-0 rounded-sm cursor-pointer transition-all"
@@ -101,7 +105,69 @@ export default function ServicesCatalog() {
           Agregar Servicio
         </Button>
       </div>
+      {/* Stat cards section */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-2">
+        {/* Total services */}
+        <Card className="shadow-md bg-card border border-card">
+          <CardHeader>
+            <CardTitle>Servicios Totales</CardTitle>
+            <CardAction>
+              <Badge variant="default">{services.length}</Badge>
+            </CardAction>
+          </CardHeader>
+          <CardContent>
+            <span className="text-muted-foreground text-xs">Todos los registrados</span>
+          </CardContent>
+        </Card>
+        {/* Active services */}
+        <Card className="shadow-md bg-card border border-card">
+          <CardHeader>
+            <CardTitle>Activos</CardTitle>
+            <CardAction>
+              <Badge variant="secondary">{services.filter(s => s.status === "active").length}</Badge>
+            </CardAction>
+          </CardHeader>
+          <CardContent>
+            <span className="text-muted-foreground text-xs">Actualmente disponibles</span>
+          </CardContent>
+        </Card>
+        {/* Promos */}
+        <Card className="shadow-md bg-card border border-card">
+          <CardHeader>
+            <CardTitle>Promociones</CardTitle>
+            <CardAction>
+              <Badge variant="outline">{promotions.filter(p => p.status === "active" && (p.scope === "service" || p.scope === "all")).length}</Badge>
+            </CardAction>
+          </CardHeader>
+          <CardContent>
+            <span className="text-muted-foreground text-xs">Servicios con descuento</span>
+          </CardContent>
+        </Card>
 
+        <Card className="shadow-md bg-card border border-card">
+          <CardHeader>
+            <CardTitle>Exterior</CardTitle>
+            <CardAction>
+              <Badge variant="ghost">{services.filter(s => s.category === "exterior").length}</Badge>
+            </CardAction>
+          </CardHeader>
+          <CardContent>
+            <span className="text-muted-foreground text-xs">Servicios para exteriores</span>
+          </CardContent>
+        </Card>
+        {/* Interior */}
+        <Card className="shadow-md bg-card border border-card">
+          <CardHeader>
+            <CardTitle>Interior</CardTitle>
+            <CardAction>
+              <Badge variant="ghost">{services.filter(s => s.category === "interior").length}</Badge>
+            </CardAction>
+          </CardHeader>
+          <CardContent>
+            <span className="text-muted-foreground text-xs">Servicios de interior</span>
+          </CardContent>
+        </Card>
+      </div>
       <div className="flex flex-wrap gap-2">
         {FILTERS.map((filter) => (
           <Button

@@ -238,7 +238,7 @@
       "category": "exterior",
       "status": "active",
       "createdAt": "2025-01-01T00:00:00Z",
-      "updatedAt": "2026-02-24T17:46:55.081Z"
+      "updatedAt": "2026-02-24T19:33:34.419Z"
     },
     {
       "id": "srv-2",
@@ -282,10 +282,10 @@
       "id": "prc-1",
       "serviceId": "srv-1",
       "vehicleTypeId": "vt-1",
-      "price": 20,
+      "price": 30,
       "status": "active",
       "createdAt": "2025-01-01T00:00:00Z",
-      "updatedAt": "2026-02-24T17:57:26.984Z"
+      "updatedAt": "2026-02-24T19:36:19.331Z"
     },
     {
       "id": "prc-2",
@@ -341,7 +341,9 @@
       "discountType": "percentage",
       "discountValue": 20,
       "scope": "service",
-      "scopeIds": ["srv-1"],
+      "scopeIds": [
+        "srv-1"
+      ],
       "startDate": "2025-01-01",
       "endDate": "2025-03-31",
       "status": "active",
@@ -355,7 +357,9 @@
       "discountType": "fixed",
       "discountValue": 10,
       "scope": "vehicleType",
-      "scopeIds": ["vt-2"],
+      "scopeIds": [
+        "vt-2"
+      ],
       "startDate": "2025-02-01",
       "endDate": "2025-04-30",
       "status": "active",
@@ -393,6 +397,114 @@
       "docNumber": "12345678"
     }
   ],
-  "orders": [],
+  "orders": [
+    {
+      "id": "o-1",
+      "orderNumber": "O-000021",
+      "customerId": "c-4",
+      "customerName": "María López",
+      "vehicleId": "v-1",
+      "vehiclePlate": "ABC-1234",
+      "vehicleMakeModel": "Toyota Corolla",
+      "items": [
+        { "serviceId": "srv-1", "name": "Lavado de Carrocería", "price": 30, "quantity": 1, "subtotal": 30 },
+        { "serviceId": "srv-3", "name": "Encerado", "price": 25, "quantity": 1, "subtotal": 25 }
+      ],
+      "subtotal": 55,
+      "discounts": 0,
+      "total": 55,
+      "status": "Pendiente",
+      "paymentStatus": "pendiente",
+      "registeredAt": "2026-02-24T09:15:00.000Z",
+      "updatedAt": "2026-02-24T09:15:00.000Z",
+      "notes": "Cliente pide secado especial",
+      "attachments": [],
+      "staff": [],
+      "statusHistory": [
+        { "status": "Pendiente", "at": "2026-02-24T09:15:00.000Z" }
+      ]
+    },
+    {
+      "id": "o-2",
+      "orderNumber": "O-000022",
+      "customerId": "c-1",
+      "customerName": "Carlos Mendoza",
+      "vehicleId": "v-2",
+      "vehiclePlate": "XYZ-5678",
+      "vehicleMakeModel": "Ford Explorer",
+      "items": [
+        { "serviceId": "srv-2", "name": "Lavado de Salón", "price": 50, "quantity": 1, "subtotal": 50 }
+      ],
+      "subtotal": 50,
+      "discounts": 0,
+      "total": 50,
+      "status": "En Proceso",
+      "paymentStatus": "parcial",
+      "registeredAt": "2026-02-23T11:00:00.000Z",
+      "updatedAt": "2026-02-24T08:00:00.000Z",
+      "notes": "Incluir limpieza de alfombras",
+      "attachments": [],
+      "staff": [{ "staffId": "s-1771950913988", "name": "Juan Perez", "role": "operador" }],
+      "statusHistory": [
+        { "status": "Pendiente", "at": "2026-02-23T11:00:00.000Z" },
+        { "status": "En Proceso", "at": "2026-02-24T08:00:00.000Z", "by": "Juan Perez" }
+      ]
+    },
+    {
+      "id": "o-3",
+      "orderNumber": "O-000023",
+      "customerId": "c-2",
+      "customerName": "Ana García",
+      "vehicleId": "v-3",
+      "vehiclePlate": "LMN-9012",
+      "vehicleMakeModel": "Chevrolet Silverado",
+      "items": [
+        { "serviceId": "srv-1", "name": "Lavado de Carrocería", "price": 30, "quantity": 1, "subtotal": 30 },
+        { "serviceId": "srv-4", "name": "Pulido de Faros", "price": 15, "quantity": 1, "subtotal": 15 }
+      ],
+      "subtotal": 45,
+      "discounts": 5,
+      "total": 40,
+      "status": "Entregado",
+      "paymentStatus": "pagado",
+      "registeredAt": "2026-02-22T14:30:00.000Z",
+      "updatedAt": "2026-02-22T16:00:00.000Z",
+      "notes": "Entrega completa",
+      "attachments": [],
+      "staff": [],
+      "statusHistory": [
+        { "status": "Pendiente", "at": "2026-02-22T14:30:00.000Z" },
+        { "status": "En Proceso", "at": "2026-02-22T15:00:00.000Z" },
+        { "status": "Entregado", "at": "2026-02-22T16:00:00.000Z" }
+      ]
+    },
+    {
+      "id": "o-4",
+      "orderNumber": "O-000024",
+      "customerId": "c-5",
+      "customerName": "Pedro Ramírez",
+      "vehicleId": "v-5",
+      "vehiclePlate": "STU-7890",
+      "vehicleMakeModel": "Kia Carnival",
+      "items": [
+        { "serviceId": "srv-5", "name": "Ambientación", "price": 10, "quantity": 1, "subtotal": 10 }
+      ],
+      "subtotal": 10,
+      "discounts": 0,
+      "total": 10,
+      "status": "Cancelado",
+      "paymentStatus": "pendiente",
+      "registeredAt": "2026-02-21T09:00:00.000Z",
+      "updatedAt": "2026-02-21T09:30:00.000Z",
+      "notes": "Cancelado por cliente",
+      "attachments": [],
+      "staff": [],
+      "cancelReason": "Cliente no llegó",
+      "statusHistory": [
+        { "status": "Pendiente", "at": "2026-02-21T09:00:00.000Z" },
+        { "status": "Cancelado", "at": "2026-02-21T09:30:00.000Z", "note": "Cliente no llegó" }
+      ]
+    }
+  ],
   "inventory": []
 }

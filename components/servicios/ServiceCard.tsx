@@ -1,9 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { MoreHoriz, Plus, EditPencil, Trash, Minus, Plus as PlusIcon } from "iconoir-react";
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
+import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -38,6 +40,9 @@ export default function ServiceCard({ service, onEdit, onDelete, initiallyExpand
   const { vehicleTypes } = useVehicleTypes();
 
   const [isExpanded, setIsExpanded] = useState(initiallyExpanded ?? false);
+  const [localStatus, setLocalStatus] = useState<Service["status"]>(service.status);
+  const [isToggling, setIsToggling] = useState(false);
+  useEffect(() => { setLocalStatus(service.status); }, [service.status]);
   const [pricingDialogOpen, setPricingDialogOpen] = useState(false);
   const [editingPricing, setEditingPricing] = useState<ServicePricing | null>(null);
   const [deletePricingDialogOpen, setDeletePricingDialogOpen] = useState(false);
@@ -112,40 +117,60 @@ export default function ServiceCard({ service, onEdit, onDelete, initiallyExpand
 
   return (
     <>
-      <div
-        className="bg-card/80 rounded-lg border border-border overflow-hidden cursor-pointer transition-all duration-200 hover:border-primary/30"
-        onClick={() => setIsExpanded(!isExpanded)}
-      >
+       <div
+         className="bg-card shadow-xl rounded-xl border border-border overflow-hidden cursor-pointer transition-all duration-200 hover:border-primary/30 hover:shadow-2xl"
+         onClick={() => setIsExpanded(!isExpanded)}
+       >
         <div className="flex items-center justify-between p-4">
           <div className="flex items-center gap-4 flex-1 min-w-0">
             <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-2xl shrink-0">
               {SERVICE_ICONS[service.category]}
             </div>
-            <div className="flex-1 min-w-0">
-              <h3 className="text-lg font-semibold text-foreground truncate">
-                {service.name}
-              </h3>
-              <p className="text-sm text-muted-foreground truncate">
+             <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 mb-1">
+                <h3 className="text-lg font-bold text-foreground truncate">
+                  {service.name}
+                </h3>
+                {/* Category pill/tag */}
+                <Badge variant="secondary" className="text-xs font-semibold capitalize mr-2">
+                  {service.category}
+                </Badge>
+              </div>
+              {/* Subtitle or detail pill for 'detalle' or 'añadido' */}
+              {(service.category === "detalle" || service.category === "añadido") && (
+                <Badge variant="outline" className="text-xs">
+                  {service.category === "detalle" ? "Especialidad" : "Extra"}
+                </Badge>
+              )}
+
+              <p className="text-sm text-muted-foreground truncate mt-1">
                 {service.description ?? "Sin descripción"}
               </p>
             </div>
           </div>
 
           <div className="flex items-center gap-2 shrink-0">
-            <Button
-              variant="ghost"
-              size="sm"
-              className={`px-3 h-8 rounded-md text-xs font-medium transition-colors ${service.status === "active"
-                  ? "bg-primary text-background hover:bg-primary/90"
-                  : "bg-muted text-muted-foreground hover:text-foreground"
-                }`}
-              onClick={(e) => {
-                e.stopPropagation();
-                handleToggleStatus();
-              }}
-            >
-              {service.status === "active" ? "Active" : "Inactive"}
-            </Button>
+            <div onClick={e => e.stopPropagation()} className="flex items-center">
+               <Switch
+                 checked={localStatus === "active"}
+                 size="default"
+                 disabled={isToggling}
+                 onCheckedChange={async (checked) => {
+                   setIsToggling(true);
+                   setLocalStatus(checked ? "active" : "inactive");
+                   try {
+                     await handleToggleStatus();
+                   } finally {
+                     setIsToggling(false);
+                   }
+                 }}
+                 aria-label="Alternar estado"
+                 className="mr-2"
+               />
+<span className={`text-xs font-medium ${localStatus === "active" ? "text-primary" : "text-muted-foreground"}`}>
+                 {localStatus === "active" ? "Activo" : "Inactivo"}
+               </span>
+            </div>
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
