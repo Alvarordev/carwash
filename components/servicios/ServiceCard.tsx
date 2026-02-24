@@ -1,9 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { MoreHoriz, Car, Plus, EditPencil, Trash, Minus, Plus as PlusIcon } from "iconoir-react";
+import { MoreHoriz, Plus, EditPencil, Trash, Minus, Plus as PlusIcon } from "iconoir-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -15,7 +14,6 @@ import { useServices } from "@/lib/hooks/useServices";
 import { useServicePricings } from "@/lib/hooks/useServicePricings";
 import { useVehicleTypes } from "@/lib/hooks/useVehicleTypes";
 import type { Service, ServicePricing, ServiceCategory } from "@/lib/types";
-import { SERVICE_CATEGORIES } from "@/lib/schemas/service";
 import PricingCard from "./PricingCard";
 import PricingFormDialog from "./PricingFormDialog";
 import DeletePricingDialog from "./DeletePricingDialog";
@@ -34,11 +32,10 @@ const SERVICE_ICONS: Record<ServiceCategory, string> = {
 };
 
 export default function ServiceCard({ service, onEdit, onDelete }: ServiceCardProps) {
-  const router = useRouter();
   const { toggleServiceStatus } = useServices();
   const { getPricingsByService, createPricing, updatePricing, deletePricing } = useServicePricings();
   const { vehicleTypes } = useVehicleTypes();
-  
+
   const [isExpanded, setIsExpanded] = useState(false);
   const [pricingDialogOpen, setPricingDialogOpen] = useState(false);
   const [editingPricing, setEditingPricing] = useState<ServicePricing | null>(null);
@@ -103,7 +100,14 @@ export default function ServiceCard({ service, onEdit, onDelete }: ServiceCardPr
     }
   };
 
-  const categoryLabel = SERVICE_CATEGORIES.find((c) => c.value === service.category)?.label ?? service.category;
+  const handleUpdatePrice = async (id: string, price: number) => {
+    try {
+      await updatePricing(id, { price });
+      toast.success("Precio actualizado");
+    } catch {
+      toast.error("Error al actualizar el precio");
+    }
+  };
 
   return (
     <>
@@ -130,11 +134,10 @@ export default function ServiceCard({ service, onEdit, onDelete }: ServiceCardPr
             <Button
               variant="ghost"
               size="sm"
-              className={`px-3 h-8 rounded-md text-xs font-medium transition-colors ${
-                service.status === "active"
+              className={`px-3 h-8 rounded-md text-xs font-medium transition-colors ${service.status === "active"
                   ? "bg-primary text-background hover:bg-primary/90"
                   : "bg-muted text-muted-foreground hover:text-foreground"
-              }`}
+                }`}
               onClick={(e) => {
                 e.stopPropagation();
                 handleToggleStatus();
@@ -184,18 +187,19 @@ export default function ServiceCard({ service, onEdit, onDelete }: ServiceCardPr
         </div>
 
         {isExpanded && (
-          <div className="px-4 pb-4 border-t border-border">
-            <div className="pt-4">
-              <h4 className="text-sm font-medium text-muted-foreground mb-3">
-                PRECIO POR VEHÍCULO
+          <div className="px-4 pb-4" onClick={(e) => e.stopPropagation()}>
+            <div className="py-5 bg-background px-6 rounded-sm">
+              <h4 className="text-xs font-bold text-muted-foreground mb-4">
+                PRECIO POR TIPO DE VEHÍCULO
               </h4>
-              
+
               <div className="flex gap-3 overflow-x-auto pb-2 -mx-1 px-1">
                 {servicePricings.map((pricing) => (
                   <PricingCard
                     key={pricing.id}
                     pricing={pricing}
                     vehicleType={vehicleTypes.find((v) => v.id === pricing.vehicleTypeId)}
+                    onUpdatePrice={handleUpdatePrice}
                     onEdit={(p) => {
                       setEditingPricing(p);
                       setPricingDialogOpen(true);
@@ -206,14 +210,14 @@ export default function ServiceCard({ service, onEdit, onDelete }: ServiceCardPr
                     }}
                   />
                 ))}
-                
+
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
                     setEditingPricing(null);
                     setPricingDialogOpen(true);
                   }}
-                  className="flex flex-col items-center justify-center p-4 rounded-lg min-w-[120px] max-w-[140px] bg-transparent border border-dashed border-border text-muted-foreground hover:border-primary/50 hover:text-foreground transition-colors"
+                  className="flex flex-col items-center justify-center p-4 rounded-lg min-w-30 max-w-35 bg-transparent border border-dashed border-border text-muted-foreground hover:border-primary/50 hover:text-foreground transition-colors"
                 >
                   <Plus className="w-5 h-5 mb-1" />
                   <span className="text-xs">Agregar</span>
