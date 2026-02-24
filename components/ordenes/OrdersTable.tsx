@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Search, EditPencil, Eye, Calendar } from "iconoir-react";
@@ -49,19 +49,18 @@ export default function OrdersTable() {
     }
   };
 
-  // fetch page when page or pageSize changes
-  const reload = useCallback(() => {
-    const q = search ? `&q=${encodeURIComponent(search)}` : "";
-    const statusQ = filterStatus !== "all" ? `&status=${encodeURIComponent(filterStatus)}` : "";
-    fetchOrders(page, pageSize, `${q}${statusQ}`);
-  }, [page, pageSize, search, filterStatus, fetchOrders]);
+  // fetch orders simply (no pagination)
+  useEffect(() => {
+    fetchOrders();
+  }, [fetchOrders]);
 
-  // call reload when dependencies change
-  useMemo(() => {
-    reload();
-  }, [reload]);
+  const rows = Array.isArray(orders) ? orders : [];
 
-  const filtered = orders; // server filtered via query
+  // Debug: ensure we received data from the hook
+  if (!loading && !error) {
+    // eslint-disable-next-line no-console
+    console.debug("OrdersTable rows:", rows.length, rows.slice(0, 3));
+  }
 
   return (
     <div className="flex flex-col gap-6">
@@ -103,17 +102,7 @@ export default function OrdersTable() {
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="text-sm text-muted-foreground">Mostrar</div>
-          <Select value={String(pageSize)} onValueChange={(v) => { setPageSize(Number(v)); setPage(1); }}>
-            <SelectTrigger className="w-24 bg-background border-border rounded-sm">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="10">10</SelectItem>
-              <SelectItem value="25">25</SelectItem>
-              <SelectItem value="50">50</SelectItem>
-            </SelectContent>
-          </Select>
+          <div className="text-sm text-muted-foreground">(Sin paginación — mostrando todas las órdenes)</div>
         </div>
       </div>
 
@@ -158,7 +147,7 @@ export default function OrdersTable() {
                   </div>
                 </TableCell>
               </TableRow>
-            ) : filtered.length === 0 ? (
+            ) : rows.length === 0 ? (
               <TableRow className="bg-card">
                 <TableCell colSpan={8} className="text-center py-12">
                   <div className="flex flex-col items-center gap-3 text-muted-foreground">
@@ -167,13 +156,13 @@ export default function OrdersTable() {
                 </TableCell>
               </TableRow>
             ) : (
-              filtered.map((order) => (
+              rows.map((order: Order) => (
                 <TableRow key={order.id} className="border-border bg-card/80 hover:bg-card/40 transition-colors cursor-pointer" onClick={() => router.push(`/dashboard/ordenes/${order.id}`)}>
                   <TableCell className="font-mono text-sm font-medium text-white pl-4">{order.orderNumber}</TableCell>
                   <TableCell>{order.customerName}</TableCell>
                   <TableCell>{order.vehiclePlate} - {order.vehicleMakeModel}</TableCell>
                   <TableCell>
-                    {order.items.map((it) => (
+                    {order.items.map((it: any) => (
                       <span key={it.serviceId} className="inline-block bg-secondary text-xs rounded px-2 py-1 mr-1 mb-1">{it.name}</span>
                     ))}
                   </TableCell>
@@ -202,6 +191,11 @@ export default function OrdersTable() {
           </TableBody>
         </Table>
       </div>
+
+      {/* DEBUG: show a sample of rows */}
+      {!loading && !error && (
+        <pre className="text-xs text-muted-foreground max-h-40 overflow-auto p-2">{JSON.stringify(rows.slice(0,5), null, 2)}</pre>
+      )}
 
       {/* Pagination controls */}
       <div className="flex items-center justify-between">
