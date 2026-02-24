@@ -21,7 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { staffSchema, STAFF_ROLES, type StaffFormData } from "@/lib/schemas/staff";
+import { staffSchema, STAFF_ROLES, DOC_TYPES, type StaffFormData } from "@/lib/schemas/staff";
 import type { StaffMember } from "@/lib/types";
 
 type StaffFormDialogProps = {
@@ -44,7 +44,6 @@ export default function StaffFormDialog({
   const {
     register,
     handleSubmit,
-    setValue,
     reset,
     control,
     formState: { errors },
@@ -53,10 +52,11 @@ export default function StaffFormDialog({
     defaultValues: {
       firstName: "",
       lastName: "",
+      docType: null,
+      docNumber: "",
       role: "washer",
       phone: "",
       email: "",
-      hiredAt: new Date().toISOString().split("T")[0],
       status: "active",
     },
   });
@@ -67,20 +67,22 @@ export default function StaffFormDialog({
         reset({
           firstName: staffMember.firstName,
           lastName: staffMember.lastName,
+          docType: staffMember.docType ?? null,
+          docNumber: staffMember.docNumber ?? "",
           role: staffMember.role,
           phone: staffMember.phone ?? "",
           email: staffMember.email ?? "",
-          hiredAt: staffMember.hiredAt.split("T")[0],
           status: staffMember.status,
         });
       } else {
         reset({
           firstName: "",
           lastName: "",
+          docType: null,
+          docNumber: "",
           role: "washer",
           phone: "",
           email: "",
-          hiredAt: new Date().toISOString().split("T")[0],
           status: "active",
         });
       }
@@ -136,6 +138,50 @@ export default function StaffFormDialog({
 
           <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col gap-1.5">
+              <Label className="text-foreground text-sm font-medium">Tipo de documento</Label>
+              <Controller
+                control={control}
+                name="docType"
+                render={({ field }) => (
+                  <Select
+                    value={field.value ?? ""}
+                    onValueChange={(val) =>
+                      field.onChange(val === "" ? null : (val as StaffFormData["docType"]))
+                    }
+                  >
+                    <SelectTrigger className="bg-background border-border rounded-md">
+                      <SelectValue placeholder="Seleccionar" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-background border-border rounded-md">
+                      {DOC_TYPES.map((dt) => (
+                        <SelectItem key={dt.value} value={dt.value}>
+                          {dt.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="docNumber" className="text-foreground text-sm font-medium">
+                Nro. de documento
+              </Label>
+              <Input
+                id="docNumber"
+                placeholder="12345678"
+                className="bg-background border-border rounded-md"
+                {...register("docNumber")}
+              />
+              {errors.docNumber && (
+                <p className="text-destructive text-xs">{errors.docNumber.message}</p>
+              )}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="flex flex-col gap-1.5">
               <Label className="text-foreground text-sm font-medium">
                 Rol <span className="text-destructive">*</span>
               </Label>
@@ -166,23 +212,6 @@ export default function StaffFormDialog({
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="hiredAt" className="text-foreground text-sm font-medium">
-                Fecha de contratación <span className="text-destructive">*</span>
-              </Label>
-              <Input
-                id="hiredAt"
-                type="date"
-                className="bg-background border-border rounded-md"
-                {...register("hiredAt")}
-              />
-              {errors.hiredAt && (
-                <p className="text-destructive text-xs">{errors.hiredAt.message}</p>
-              )}
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div className="flex flex-col gap-1.5">
               <Label htmlFor="phone" className="text-foreground text-sm font-medium">
                 Teléfono
               </Label>
@@ -196,22 +225,22 @@ export default function StaffFormDialog({
                 <p className="text-destructive text-xs">{errors.phone.message}</p>
               )}
             </div>
+          </div>
 
-            <div className="flex flex-col gap-1.5">
-              <Label htmlFor="email" className="text-foreground text-sm font-medium">
-                Email
-              </Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="juan@carwash.com"
-                className="bg-background border-border rounded-md"
-                {...register("email")}
-              />
-              {errors.email && (
-                <p className="text-destructive text-xs">{errors.email.message}</p>
-              )}
-            </div>
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="email" className="text-foreground text-sm font-medium">
+              Email
+            </Label>
+            <Input
+              id="email"
+              type="email"
+              placeholder="juan@carwash.com"
+              className="bg-background border-border rounded-md"
+              {...register("email")}
+            />
+            {errors.email && (
+              <p className="text-destructive text-xs">{errors.email.message}</p>
+            )}
           </div>
 
           <div className="flex flex-col gap-1.5">

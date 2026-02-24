@@ -33,6 +33,8 @@ export function useStaff() {
     const now = new Date().toISOString();
     const newStaffMember = {
       ...data,
+      docType: data.docType ?? null,
+      docNumber: data.docNumber ?? null,
       phone: data.phone ?? null,
       email: data.email ?? null,
       id: `s-${Date.now()}`,
@@ -59,6 +61,8 @@ export function useStaff() {
     const updated = {
       ...existing,
       ...data,
+      docType: data.docType ?? null,
+      docNumber: data.docNumber ?? null,
       phone: data.phone ?? null,
       email: data.email ?? null,
       updatedAt: new Date().toISOString(),

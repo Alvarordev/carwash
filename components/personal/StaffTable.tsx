@@ -142,14 +142,6 @@ export default function StaffTable() {
     }
   };
 
-  const formatDate = (dateStr: string) => {
-    return new Date(dateStr).toLocaleDateString("es-PE", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    });
-  };
-
   return (
     <div className="flex flex-col gap-6">
       <div className="flex w-full justify-between items-center">
@@ -229,7 +221,7 @@ export default function StaffTable() {
               <TableHead className="text-white font-medium hidden sm:table-cell">Teléfono</TableHead>
               <TableHead className="text-white font-medium hidden md:table-cell">Email</TableHead>
               <TableHead className="text-white font-medium hidden lg:table-cell">
-                Fecha de contratación
+                Nro. Doc.
               </TableHead>
               <TableHead className="text-white font-medium">Estado</TableHead>
               <TableHead className="text-white font-medium text-right pr-4">Acciones</TableHead>
@@ -334,7 +326,11 @@ export default function StaffTable() {
                     {member.email ?? <span className="text-muted-foreground italic">—</span>}
                   </TableCell>
                   <TableCell className="hidden lg:table-cell text-sm text-white">
-                    {formatDate(member.hiredAt)}
+                    {member.docNumber ? (
+                      <span className="font-mono">{member.docNumber}</span>
+                    ) : (
+                      <span className="text-muted-foreground italic">—</span>
+                    )}
                   </TableCell>
                   <TableCell>
                     <Badge
