@@ -238,7 +238,7 @@
       "category": "exterior",
       "status": "active",
       "createdAt": "2025-01-01T00:00:00Z",
-      "updatedAt": "2025-01-01T00:00:00Z"
+      "updatedAt": "2026-02-24T17:46:55.081Z"
     },
     {
       "id": "srv-2",
@@ -282,10 +282,10 @@
       "id": "prc-1",
       "serviceId": "srv-1",
       "vehicleTypeId": "vt-1",
-      "price": 30,
+      "price": 20,
       "status": "active",
       "createdAt": "2025-01-01T00:00:00Z",
-      "updatedAt": "2025-01-01T00:00:00Z"
+      "updatedAt": "2026-02-24T17:57:26.984Z"
     },
     {
       "id": "prc-2",
@@ -333,7 +333,50 @@
       "updatedAt": "2025-01-03T00:00:00Z"
     }
   ],
-  "promotions": [],
+  "promotions": [
+    {
+      "id": "promo-1",
+      "name": "Descuento de Verano",
+      "description": "20% de descuento en lavado de carrocería",
+      "discountType": "percentage",
+      "discountValue": 20,
+      "scope": "service",
+      "scopeIds": ["srv-1"],
+      "startDate": "2025-01-01",
+      "endDate": "2025-03-31",
+      "status": "active",
+      "createdAt": "2025-01-01T00:00:00Z",
+      "updatedAt": "2025-01-01T00:00:00Z"
+    },
+    {
+      "id": "promo-2",
+      "name": "Promoción SUV",
+      "description": "S/ 10 de descuento en lavados de SUV",
+      "discountType": "fixed",
+      "discountValue": 10,
+      "scope": "vehicleType",
+      "scopeIds": ["vt-2"],
+      "startDate": "2025-02-01",
+      "endDate": "2025-04-30",
+      "status": "active",
+      "createdAt": "2025-02-01T00:00:00Z",
+      "updatedAt": "2025-02-01T00:00:00Z"
+    },
+    {
+      "id": "promo-3",
+      "name": "Descuento General",
+      "description": "15% en todos los servicios",
+      "discountType": "percentage",
+      "discountValue": 15,
+      "scope": "all",
+      "scopeIds": [],
+      "startDate": null,
+      "endDate": null,
+      "status": "inactive",
+      "createdAt": "2025-01-15T00:00:00Z",
+      "updatedAt": "2025-01-15T00:00:00Z"
+    }
+  ],
   "staff": [
     {
       "id": "s-1771950913988",

@@ -22,6 +22,7 @@ type ServiceCardProps = {
   service: Service;
   onEdit: (service: Service) => void;
   onDelete: (service: Service) => void;
+  initiallyExpanded?: boolean;
 };
 
 const SERVICE_ICONS: Record<ServiceCategory, string> = {
@@ -31,12 +32,12 @@ const SERVICE_ICONS: Record<ServiceCategory, string> = {
   añadido: "➕",
 };
 
-export default function ServiceCard({ service, onEdit, onDelete }: ServiceCardProps) {
+export default function ServiceCard({ service, onEdit, onDelete, initiallyExpanded = false }: ServiceCardProps) {
   const { toggleServiceStatus } = useServices();
   const { getPricingsByService, createPricing, updatePricing, deletePricing } = useServicePricings();
   const { vehicleTypes } = useVehicleTypes();
 
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(initiallyExpanded ?? false);
   const [pricingDialogOpen, setPricingDialogOpen] = useState(false);
   const [editingPricing, setEditingPricing] = useState<ServicePricing | null>(null);
   const [deletePricingDialogOpen, setDeletePricingDialogOpen] = useState(false);

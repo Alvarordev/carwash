@@ -22,21 +22,18 @@ export default function PricingCard({
 }: PricingCardProps) {
   const [isHovered, setIsHovered] = useState(false);
   const [inputValue, setInputValue] = useState(pricing.price.toFixed(2));
-  const [isEditing, setIsEditing] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handlePriceChange = async () => {
     const newPrice = parseFloat(inputValue);
     if (isNaN(newPrice) || newPrice < 0) {
       setInputValue(pricing.price.toFixed(2));
-      setIsEditing(false);
       return;
     }
 
     if (newPrice !== pricing.price) {
       await onUpdatePrice(pricing.id, newPrice);
     }
-    setIsEditing(false);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -45,7 +42,6 @@ export default function PricingCard({
       inputRef.current?.blur();
     } else if (e.key === "Escape") {
       setInputValue(pricing.price.toFixed(2));
-      setIsEditing(false);
     }
   };
 
@@ -93,10 +89,10 @@ export default function PricingCard({
             min="0"
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
-            onFocus={() => setIsEditing(true)}
             onBlur={handlePriceChange}
             onKeyDown={handleKeyDown}
-            className="pl-8 bg-background border-border text-lg font-semibold text-foreground h-10"
+            className="pl-8 bg-background border-border text-lg font-semibold text-foreground h-10 "
+            style={{ appearance: 'textfield' }}
           />
         </div>
       </div>

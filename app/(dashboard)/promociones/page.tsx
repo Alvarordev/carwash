@@ -1,3 +1,11 @@
+import type { Metadata } from "next";
+import PromotionsTable from "@/components/promociones/PromotionsTable";
+
+export const metadata: Metadata = {
+  title: "Promociones — CarWash",
+  description: "Gestión de promociones y descuentos del sistema.",
+};
+
 export default function PromocionesPage() {
-  return <h1 className="text-2xl font-semibold">Promociones</h1>;
+  return <PromotionsTable />;
 }

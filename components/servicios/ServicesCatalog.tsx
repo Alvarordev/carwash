@@ -98,7 +98,7 @@ export default function ServicesCatalog() {
           size="lg"
         >
           <Plus className="size-5 stroke-2" />
-          Agregar
+          Agregar Servicio
         </Button>
       </div>
 
@@ -110,8 +110,8 @@ export default function ServicesCatalog() {
             onClick={() => setActiveFilter(filter.value as "all" | ServiceCategory)}
             className={`rounded-sm px-4 h-9 text-sm font-medium transition-all ${
               activeFilter === filter.value
-                ? "bg-foreground text-background border-foreground"
-                : "bg-transparent border-border text-card hover:bg-muted hover:text-foreground"
+                ? "bg-foreground text-background border-foreground hover:bg-foreground hover:text-background"
+                : "bg-transparent border-border text-muted-foreground hover:bg-muted hover:text-foreground"
             }`}
           >
             {filter.label}
@@ -157,12 +157,13 @@ export default function ServicesCatalog() {
             </Button>
           </div>
         ) : (
-          filteredServices.map((service) => (
+          filteredServices.map((service, i) => (
             <ServiceCard
               key={service.id}
               service={service}
               onEdit={handleOpenEdit}
               onDelete={handleOpenDelete}
+              initiallyExpanded={i === 0}
             />
           ))
         )}
