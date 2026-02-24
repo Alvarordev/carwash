@@ -1,0 +1,349 @@
+"use client";
+
+import { useState, useMemo } from "react";
+import { toast } from "sonner";
+import { Plus, Search, EditPencil, Trash, Group, FilterList, Xmark } from "iconoir-react";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useCustomers } from "@/lib/hooks/useCustomers";
+import { useVehicles } from "@/lib/hooks/useVehicles";
+import type { Customer } from "@/lib/types";
+import type { CustomerFormData } from "@/lib/schemas/customer";
+import CustomerFormDialog from "./CustomerFormDialog";
+import DeleteCustomerDialog from "./DeleteCustomerDialog";
+
+export default function CustomersTable() {
+  const { customers, loading, error, createCustomer, updateCustomer, deleteCustomer, restoreCustomer } =
+    useCustomers();
+  const { vehicles } = useVehicles();
+
+  const [search, setSearch] = useState("");
+  const [filterStatus, setFilterStatus] = useState<string>("all");
+
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [editingCustomer, setEditingCustomer] = useState<Customer | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [deletingCustomer, setDeletingCustomer] = useState<Customer | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const getVehicleCount = (customerId: string) =>
+    vehicles.filter((v) => v.ownerIds.includes(customerId)).length;
+
+  const filtered = useMemo(() => {
+    return customers.filter((c) => {
+      const q = search.toLowerCase();
+      const fullName = `${c.firstName} ${c.lastName}`.toLowerCase();
+      const matchesSearch =
+        !q ||
+        fullName.includes(q) ||
+        (c.phone ?? "").toLowerCase().includes(q) ||
+        (c.email ?? "").toLowerCase().includes(q);
+      const matchesStatus = filterStatus === "all" || c.status === filterStatus;
+      return matchesSearch && matchesStatus;
+    });
+  }, [customers, search, filterStatus]);
+
+  const hasActiveFilters = search || filterStatus !== "all";
+
+  const clearFilters = () => {
+    setSearch("");
+    setFilterStatus("all");
+  };
+
+  const handleOpenCreate = () => {
+    setEditingCustomer(null);
+    setDialogOpen(true);
+  };
+
+  const handleOpenEdit = (customer: Customer) => {
+    setEditingCustomer(customer);
+    setDialogOpen(true);
+  };
+
+  const handleOpenDelete = (customer: Customer) => {
+    setDeletingCustomer(customer);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleFormSubmit = async (data: CustomerFormData) => {
+    setIsSubmitting(true);
+    try {
+      if (editingCustomer) {
+        await updateCustomer(editingCustomer.id, data);
+        toast.success("Cliente actualizado", {
+          description: `${data.firstName} ${data.lastName}`,
+        });
+      } else {
+        await createCustomer(data);
+        toast.success("Cliente creado", {
+          description: `${data.firstName} ${data.lastName}`,
+        });
+      }
+      setDialogOpen(false);
+    } catch {
+      toast.error("Ocurrió un error", { description: "No se pudo guardar el cliente." });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!deletingCustomer) return;
+    setIsDeleting(true);
+    const backup = { ...deletingCustomer };
+    try {
+      await deleteCustomer(backup.id);
+      setDeleteDialogOpen(false);
+      setDeletingCustomer(null);
+      toast.error(`${backup.firstName} ${backup.lastName} eliminado`, {
+        duration: 8000,
+        action: {
+          label: "Deshacer",
+          onClick: async () => {
+            try {
+              await restoreCustomer(backup);
+              toast.success("Cliente restaurado", {
+                description: `${backup.firstName} ${backup.lastName}`,
+              });
+            } catch {
+              toast.error("No se pudo restaurar el cliente.");
+            }
+          },
+        },
+      });
+    } catch {
+      toast.error("No se pudo eliminar el cliente.");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  return (
+    <div className="flex flex-col gap-6">
+      <h1 className="text-[28px] font-semibold tracking-tight text-foreground pb-4">
+        Gestión de Clientes
+      </h1>
+
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-1 flex-wrap items-center gap-2">
+          <div className="relative flex-1 min-w-48 max-w-xs">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Buscar nombre, teléfono, email..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="pl-9 bg-card border-border rounded-md"
+            />
+          </div>
+
+          <Select value={filterStatus} onValueChange={setFilterStatus}>
+            <SelectTrigger className="w-36 bg-card border-border rounded-md">
+              <FilterList className="h-3.5 w-3.5 mr-1.5 text-muted-foreground shrink-0" />
+              <SelectValue placeholder="Estado" />
+            </SelectTrigger>
+            <SelectContent className="bg-popover border-border rounded-md">
+              <SelectItem value="all">Todos</SelectItem>
+              <SelectItem value="active">Activo</SelectItem>
+              <SelectItem value="inactive">Inactivo</SelectItem>
+            </SelectContent>
+          </Select>
+
+          {hasActiveFilters && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={clearFilters}
+              className="text-muted-foreground hover:text-foreground gap-1.5 rounded-md"
+            >
+              <Xmark className="h-3.5 w-3.5" />
+              Limpiar
+            </Button>
+          )}
+        </div>
+
+        <Button
+          onClick={handleOpenCreate}
+          className="bg-primary text-background px-6 font-semibold hover:text-foreground gap-1 shrink-0 rounded-2xl cursor-pointer transition-all"
+        >
+          <Plus className="size-5 stroke-2" />
+          Nuevo cliente
+        </Button>
+      </div>
+
+      <div className="rounded-md border border-border overflow-hidden">
+        <Table>
+          <TableHeader>
+            <TableRow className="border-border bg-card/20">
+              <TableHead className="text-white font-medium pl-4">Nombre</TableHead>
+              <TableHead className="text-white font-medium hidden sm:table-cell">Teléfono</TableHead>
+              <TableHead className="text-white font-medium hidden md:table-cell">Email</TableHead>
+              <TableHead className="text-white font-medium hidden lg:table-cell">Vehículos</TableHead>
+              <TableHead className="text-white font-medium">Estado</TableHead>
+              <TableHead className="text-white font-medium text-right pr-4">Acciones</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {loading ? (
+              Array.from({ length: 5 }).map((_, i) => (
+                <TableRow key={i} className="border-border bg-card">
+                  <TableCell><Skeleton className="h-4 w-36 bg-muted" /></TableCell>
+                  <TableCell className="hidden sm:table-cell"><Skeleton className="h-4 w-24 bg-muted" /></TableCell>
+                  <TableCell className="hidden md:table-cell"><Skeleton className="h-4 w-40 bg-muted" /></TableCell>
+                  <TableCell className="hidden lg:table-cell"><Skeleton className="h-5 w-10 rounded bg-muted" /></TableCell>
+                  <TableCell><Skeleton className="h-5 w-16 rounded bg-muted" /></TableCell>
+                  <TableCell>
+                    <div className="flex justify-end gap-2">
+                      <Skeleton className="h-8 w-20 rounded-md bg-muted" />
+                      <Skeleton className="h-8 w-20 rounded-md bg-muted" />
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : error ? (
+              <TableRow className="bg-card">
+                <TableCell colSpan={6} className="text-center py-12">
+                  <div className="flex flex-col items-center gap-3 text-muted-foreground">
+                    <Group className="h-10 w-10 opacity-30" />
+                    <p className="text-sm text-white">Error al cargar los clientes.</p>
+                    <p className="text-xs">
+                      Asegúrate de que json-server esté corriendo en el puerto 3001.
+                    </p>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ) : filtered.length === 0 ? (
+              <TableRow className="bg-card">
+                <TableCell colSpan={6} className="text-center py-12">
+                  <div className="flex flex-col items-center gap-3 text-muted-foreground">
+                    <Group className="h-10 w-10 opacity-30" />
+                    <p className="text-sm text-white">
+                      {hasActiveFilters
+                        ? "No se encontraron clientes con los filtros aplicados."
+                        : "No hay clientes registrados aún."}
+                    </p>
+                    {!hasActiveFilters && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={handleOpenCreate}
+                        className="border-border gap-1.5 rounded-md"
+                      >
+                        <Plus className="h-3.5 w-3.5" />
+                        Agregar el primero
+                      </Button>
+                    )}
+                  </div>
+                </TableCell>
+              </TableRow>
+            ) : (
+              filtered.map((customer) => {
+                const vehicleCount = getVehicleCount(customer.id);
+                return (
+                  <TableRow
+                    key={customer.id}
+                    className="border-border bg-[#24262A] hover:bg-card/40 transition-colors"
+                  >
+                    <TableCell className="pl-4">
+                      <span className="font-medium text-white">
+                        {customer.firstName} {customer.lastName}
+                      </span>
+                    </TableCell>
+                    <TableCell className="hidden sm:table-cell text-sm text-white">
+                      {customer.phone ?? <span className="text-muted-foreground italic">—</span>}
+                    </TableCell>
+                    <TableCell className="hidden md:table-cell text-sm text-white">
+                      {customer.email ?? <span className="text-muted-foreground italic">—</span>}
+                    </TableCell>
+                    <TableCell className="hidden lg:table-cell text-sm">
+                      {vehicleCount > 0 ? (
+                        <span className="text-white">
+                          {vehicleCount} vehículo{vehicleCount !== 1 ? "s" : ""}
+                        </span>
+                      ) : (
+                        <span className="text-muted-foreground italic">Sin vehículos</span>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      <Badge
+                        className="bg-background py-1 px-2.5 gap-2 text-white rounded-md font-normal"
+                      >
+                        <span
+                          className={`size-2 rounded-full ${
+                            customer.status === "active" ? "bg-primary" : "bg-[#FD542A]"
+                          }`}
+                        />
+                        {customer.status === "active" ? "Activo" : "Inactivo"}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center justify-end gap-2">
+                        <Button
+                          size="sm"
+                          onClick={() => handleOpenEdit(customer)}
+                          className="bg-primary hover:bg-primary/90 text-white gap-1.5 rounded-sm h-8 px-3 text-xs font-medium cursor-pointer"
+                        >
+                          <EditPencil className="h-3.5 w-3.5" />
+                          Editar
+                        </Button>
+                        <Button
+                          size="sm"
+                          onClick={() => handleOpenDelete(customer)}
+                          className="text-white gap-1.5 rounded-sm h-8 px-3 text-xs font-medium cursor-pointer"
+                          style={{ backgroundColor: "#FD2A2A" }}
+                        >
+                          <Trash className="h-3.5 w-3.5" />
+                          Eliminar
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                );
+              })
+            )}
+          </TableBody>
+        </Table>
+      </div>
+
+      {!loading && !error && filtered.length > 0 && (
+        <p className="text-xs text-muted-foreground">
+          Mostrando {filtered.length} de {customers.length} clientes
+        </p>
+      )}
+
+      <CustomerFormDialog
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        customer={editingCustomer}
+        onSubmit={handleFormSubmit}
+        isSubmitting={isSubmitting}
+      />
+
+      <DeleteCustomerDialog
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        customer={deletingCustomer}
+        onConfirm={handleConfirmDelete}
+        isDeleting={isDeleting}
+      />
+    </div>
+  );
+}

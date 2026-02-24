@@ -1,6 +1,6 @@
 export type { UUID, Timestamps, Status } from "./common";
 export type { VehicleType } from "./vehicleType";
-export type { Customer } from "./customer";
+export type { Customer, DocumentType } from "./customer";
 export type { Vehicle } from "./vehicle";
 export type { Service, ServicePricing } from "./service";
 export type { DiscountType, PromotionScope, Promotion } from "./promotion";
