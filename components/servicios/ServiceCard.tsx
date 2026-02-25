@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
-import { MoreHoriz, Plus, EditPencil, Trash, Minus, Plus as PlusIcon } from "iconoir-react";
+import { MoreHoriz, Plus, EditPencil, Trash, Minus, Plus as PlusIcon, Car, PageSearch, ReportColumns } from "iconoir-react";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
@@ -27,11 +27,12 @@ type ServiceCardProps = {
   initiallyExpanded?: boolean;
 };
 
-const SERVICE_ICONS: Record<ServiceCategory, string> = {
-  exterior: "🚗",
-  interior: "🧹",
-  detalle: "✨",
-  añadido: "➕",
+// use React.ReactElement for icon elements
+const SERVICE_ICONS: Record<ServiceCategory, React.ReactElement> = {
+  exterior: <Car className="w-5 h-5 text-primary" />,
+  interior: <PageSearch className="w-5 h-5 text-primary" />,
+  detalle: <ReportColumns className="w-5 h-5 text-primary" />,
+  añadido: <PlusIcon className="w-5 h-5 text-primary" />,
 };
 
 export default function ServiceCard({ service, onEdit, onDelete, initiallyExpanded = false }: ServiceCardProps) {
