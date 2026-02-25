@@ -111,7 +111,7 @@ export default function VehicleFormDialog({
             <Input
               id="plate"
               placeholder="ABC-1234"
-              className="bg-background border-border rounded-md uppercase"
+              className="bg-card border-border rounded-md uppercase"
               {...register("plate")}
             />
             {errors.plate && (
@@ -127,7 +127,7 @@ export default function VehicleFormDialog({
               <Input
                 id="brand"
                 placeholder="Toyota"
-                className="bg-background border-border rounded-md"
+                className="bg-card border-border rounded-md"
                 {...register("brand")}
               />
               {errors.brand && (
@@ -142,7 +142,7 @@ export default function VehicleFormDialog({
               <Input
                 id="model"
                 placeholder="Corolla"
-                className="bg-background border-border rounded-md"
+                className="bg-card border-border rounded-md"
                 {...register("model")}
               />
               {errors.model && (
@@ -159,7 +159,7 @@ export default function VehicleFormDialog({
               <Input
                 id="color"
                 placeholder="Blanco"
-                className="bg-background border-border rounded-md"
+                className="bg-card border-border rounded-md"
                 {...register("color")}
               />
               {errors.color && (
@@ -175,7 +175,7 @@ export default function VehicleFormDialog({
                 value={watchVehicleTypeId}
                 onValueChange={(val) => setValue("vehicleTypeId", val, { shouldValidate: true })}
               >
-                <SelectTrigger className="bg-background border-border rounded-md">
+                <SelectTrigger className="bg-card border-border rounded-md w-full">
                   <SelectValue placeholder="Seleccionar tipo" />
                 </SelectTrigger>
                 <SelectContent className="bg-popover border-border rounded-md">
@@ -200,7 +200,7 @@ export default function VehicleFormDialog({
                 setValue("status", val as "active" | "inactive", { shouldValidate: true })
               }
             >
-              <SelectTrigger className="bg-background border-border rounded-md">
+              <SelectTrigger className="bg-card border-border rounded-md">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent className="bg-popover border-border rounded-md">

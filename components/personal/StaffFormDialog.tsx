@@ -112,7 +112,7 @@ export default function StaffFormDialog({
               <Input
                 id="firstName"
                 placeholder="Juan"
-                className="bg-background border-border rounded-md"
+                className="bg-card border-border rounded-md"
                 {...register("firstName")}
               />
               {errors.firstName && (
@@ -127,7 +127,7 @@ export default function StaffFormDialog({
               <Input
                 id="lastName"
                 placeholder="Pérez"
-                className="bg-background border-border rounded-md"
+                className="bg-card border-border rounded-md"
                 {...register("lastName")}
               />
               {errors.lastName && (
@@ -149,10 +149,10 @@ export default function StaffFormDialog({
                       field.onChange(val === "" ? null : (val as StaffFormData["docType"]))
                     }
                   >
-                    <SelectTrigger className="bg-background border-border rounded-md">
+                    <SelectTrigger className="bg-card border-border rounded-md w-full">
                       <SelectValue placeholder="Seleccionar" />
                     </SelectTrigger>
-                    <SelectContent className="bg-background border-border rounded-md">
+                    <SelectContent className="bg-card border-border rounded-md">
                       {DOC_TYPES.map((dt) => (
                         <SelectItem key={dt.value} value={dt.value}>
                           {dt.label}
@@ -171,7 +171,7 @@ export default function StaffFormDialog({
               <Input
                 id="docNumber"
                 placeholder="12345678"
-                className="bg-background border-border rounded-md"
+                className="bg-card border-border rounded-md"
                 {...register("docNumber")}
               />
               {errors.docNumber && (
@@ -193,10 +193,10 @@ export default function StaffFormDialog({
                     value={field.value}
                     onValueChange={(val) => field.onChange(val as StaffFormData["role"])}
                   >
-                    <SelectTrigger className="bg-background border-border rounded-md">
+                    <SelectTrigger className="bg-card border-border rounded-md w-full">
                       <SelectValue placeholder="Seleccionar rol" />
                     </SelectTrigger>
-                    <SelectContent className="bg-background border-border rounded-md">
+                    <SelectContent className="bg-card border-border rounded-md">
                       {STAFF_ROLES.map((role) => (
                         <SelectItem key={role.value} value={role.value}>
                           {role.label}
@@ -218,7 +218,7 @@ export default function StaffFormDialog({
               <Input
                 id="phone"
                 placeholder="555-1234"
-                className="bg-background border-border rounded-md"
+                className="bg-card border-border rounded-md"
                 {...register("phone")}
               />
               {errors.phone && (
@@ -235,7 +235,7 @@ export default function StaffFormDialog({
               id="email"
               type="email"
               placeholder="juan@carwash.com"
-              className="bg-background border-border rounded-md"
+              className="bg-card border-border rounded-md"
               {...register("email")}
             />
             {errors.email && (
@@ -253,10 +253,10 @@ export default function StaffFormDialog({
                   value={field.value}
                   onValueChange={(val) => field.onChange(val as "active" | "inactive")}
                 >
-                  <SelectTrigger className="bg-background border-border rounded-md">
+                  <SelectTrigger className="bg-card border-border rounded-md">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent className="bg-background border-border rounded-md">
+                  <SelectContent className="bg-card border-border rounded-md">
                     <SelectItem value="active">Activo</SelectItem>
                     <SelectItem value="inactive">Inactivo</SelectItem>
                   </SelectContent>

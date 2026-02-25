@@ -99,7 +99,7 @@ export default function ServiceFormDialog({
             <Input
               id="name"
               placeholder="Lavado de Carrocería"
-              className="bg-background border-border rounded-md"
+              className="bg-card border-border rounded-md"
               {...register("name")}
             />
             {errors.name && (
@@ -114,7 +114,7 @@ export default function ServiceFormDialog({
             <Input
               id="description"
               placeholder="Breve descripción del servicio..."
-              className="bg-background border-border rounded-md min-h-20"
+              className="bg-card border-border rounded-md min-h-20"
               {...register("description")}
             />
             {errors.description && (
@@ -135,10 +135,10 @@ export default function ServiceFormDialog({
                     value={field.value}
                     onValueChange={(val) => field.onChange(val as ServiceFormData["category"])}
                   >
-                    <SelectTrigger className="bg-background border-border rounded-md">
+                    <SelectTrigger className="bg-card border-border rounded-md w-full">
                       <SelectValue placeholder="Seleccionar" />
                     </SelectTrigger>
-                    <SelectContent className="bg-background border-border rounded-md">
+                    <SelectContent className="bg-card border-border rounded-md">
                       {SERVICE_CATEGORIES.map((cat) => (
                         <SelectItem key={cat.value} value={cat.value}>
                           {cat.label}
@@ -163,10 +163,10 @@ export default function ServiceFormDialog({
                     value={field.value}
                     onValueChange={(val) => field.onChange(val as "active" | "inactive")}
                   >
-                    <SelectTrigger className="bg-background border-border rounded-md">
+                    <SelectTrigger className="bg-card border-border rounded-md w-full">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent className="bg-background border-border rounded-md">
+                    <SelectContent className="bg-card border-border rounded-md">
                       <SelectItem value="active">Activo</SelectItem>
                       <SelectItem value="inactive">Inactivo</SelectItem>
                     </SelectContent>

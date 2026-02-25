@@ -132,7 +132,7 @@ export default function CustomerFormDialog({
         typeName.includes(q)
       );
     });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [vehicles, vehicleTypes, vehicleSearch]);
 
   return (
@@ -158,7 +158,7 @@ export default function CustomerFormDialog({
               <Input
                 id="firstName"
                 placeholder="Carlos"
-                className="bg-background border-border rounded-md"
+                className="bg-card border-border rounded-md"
                 {...register("firstName")}
               />
               {errors.firstName && (
@@ -173,7 +173,7 @@ export default function CustomerFormDialog({
               <Input
                 id="lastName"
                 placeholder="Mendoza"
-                className="bg-background border-border rounded-md"
+                className="bg-card border-border rounded-md"
                 {...register("lastName")}
               />
               {errors.lastName && (
@@ -195,7 +195,7 @@ export default function CustomerFormDialog({
                       field.onChange(val === "" ? null : (val as CustomerFormData["docType"]))
                     }
                   >
-                    <SelectTrigger className="bg-background border-border rounded-md">
+                    <SelectTrigger className="bg-card border-border rounded-md w-full">
                       <SelectValue placeholder="Seleccionar" />
                     </SelectTrigger>
                     <SelectContent className="bg-popover border-border rounded-md">
@@ -217,7 +217,7 @@ export default function CustomerFormDialog({
               <Input
                 id="docNumber"
                 placeholder="12345678"
-                className="bg-background border-border rounded-md"
+                className="bg-card border-border rounded-md"
                 {...register("docNumber")}
               />
               {errors.docNumber && (
@@ -234,7 +234,7 @@ export default function CustomerFormDialog({
               <Input
                 id="phone"
                 placeholder="555-1001"
-                className="bg-background border-border rounded-md"
+                className="bg-card border-border rounded-md"
                 {...register("phone")}
               />
               {errors.phone && (
@@ -250,7 +250,7 @@ export default function CustomerFormDialog({
                 id="email"
                 type="email"
                 placeholder="cliente@ejemplo.com"
-                className="bg-background border-border rounded-md"
+                className="bg-card border-border rounded-md"
                 {...register("email")}
               />
               {errors.email && (
@@ -269,7 +269,7 @@ export default function CustomerFormDialog({
                   value={field.value}
                   onValueChange={(val) => field.onChange(val as "active" | "inactive")}
                 >
-                  <SelectTrigger className="bg-background border-border rounded-md">
+                  <SelectTrigger className="bg-card border-border rounded-md">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent className="bg-popover border-border rounded-md">
@@ -297,7 +297,7 @@ export default function CustomerFormDialog({
                 placeholder="Buscar por placa, marca, modelo o tipo..."
                 value={vehicleSearch}
                 onChange={(e) => setVehicleSearch(e.target.value)}
-                className="pl-9 bg-background border-border rounded-md text-sm h-9"
+                className="pl-9 bg-card border-border rounded-md text-sm h-9"
               />
             </div>
 
@@ -320,16 +320,14 @@ export default function CustomerFormDialog({
                         key={vehicle.id}
                         type="button"
                         onClick={() => toggleVehicle(vehicle.id)}
-                        className={`flex items-center gap-3 px-3 py-2.5 text-sm text-left transition-colors cursor-pointer border-b border-border last:border-b-0 ${
-                          isSelected
-                            ? "bg-primary/10 hover:bg-primary/15"
-                            : "hover:bg-muted"
-                        }`}
+                        className={`flex items-center gap-3 px-3 py-2.5 text-sm text-left transition-colors cursor-pointer border-b border-border last:border-b-0 ${isSelected
+                          ? "bg-primary/10 hover:bg-primary/15"
+                          : "hover:bg-muted"
+                          }`}
                       >
                         <span
-                          className={`size-4 rounded border flex-shrink-0 flex items-center justify-center transition-colors ${
-                            isSelected ? "bg-primary border-primary" : "border-border"
-                          }`}
+                          className={`size-4 rounded border flex-shrink-0 flex items-center justify-center transition-colors ${isSelected ? "bg-primary border-primary" : "border-border"
+                            }`}
                         >
                           {isSelected && (
                             <svg viewBox="0 0 12 12" fill="none" className="size-2.5">
