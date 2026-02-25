@@ -50,7 +50,6 @@ export default function PricingFormDialog({
   const {
     register,
     handleSubmit,
-    setValue,
     reset,
     control,
     formState: { errors },

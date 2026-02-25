@@ -24,7 +24,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { useStaff } from "@/lib/hooks/useStaff";
 import type { StaffMember } from "@/lib/types";
-import type { StaffFormData, STAFF_ROLES } from "@/lib/schemas/staff";
+import type { StaffFormData } from "@/lib/schemas/staff";
 import StaffFormDialog from "./StaffFormDialog";
 import DeleteStaffDialog from "./DeleteStaffDialog";
 
@@ -174,7 +174,7 @@ export default function StaffTable() {
         <div className="flex flex-1 flex-wrap items-center gap-2">
           <div className="flex items-center mr-4">
             <FilterList className="size-4 mr-1.5 text-muted-foreground shrink-0" />
-            <p>Filters:</p>
+            <p>Filtros:</p>
           </div>
 
           <Select value={filterRole} onValueChange={setFilterRole}>
@@ -306,15 +306,14 @@ export default function StaffTable() {
                   </TableCell>
                   <TableCell>
                     <Badge
-                      className={`rounded-sm font-medium ${
-                        member.role === "admin"
-                          ? "bg-purple-600/20 text-purple-400 border border-purple-600/30"
-                          : member.role === "supervisor"
+                      className={`rounded-sm font-medium ${member.role === "admin"
+                        ? "bg-purple-600/20 text-purple-400 border border-purple-600/30"
+                        : member.role === "supervisor"
                           ? "bg-blue-600/20 text-blue-400 border border-blue-600/30"
                           : member.role === "cashier"
-                          ? "bg-green-600/20 text-green-400 border border-green-600/30"
-                          : "bg-yellow-600/20 text-yellow-400 border border-yellow-600/30"
-                      }`}
+                            ? "bg-green-600/20 text-green-400 border border-green-600/30"
+                            : "bg-yellow-600/20 text-yellow-400 border border-yellow-600/30"
+                        }`}
                     >
                       {ROLE_LABELS[member.role]}
                     </Badge>
@@ -337,9 +336,8 @@ export default function StaffTable() {
                       className="bg-background py-1 px-2.5 gap-2 text-white rounded-md font-normal"
                     >
                       <span
-                        className={`size-2 rounded-full ${
-                          member.status === "active" ? "bg-primary" : "bg-[#FD542A]"
-                        }`}
+                        className={`size-2 rounded-full ${member.status === "active" ? "bg-primary" : "bg-[#FD542A]"
+                          }`}
                       />
                       {member.status === "active" ? "Activo" : "Inactivo"}
                     </Badge>
@@ -349,7 +347,7 @@ export default function StaffTable() {
                       <Button
                         size="sm"
                         onClick={() => handleOpenEdit(member)}
-                        className="bg-primary hover:bg-primary/90 text-white gap-1.5 rounded-sm h-8 px-3 text-xs font-medium cursor-pointer"
+                        variant="secondary"
                       >
                         <EditPencil className="h-3.5 w-3.5" />
                         Editar

@@ -44,9 +44,6 @@ export default function Sidebar() {
   const navContent = (
     <nav className="flex flex-col h-full">
       <div className="flex items-center gap-2 px-5 pt-6.5 pb-13.5">
-        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-          <Car className="h-4 w-4 text-white" />
-        </div>
         <span className="text-2xl font-bold tracking-tight text-primary">CarWash</span>
       </div>
 
@@ -56,11 +53,10 @@ export default function Sidebar() {
             <Link
               href={href}
               onClick={() => setMobileOpen(false)}
-              className={`flex items-center gap-3 rounded-2xl px-3 py-2 text-base font-medium transition-colors ${
-                isActive(href)
-                  ? "bg-card text-white"
-                  : "text-muted-foreground hover:bg-card hover:text-foreground"
-              }`}
+              className={`flex items-center gap-3 rounded-2xl px-3 py-2 text-base font-medium transition-colors ${isActive(href)
+                ? "bg-card text-white"
+                : "text-muted-foreground hover:bg-card hover:text-foreground"
+                }`}
             >
               <Icon className={`size-5 shrink-0 ${isActive(href) ? 'fill-white' : ''}`} />
               {label}
@@ -73,7 +69,7 @@ export default function Sidebar() {
 
   return (
     <>
-      <aside className="hidden xl:flex xl:w-57.5 xl:shrink-0 flex-col bg-background border-r border-card min-h-screen">
+      <aside className="hidden xl:flex xl:w-57.5 xl:shrink-0 flex-col bg-background border-r border-border min-h-screen">
         {navContent}
       </aside>
 
@@ -101,9 +97,8 @@ export default function Sidebar() {
       )}
 
       <aside
-        className={`xl:hidden fixed inset-y-0 left-0 z-50 w-64 bg-background border-r border-border transform transition-transform duration-300 ${
-          mobileOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
+        className={`xl:hidden fixed inset-y-0 left-0 z-50 w-64 bg-background border-r border-border transform transition-transform duration-300 ${mobileOpen ? "translate-x-0" : "-translate-x-full"
+          }`}
       >
         {navContent}
       </aside>

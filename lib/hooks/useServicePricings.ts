@@ -3,84 +3,110 @@
 import { useState, useEffect, useCallback } from "react";
 import type { ServicePricing } from "@/lib/types";
 import type { ServicePricingFormData } from "@/lib/schemas/service";
+import { createClient } from "@/lib/supabase/client";
 
-const API_URL = "http://localhost:3001/servicePricings";
+function mapPricing(row: Record<string, unknown>): ServicePricing {
+  return {
+    id: row.id as string,
+    serviceId: row.service_id as string,
+    vehicleTypeId: row.vehicle_type_id as string,
+    price: row.price as number,
+    status: row.status as ServicePricing["status"],
+    createdAt: row.created_at as string,
+    updatedAt: row.updated_at as string,
+  };
+}
 
 export function useServicePricings() {
   const [pricings, setPricings] = useState<ServicePricing[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const supabase = createClient();
+
   const fetchPricings = useCallback(async () => {
     try {
       setLoading(true);
-      const res = await fetch(API_URL);
-      if (!res.ok) throw new Error("Error al cargar precios");
-      const data: ServicePricing[] = await res.json();
-      setPricings(data);
+      const { data, error: err } = await supabase
+        .from("service_pricing")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (err) throw new Error(err.message);
+      setPricings((data ?? []).map(mapPricing));
+      setError(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error desconocido");
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     fetchPricings();
   }, [fetchPricings]);
 
-  const createPricing = useCallback(async (data: ServicePricingFormData): Promise<ServicePricing> => {
-    const now = new Date().toISOString();
-    const newPricing = {
-      ...data,
-      id: `prc-${Date.now()}`,
-      createdAt: now,
-      updatedAt: now,
-    };
+  const createPricing = useCallback(
+    async (data: ServicePricingFormData): Promise<ServicePricing> => {
+      const { data: created, error: err } = await supabase
+        .from("service_pricing")
+        .insert({
+          service_id: data.serviceId,
+          vehicle_type_id: data.vehicleTypeId,
+          price: data.price,
+          status: data.status ?? "active",
+        })
+        .select()
+        .single();
 
-    const res = await fetch(API_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(newPricing),
-    });
+      if (err) throw new Error(err.message);
+      const newPricing = mapPricing(created as Record<string, unknown>);
+      setPricings((prev) => [newPricing, ...prev]);
+      return newPricing;
+    },
+    [] // eslint-disable-line react-hooks/exhaustive-deps
+  );
 
-    if (!res.ok) throw new Error("Error al crear el precio");
-    const created: ServicePricing = await res.json();
-    setPricings((prev) => [...prev, created]);
-    return created;
-  }, []);
+  const updatePricing = useCallback(
+    async (
+      id: string,
+      data: Partial<ServicePricingFormData>
+    ): Promise<ServicePricing> => {
+      const update: Record<string, unknown> = {};
+      if (data.serviceId !== undefined) update.service_id = data.serviceId;
+      if (data.vehicleTypeId !== undefined) update.vehicle_type_id = data.vehicleTypeId;
+      if (data.price !== undefined) update.price = data.price;
+      if (data.status !== undefined) update.status = data.status;
 
-  const updatePricing = useCallback(async (id: string, data: Partial<ServicePricingFormData>): Promise<ServicePricing> => {
-    const existing = pricings.find((p) => p.id === id);
-    if (!existing) throw new Error("Precio no encontrado");
+      const { data: updated, error: err } = await supabase
+        .from("service_pricing")
+        .update(update)
+        .eq("id", id)
+        .select()
+        .single();
 
-    const updated = {
-      ...existing,
-      ...data,
-      updatedAt: new Date().toISOString(),
-    };
-
-    const res = await fetch(`${API_URL}/${id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(updated),
-    });
-
-    if (!res.ok) throw new Error("Error al actualizar el precio");
-    const result: ServicePricing = await res.json();
-    setPricings((prev) => prev.map((p) => (p.id === id ? result : p)));
-    return result;
-  }, [pricings]);
+      if (err) throw new Error(err.message);
+      const result = mapPricing(updated as Record<string, unknown>);
+      setPricings((prev) => prev.map((p) => (p.id === id ? result : p)));
+      return result;
+    },
+    [] // eslint-disable-line react-hooks/exhaustive-deps
+  );
 
   const deletePricing = useCallback(async (id: string): Promise<void> => {
-    const res = await fetch(`${API_URL}/${id}`, { method: "DELETE" });
-    if (!res.ok) throw new Error("Error al eliminar el precio");
+    const { error: err } = await supabase
+      .from("service_pricing")
+      .delete()
+      .eq("id", id);
+    if (err) throw new Error(err.message);
     setPricings((prev) => prev.filter((p) => p.id !== id));
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const getPricingsByService = useCallback(
     (serviceId: string) => {
-      return pricings.filter((p) => p.serviceId === serviceId && p.status === "active");
+      return pricings.filter(
+        (p) => p.serviceId === serviceId && p.status === "active"
+      );
     },
     [pricings]
   );

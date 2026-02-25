@@ -25,6 +25,8 @@ export default function OrdersTable() {
   const router = useRouter();
   const { orders, loading, error, updateOrderStatus, cancelOrder } = useOrders();
 
+  console.log(orders)
+
   const [search, setSearch] = useState("");
   const [filterStatus, setFilterStatus] = useState<string>("all");
 
@@ -184,12 +186,12 @@ export default function OrdersTable() {
                   <TableCell>{new Date(order.registeredAt).toLocaleString("es-PE")}</TableCell>
                   <TableCell>
                     <div className="flex items-center justify-end gap-2" onClick={(e) => e.stopPropagation()}>
-                      <Button size="sm" asChild>
+                      <Button size="sm" variant="outline">
                         <Link href={`/ordenes/${order.id}`} className="flex items-center gap-1">
                           <Eye className="h-3.5 w-3.5" />Ver
                         </Link>
                       </Button>
-                      <Button size="sm" onClick={() => handleOpenEdit(order)} className="bg-primary text-white gap-1.5 rounded-sm h-8 px-3 text-xs font-medium">
+                      <Button size="sm" variant="secondary" onClick={() => handleOpenEdit(order)}>
                         <EditPencil className="h-3.5 w-3.5" />Editar
                       </Button>
                     </div>

@@ -23,7 +23,6 @@ type DeletePricingDialogProps = {
 export default function DeletePricingDialog({
   open,
   onOpenChange,
-  pricing,
   onConfirm,
   isDeleting,
 }: DeletePricingDialogProps) {

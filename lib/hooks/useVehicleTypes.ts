@@ -2,26 +2,42 @@
 
 import { useState, useEffect, useCallback } from "react";
 import type { VehicleType } from "@/lib/types";
+import { createClient } from "@/lib/supabase/client";
 
-const API_URL = "http://localhost:3001/vehicleTypes";
+function mapVehicleType(row: Record<string, unknown>): VehicleType {
+  return {
+    id: row.id as string,
+    name: row.name as string,
+    description: (row.description as string) ?? null,
+    status: row.status as VehicleType["status"],
+    createdAt: row.created_at as string,
+    updatedAt: row.updated_at as string,
+  };
+}
 
 export function useVehicleTypes() {
   const [vehicleTypes, setVehicleTypes] = useState<VehicleType[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const supabase = createClient();
+
   const fetchVehicleTypes = useCallback(async () => {
     try {
       setLoading(true);
-      const res = await fetch(API_URL);
-      if (!res.ok) throw new Error("Error al cargar tipos de vehículos");
-      const data: VehicleType[] = await res.json();
-      setVehicleTypes(data.filter((t) => t.status === "active"));
+      const { data, error } = await supabase
+        .from("vehicle_types")
+        .select("*")
+        .eq("status", "active")
+        .order("name");
+
+      if (error) throw error;
+      setVehicleTypes((data ?? []).map(mapVehicleType));
     } catch {
       setVehicleTypes([]);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     fetchVehicleTypes();

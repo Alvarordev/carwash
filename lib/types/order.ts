@@ -26,7 +26,7 @@ export type OrderStatusHistoryEntry = {
 
 export interface Order {
   id: string | number;
-  orderNumber: string; // e.g. O-000021 (display)
+  orderNumber: string;
   customerId?: string;
   customerName: string;
   vehicleId?: string;

@@ -185,7 +185,7 @@ export default function VehiclesTable() {
         <div className="flex flex-1 flex-wrap items-center gap-2">
           <div className="flex items-center mr-4">
             <FilterList className="size-4 mr-1.5 text-muted-foreground shrink-0" />
-            <p>Filters:</p>
+            <p>Filtros:</p>
           </div>
 
           <Select value={filterType} onValueChange={setFilterType}>
@@ -339,7 +339,7 @@ export default function VehiclesTable() {
                       <Button
                         size="sm"
                         onClick={() => handleOpenEdit(vehicle)}
-                        className="bg-primary hover:bg-primary/90 text-white gap-1.5 rounded-sm h-8 px-3 text-xs font-medium cursor-pointer"
+                        variant="secondary"
                       >
                         <EditPencil className="h-3.5 w-3.5" />
                         Editar

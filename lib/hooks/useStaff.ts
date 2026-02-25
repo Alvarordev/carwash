@@ -3,99 +3,133 @@
 import { useState, useEffect, useCallback } from "react";
 import type { StaffMember } from "@/lib/types";
 import type { StaffFormData } from "@/lib/schemas/staff";
+import { createClient } from "@/lib/supabase/client";
 
-const API_URL = "http://localhost:3001/staff";
+function mapStaff(row: Record<string, unknown>): StaffMember {
+  return {
+    id: row.id as string,
+    firstName: row.first_name as string,
+    lastName: row.last_name as string,
+    docType: (row.doc_type as StaffMember["docType"]) ?? null,
+    docNumber: (row.doc_number as string) ?? null,
+    role: row.role as StaffMember["role"],
+    phone: (row.phone as string) ?? null,
+    email: (row.email as string) ?? null,
+    status: row.status as StaffMember["status"],
+    createdAt: row.created_at as string,
+    updatedAt: row.updated_at as string,
+  };
+}
 
 export function useStaff() {
   const [staff, setStaff] = useState<StaffMember[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const supabase = createClient();
+
   const fetchStaff = useCallback(async () => {
     try {
       setLoading(true);
-      const res = await fetch(API_URL);
-      if (!res.ok) throw new Error("Error al cargar el personal");
-      const data: StaffMember[] = await res.json();
-      setStaff(data);
+      const { data, error: err } = await supabase
+        .from("staff_members")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (err) throw new Error(err.message);
+      setStaff((data ?? []).map(mapStaff));
+      setError(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error desconocido");
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     fetchStaff();
   }, [fetchStaff]);
 
-  const createStaff = useCallback(async (data: StaffFormData): Promise<StaffMember> => {
-    const now = new Date().toISOString();
-    const newStaffMember = {
-      ...data,
-      docType: data.docType ?? null,
-      docNumber: data.docNumber ?? null,
-      phone: data.phone ?? null,
-      email: data.email ?? null,
-      id: `s-${Date.now()}`,
-      createdAt: now,
-      updatedAt: now,
-    };
+  const createStaff = useCallback(
+    async (data: StaffFormData): Promise<StaffMember> => {
+      const { data: created, error: err } = await supabase
+        .from("staff_members")
+        .insert({
+          first_name: data.firstName,
+          last_name: data.lastName,
+          doc_type: data.docType ?? null,
+          doc_number: data.docNumber ?? null,
+          role: data.role,
+          phone: data.phone ?? null,
+          email: data.email ?? null,
+          status: data.status ?? "active",
+        })
+        .select()
+        .single();
 
-    const res = await fetch(API_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(newStaffMember),
-    });
+      if (err) throw new Error(err.message);
+      const newMember = mapStaff(created as Record<string, unknown>);
+      setStaff((prev) => [newMember, ...prev]);
+      return newMember;
+    },
+    [] // eslint-disable-line react-hooks/exhaustive-deps
+  );
 
-    if (!res.ok) throw new Error("Error al crear el miembro del personal");
-    const created: StaffMember = await res.json();
-    setStaff((prev) => [...prev, created]);
-    return created;
-  }, []);
+  const updateStaff = useCallback(
+    async (id: string, data: StaffFormData): Promise<StaffMember> => {
+      const { data: updated, error: err } = await supabase
+        .from("staff_members")
+        .update({
+          first_name: data.firstName,
+          last_name: data.lastName,
+          doc_type: data.docType ?? null,
+          doc_number: data.docNumber ?? null,
+          role: data.role,
+          phone: data.phone ?? null,
+          email: data.email ?? null,
+          status: data.status,
+        })
+        .eq("id", id)
+        .select()
+        .single();
 
-  const updateStaff = useCallback(async (id: string, data: StaffFormData): Promise<StaffMember> => {
-    const existing = staff.find((s) => s.id === id);
-    if (!existing) throw new Error("Miembro del personal no encontrado");
-
-    const updated = {
-      ...existing,
-      ...data,
-      docType: data.docType ?? null,
-      docNumber: data.docNumber ?? null,
-      phone: data.phone ?? null,
-      email: data.email ?? null,
-      updatedAt: new Date().toISOString(),
-    };
-
-    const res = await fetch(`${API_URL}/${id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(updated),
-    });
-
-    if (!res.ok) throw new Error("Error al actualizar el miembro del personal");
-    const result: StaffMember = await res.json();
-    setStaff((prev) => prev.map((s) => (s.id === id ? result : s)));
-    return result;
-  }, [staff]);
+      if (err) throw new Error(err.message);
+      const result = mapStaff(updated as Record<string, unknown>);
+      setStaff((prev) => prev.map((s) => (s.id === id ? result : s)));
+      return result;
+    },
+    [] // eslint-disable-line react-hooks/exhaustive-deps
+  );
 
   const deleteStaff = useCallback(async (id: string): Promise<void> => {
-    const res = await fetch(`${API_URL}/${id}`, { method: "DELETE" });
-    if (!res.ok) throw new Error("Error al eliminar el miembro del personal");
+    const { error: err } = await supabase.from("staff_members").delete().eq("id", id);
+    if (err) throw new Error(err.message);
     setStaff((prev) => prev.filter((s) => s.id !== id));
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const restoreStaff = useCallback(async (member: StaffMember): Promise<void> => {
-    const res = await fetch(API_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(member),
-    });
-    if (!res.ok) throw new Error("Error al restaurar el miembro del personal");
-    const restored: StaffMember = await res.json();
-    setStaff((prev) => [...prev, restored]);
-  }, []);
+  const restoreStaff = useCallback(
+    async (member: StaffMember): Promise<void> => {
+      const { data, error: err } = await supabase
+        .from("staff_members")
+        .insert({
+          id: member.id,
+          first_name: member.firstName,
+          last_name: member.lastName,
+          doc_type: member.docType ?? null,
+          doc_number: member.docNumber ?? null,
+          role: member.role,
+          phone: member.phone ?? null,
+          email: member.email ?? null,
+          status: member.status,
+        })
+        .select()
+        .single();
+
+      if (err) throw new Error(err.message);
+      setStaff((prev) => [mapStaff(data as Record<string, unknown>), ...prev]);
+    },
+    [] // eslint-disable-line react-hooks/exhaustive-deps
+  );
 
   return {
     staff,

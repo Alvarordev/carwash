@@ -44,7 +44,6 @@ export default function ServiceFormDialog({
   const {
     register,
     handleSubmit,
-    setValue,
     reset,
     control,
     formState: { errors },
@@ -115,7 +114,7 @@ export default function ServiceFormDialog({
             <Input
               id="description"
               placeholder="Breve descripción del servicio..."
-              className="bg-background border-border rounded-md min-h-[80px]"
+              className="bg-background border-border rounded-md min-h-20"
               {...register("description")}
             />
             {errors.description && (

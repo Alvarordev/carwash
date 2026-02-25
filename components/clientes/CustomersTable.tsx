@@ -25,7 +25,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useCustomers } from "@/lib/hooks/useCustomers";
 import { useVehicles } from "@/lib/hooks/useVehicles";
 import type { Customer } from "@/lib/types";
-import { customerSchema, DOC_TYPES, type CustomerFormData } from "@/lib/schemas/customer";
+import { DOC_TYPES, type CustomerFormData } from "@/lib/schemas/customer";
 import CustomerFormDialog from "./CustomerFormDialog";
 import DeleteCustomerDialog from "./DeleteCustomerDialog";
 
@@ -165,11 +165,11 @@ export default function CustomersTable() {
         </div>
       </div>
 
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between bg-card/80 border border-border px-4 py-5 rounded-sm">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between bg-card border border-border px-4 py-5 rounded-sm">
         <div className="flex flex-1 flex-wrap items-center gap-2">
           <div className="flex items-center mr-4">
             <FilterList className="size-4 mr-1.5 text-muted-foreground shrink-0" />
-            <p>Filters:</p>
+            <p>Filtros:</p>
           </div>
 
           <Select value={filterStatus} onValueChange={setFilterStatus}>
@@ -272,7 +272,7 @@ export default function CustomersTable() {
                 return (
                   <TableRow
                     key={customer.id}
-                    className="border-border bg-card/80 hover:bg-card/40 transition-colors"
+                    className="border-border bg-card hover:bg-card/40 transition-colors"
                   >
                     <TableCell className="pl-4">
                       <span className="text-sm text-white">
@@ -309,9 +309,8 @@ export default function CustomersTable() {
                         className="bg-background py-1 px-2.5 gap-2 text-white rounded-md font-normal"
                       >
                         <span
-                          className={`size-2 rounded-full ${
-                            customer.status === "active" ? "bg-primary" : "bg-[#FD542A]"
-                          }`}
+                          className={`size-2 rounded-full ${customer.status === "active" ? "bg-primary" : "bg-[#FD542A]"
+                            }`}
                         />
                         {customer.status === "active" ? "Activo" : "Inactivo"}
                       </Badge>
@@ -321,7 +320,7 @@ export default function CustomersTable() {
                         <Button
                           size="sm"
                           onClick={() => handleOpenEdit(customer)}
-                          className="bg-primary hover:bg-primary/90 text-white gap-1.5 rounded-sm h-8 px-3 text-xs font-medium cursor-pointer"
+                          variant="secondary"
                         >
                           <EditPencil className="h-3.5 w-3.5" />
                           Editar

@@ -3,101 +3,127 @@
 import { useState, useEffect, useCallback } from "react";
 import type { Service } from "@/lib/types";
 import type { ServiceFormData } from "@/lib/schemas/service";
+import { createClient } from "@/lib/supabase/client";
 
-const API_URL = "http://localhost:3001/services";
+function mapService(row: Record<string, unknown>): Service {
+  return {
+    id: row.id as string,
+    name: row.name as string,
+    description: (row.description as string) ?? null,
+    category: row.category as Service["category"],
+    status: row.status as Service["status"],
+    createdAt: row.created_at as string,
+    updatedAt: row.updated_at as string,
+  };
+}
 
 export function useServices() {
   const [services, setServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const supabase = createClient();
+
   const fetchServices = useCallback(async () => {
     try {
       setLoading(true);
-      const res = await fetch(API_URL);
-      if (!res.ok) throw new Error("Error al cargar servicios");
-      const data: Service[] = await res.json();
-      setServices(data);
+      const { data, error: err } = await supabase
+        .from("services")
+        .select("*")
+        .order("name");
+
+      if (err) throw new Error(err.message);
+      setServices((data ?? []).map(mapService));
+      setError(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error desconocido");
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     fetchServices();
   }, [fetchServices]);
 
-  const createService = useCallback(async (data: ServiceFormData): Promise<Service> => {
-    const now = new Date().toISOString();
-    const newService = {
-      ...data,
-      description: data.description ?? null,
-      id: `srv-${Date.now()}`,
-      createdAt: now,
-      updatedAt: now,
-    };
+  const createService = useCallback(
+    async (data: ServiceFormData): Promise<Service> => {
+      const { data: created, error: err } = await supabase
+        .from("services")
+        .insert({
+          name: data.name,
+          description: data.description ?? null,
+          category: data.category,
+          status: data.status ?? "active",
+        })
+        .select()
+        .single();
 
-    const res = await fetch(API_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(newService),
-    });
+      if (err) throw new Error(err.message);
+      const newService = mapService(created as Record<string, unknown>);
+      setServices((prev) => [...prev, newService]);
+      return newService;
+    },
+    [] // eslint-disable-line react-hooks/exhaustive-deps
+  );
 
-    if (!res.ok) throw new Error("Error al crear el servicio");
-    const created: Service = await res.json();
-    setServices((prev) => [...prev, created]);
-    return created;
-  }, []);
+  const updateService = useCallback(
+    async (id: string, data: ServiceFormData): Promise<Service> => {
+      const { data: updated, error: err } = await supabase
+        .from("services")
+        .update({
+          name: data.name,
+          description: data.description ?? null,
+          category: data.category,
+          status: data.status,
+        })
+        .eq("id", id)
+        .select()
+        .single();
 
-  const updateService = useCallback(async (id: string, data: ServiceFormData): Promise<Service> => {
-    const existing = services.find((s) => s.id === id);
-    if (!existing) throw new Error("Servicio no encontrado");
-
-    const updated = {
-      ...existing,
-      ...data,
-      description: data.description ?? null,
-      updatedAt: new Date().toISOString(),
-    };
-
-    const res = await fetch(`${API_URL}/${id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(updated),
-    });
-
-    if (!res.ok) throw new Error("Error al actualizar el servicio");
-    const result: Service = await res.json();
-    setServices((prev) => prev.map((s) => (s.id === id ? result : s)));
-    return result;
-  }, [services]);
+      if (err) throw new Error(err.message);
+      const result = mapService(updated as Record<string, unknown>);
+      setServices((prev) => prev.map((s) => (s.id === id ? result : s)));
+      return result;
+    },
+    [] // eslint-disable-line react-hooks/exhaustive-deps
+  );
 
   const deleteService = useCallback(async (id: string): Promise<void> => {
-    const res = await fetch(`${API_URL}/${id}`, { method: "DELETE" });
-    if (!res.ok) throw new Error("Error al eliminar el servicio");
+    const { error: err } = await supabase.from("services").delete().eq("id", id);
+    if (err) throw new Error(err.message);
     setServices((prev) => prev.filter((s) => s.id !== id));
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const restoreService = useCallback(async (service: Service): Promise<void> => {
-    const res = await fetch(API_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(service),
-    });
-    if (!res.ok) throw new Error("Error al restaurar el servicio");
-    const restored: Service = await res.json();
-    setServices((prev) => [...prev, restored]);
-  }, []);
+  const restoreService = useCallback(
+    async (service: Service): Promise<void> => {
+      const { data, error: err } = await supabase
+        .from("services")
+        .insert({
+          id: service.id,
+          name: service.name,
+          description: service.description ?? null,
+          category: service.category,
+          status: service.status,
+        })
+        .select()
+        .single();
 
-  const toggleServiceStatus = useCallback(async (id: string): Promise<void> => {
-    const existing = services.find((s) => s.id === id);
-    if (!existing) throw new Error("Servicio no encontrado");
+      if (err) throw new Error(err.message);
+      setServices((prev) => [...prev, mapService(data as Record<string, unknown>)]);
+    },
+    [] // eslint-disable-line react-hooks/exhaustive-deps
+  );
 
-    const newStatus = existing.status === "active" ? "inactive" : "active";
-    await updateService(id, { ...existing, status: newStatus });
-  }, [services, updateService]);
+  const toggleServiceStatus = useCallback(
+    async (id: string): Promise<void> => {
+      const existing = services.find((s) => s.id === id);
+      if (!existing) throw new Error("Servicio no encontrado");
+      const newStatus = existing.status === "active" ? "inactive" : "active";
+      await updateService(id, { ...existing, status: newStatus });
+    },
+    [services, updateService]
+  );
 
   return {
     services,

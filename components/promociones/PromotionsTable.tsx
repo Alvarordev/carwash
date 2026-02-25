@@ -31,7 +31,7 @@ import PromotionFormDialog from "./PromotionFormDialog";
 import DeletePromotionDialog from "./DeletePromotionDialog";
 
 export default function PromotionsTable() {
-  const { promotions, loading, error, createPromotion, updatePromotion, deletePromotion, restorePromotion, togglePromotionStatus } =
+  const { promotions, loading, error, createPromotion, updatePromotion, deletePromotion, restorePromotion } =
     usePromotions();
   const { services } = useServices();
   const { vehicleTypes } = useVehicleTypes();
@@ -199,7 +199,7 @@ export default function PromotionsTable() {
         <div className="flex flex-1 flex-wrap items-center gap-2">
           <div className="flex items-center mr-4">
             <FilterList className="size-4 mr-1.5 text-muted-foreground shrink-0" />
-            <p>Filters:</p>
+            <p>Filtros:</p>
           </div>
 
           <Select value={filterStatus} onValueChange={setFilterStatus}>
@@ -325,9 +325,8 @@ export default function PromotionsTable() {
                       className="bg-background py-1 px-2.5 gap-2 text-white rounded-md font-normal"
                     >
                       <span
-                        className={`size-2 rounded-full ${
-                          promotion.status === "active" ? "bg-primary" : "bg-[#FD542A]"
-                        }`}
+                        className={`size-2 rounded-full ${promotion.status === "active" ? "bg-primary" : "bg-[#FD542A]"
+                          }`}
                       />
                       {promotion.status === "active" ? "Activo" : "Inactivo"}
                     </Badge>
