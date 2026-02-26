@@ -43,6 +43,7 @@ export interface Order {
   updatedAt?: string;
   cancelReason?: string | null;
   notes?: string;
+  photos?: string[]; // urls
   attachments?: string[]; // urls
   staff?: OrderStaffAssignment[];
   statusHistory?: OrderStatusHistoryEntry[];

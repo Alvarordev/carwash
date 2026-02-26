@@ -19,7 +19,7 @@ export default function LoginForm() {
     const [showPwd, setShowPwd] = useState(false);
     const [isPending, startTransition] = useTransition();
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = (e: React.SubmitEvent) => {
         e.preventDefault();
         startTransition(async () => {
             const error = await signIn(email, password);

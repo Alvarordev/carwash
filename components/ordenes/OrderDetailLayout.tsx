@@ -10,6 +10,7 @@ type Props = {
 };
 
 export default function OrderDetailLayout({ order }: Props) {
+
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-start justify-between">
@@ -82,9 +83,9 @@ export default function OrderDetailLayout({ order }: Props) {
               <a className="text-sm text-primary">Ver Todos</a>
             </div>
             <div className="grid grid-cols-4 gap-3">
-              {order.attachments && order.attachments.length > 0 ? (
-                order.attachments.map((src, i) => (
-                  <div key={i} className="h-28 w-full rounded-md overflow-hidden bg-card-alt">
+              {order.photos && order.photos.length > 0 ? (
+                order.photos.map((src, i) => (
+                  <div key={i} className="min-h-28 w-full aspect-square rounded-md overflow-hidden bg-card-alt">
                     <img src={src} alt={`photo-${i}`} className="h-full w-full object-cover" />
                   </div>
                 ))

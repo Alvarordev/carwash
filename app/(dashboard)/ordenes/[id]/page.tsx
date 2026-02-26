@@ -30,6 +30,7 @@ export default async function OrderPage({ params }: Props) {
        payment_method,
        cancel_reason,
        notes,
+       photos,
        created_at,
        updated_at,
        customers ( first_name, last_name ),
@@ -70,6 +71,7 @@ export default async function OrderPage({ params }: Props) {
     paymentMethod: (raw.payment_method as string) ?? undefined,
     cancelReason: (raw.cancel_reason as string) ?? null,
     notes: (raw.notes as string) ?? undefined,
+    photos: raw.photos as string[] ?? [],
     registeredAt: raw.created_at as string,
     updatedAt: (raw.updated_at as string) ?? undefined,
     items: ((raw.order_items ?? []) as RawItem[]).map((i) => ({
