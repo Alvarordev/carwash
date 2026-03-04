@@ -63,8 +63,8 @@ export default function OrderStatusDialog({
               <SelectValue placeholder={order.status} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="Pendiente">Pendiente</SelectItem>
               <SelectItem value="En Proceso">En Proceso</SelectItem>
+              <SelectItem value="Terminado">Terminado</SelectItem>
               <SelectItem value="Entregado">Entregado</SelectItem>
               <SelectItem value="Cancelado" disabled={disableCancel}>Cancelado</SelectItem>
             </SelectContent>

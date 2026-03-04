@@ -5,5 +5,5 @@ export type { Vehicle } from "./vehicle";
 export type { Service, ServiceCategory, ServicePricing } from "./service";
 export type { DiscountType, PromotionScope, Promotion } from "./promotion";
 export type { StaffRole, StaffMember } from "./staff";
-export type { OrderStatus, OrderItem, OrderStaffAssignment, Order } from "./order";
+export type { OrderStatus, OrderItem, OrderStaffAssignment, OrderCustomer, OrderVehicle, Order } from "./order";
 export type { InventoryItem } from "./inventory";

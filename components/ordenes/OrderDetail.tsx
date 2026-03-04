@@ -1,6 +1,3 @@
-// OrderDetail.tsx
-// Order detail view (full page)
-
 import type { Order } from "@/lib/types/order";
 
 async function fetchOrder(id: string) {
@@ -17,7 +14,7 @@ export default async function OrderDetail({ orderId }: { orderId: string }) {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-semibold">Orden {order.orderNumber}</h2>
-          <p className="text-sm text-muted-foreground">{order.customerName} — {order.vehiclePlate} ({order.vehicleMakeModel})</p>
+          <p className="text-sm text-muted-foreground">{order.customer ? `${order.customer.firstName} ${order.customer.lastName}` : "—"} — {order.vehicle ? `${order.vehicle.plate} (${order.vehicle.brand}${order.vehicle.model ? " " + order.vehicle.model : ""})` : "—"}</p>
         </div>
         <div>
           <span className="text-xs text-muted-foreground">Total</span>

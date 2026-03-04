@@ -4,8 +4,8 @@ import { useState, useEffect, useCallback } from "react";
 import type { Customer } from "@/lib/types";
 import type { CustomerFormData } from "@/lib/schemas/customer";
 import { createClient } from "@/lib/supabase/client";
+import { getCompanyId } from "@/lib/supabase/get-company-id";
 
-// Mapea fila de DB (snake_case) → tipo Customer (camelCase)
 function mapCustomer(row: Record<string, unknown>): Customer {
   return {
     id: row.id as string,
@@ -50,7 +50,6 @@ export function useCustomers() {
     fetchCustomers();
   }, [fetchCustomers]);
 
-  // ── Ownership helpers (tabla vehicle_owners) ───────────────────────────────
 
   const getCustomerVehicleIds = useCallback(
     async (customerId: string): Promise<string[]> => {
@@ -77,9 +76,10 @@ export function useCustomers() {
       );
 
       if (toAdd.length > 0) {
+        const company_id = await getCompanyId();
         await supabase
           .from("vehicle_owners")
-          .insert(toAdd.map((vehicle_id) => ({ vehicle_id, customer_id: customerId })));
+          .insert(toAdd.map((vehicle_id) => ({ vehicle_id, customer_id: customerId, company_id })));
       }
       if (toRemove.length > 0) {
         await supabase
@@ -92,15 +92,15 @@ export function useCustomers() {
     [] // eslint-disable-line react-hooks/exhaustive-deps
   );
 
-  // ── CRUD ──────────────────────────────────────────────────────────────────
-
   const createCustomer = useCallback(
     async (data: CustomerFormData): Promise<Customer> => {
       const { vehicleIds, ...customerData } = data;
+      const company_id = await getCompanyId();
 
       const { data: created, error: err } = await supabase
         .from("customers")
         .insert({
+          company_id,
           first_name: customerData.firstName,
           last_name: customerData.lastName,
           doc_type: customerData.docType ?? null,
@@ -165,9 +165,11 @@ export function useCustomers() {
 
   const restoreCustomer = useCallback(
     async (customer: Customer): Promise<void> => {
+      const company_id = await getCompanyId();
       const { data, error: err } = await supabase
         .from("customers")
         .insert({
+          company_id,
           id: customer.id,
           first_name: customer.firstName,
           last_name: customer.lastName,

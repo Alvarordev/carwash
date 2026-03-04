@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import type { ServicePricing } from "@/lib/types";
 import type { ServicePricingFormData } from "@/lib/schemas/service";
 import { createClient } from "@/lib/supabase/client";
+import { getCompanyId } from "@/lib/supabase/get-company-id";
 
 function mapPricing(row: Record<string, unknown>): ServicePricing {
   return {
@@ -48,9 +49,11 @@ export function useServicePricings() {
 
   const createPricing = useCallback(
     async (data: ServicePricingFormData): Promise<ServicePricing> => {
+      const company_id = await getCompanyId();
       const { data: created, error: err } = await supabase
         .from("service_pricing")
         .insert({
+          company_id,
           service_id: data.serviceId,
           vehicle_type_id: data.vehicleTypeId,
           price: data.price,

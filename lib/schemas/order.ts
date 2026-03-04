@@ -1,8 +1,8 @@
 import { z } from "zod";
 
 export const ORDER_STATUSES = [
-  { value: "pending", label: "Pendiente", color: "text-yellow-500" },
-  { value: "completed", label: "Completado", color: "text-blue-500" },
+  { value: "in_progress", label: "En Proceso", color: "text-yellow-500" },
+  { value: "finished", label: "Terminado", color: "text-blue-500" },
   { value: "delivered", label: "Entregado", color: "text-green-500" },
   { value: "cancelled", label: "Cancelado", color: "text-red-500" },
 ] as const;
@@ -29,7 +29,7 @@ export const orderSchema = z.object({
   staffAssignments: z.array(orderStaffAssignmentSchema).default([]),
   images: z.array(z.string()).default([]),
   notes: z.string().max(500).nullable().optional(),
-  status: z.enum(["pending", "completed", "delivered", "cancelled"]),
+  status: z.enum(["in_progress", "finished", "delivered", "cancelled"]),
 });
 
 export type OrderFormData = z.infer<typeof orderSchema>;

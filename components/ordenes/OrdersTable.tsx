@@ -2,7 +2,6 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { Search, EditPencil, Eye, Calendar } from "iconoir-react";
 import {
   Table,
@@ -22,10 +21,7 @@ import OrderStatusDialog from "./OrderStatusDialog";
 import type { Order, OrderItem } from "@/lib/types/order";
 
 export default function OrdersTable() {
-  const router = useRouter();
   const { orders, loading, error, updateOrderStatus, cancelOrder } = useOrders();
-
-  console.log(orders)
 
   const [search, setSearch] = useState("");
   const [filterStatus, setFilterStatus] = useState<string>("all");
@@ -56,11 +52,12 @@ export default function OrdersTable() {
   const filtered = useMemo(() => {
     const q = search.toLowerCase();
     return orders.filter((o) => {
+      const customerName = o.customer ? `${o.customer.firstName} ${o.customer.lastName}` : "";
       const matchesSearch =
         !q ||
         o.orderNumber?.toLowerCase().includes(q) ||
-        o.customerName?.toLowerCase().includes(q) ||
-        o.vehiclePlate?.toLowerCase().includes(q);
+        customerName.toLowerCase().includes(q) ||
+        o.vehicle?.plate?.toLowerCase().includes(q);
       const matchesStatus = filterStatus === "all" || o.status === filterStatus;
       return matchesSearch && matchesStatus;
     });
@@ -97,8 +94,8 @@ export default function OrdersTable() {
             </SelectTrigger>
             <SelectContent className="bg-background border-border rounded-sm">
               <SelectItem value="all">Todos</SelectItem>
-              <SelectItem value="Pendiente">Pendiente</SelectItem>
               <SelectItem value="En Proceso">En Proceso</SelectItem>
+              <SelectItem value="Terminado">Terminado</SelectItem>
               <SelectItem value="Entregado">Entregado</SelectItem>
               <SelectItem value="Cancelado">Cancelado</SelectItem>
             </SelectContent>
@@ -168,10 +165,10 @@ export default function OrdersTable() {
               </TableRow>
             ) : (
               filtered.map((order: Order) => (
-                <TableRow key={order.id} className="border-border bg-card/80 hover:bg-card/40 transition-colors cursor-pointer" onClick={() => router.push(`/dashboard/ordenes/${order.id}`)}>
+                <TableRow key={order.id} className="border-border bg-card/80 hover:bg-card/40 transition-colors cursor-pointer">
                   <TableCell className="font-mono text-sm font-medium text-white pl-4">{order.orderNumber}</TableCell>
-                  <TableCell>{order.customerName}</TableCell>
-                  <TableCell>{order.vehiclePlate} - {order.vehicleMakeModel}</TableCell>
+                  <TableCell>{order.customer ? `${order.customer.firstName} ${order.customer.lastName}` : "—"}</TableCell>
+                  <TableCell>{order.vehicle ? `${order.vehicle.plate} - ${order.vehicle.brand}${order.vehicle.model ? " " + order.vehicle.model : ""}` : "—"}</TableCell>
                   <TableCell>
                     {order.items.map((it: OrderItem) => (
                       <span key={it.serviceId} className="inline-block bg-secondary text-xs rounded px-2 py-1 mr-1 mb-1">{it.name}</span>

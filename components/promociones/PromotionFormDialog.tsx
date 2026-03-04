@@ -292,7 +292,7 @@ export default function PromotionFormDialog({
                         }`}
                       >
                         <span
-                          className={`size-4 rounded border flex-shrink-0 flex items-center justify-center transition-colors ${
+                          className={`size-4 rounded border shrink-0 flex items-center justify-center transition-colors ${
                             isSelected ? "bg-primary border-primary" : "border-border"
                           }`}
                         >

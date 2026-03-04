@@ -14,7 +14,7 @@ export default function ScheduledCard({ orders }: { orders: Order[] }) {
           <div key={o.id} className="flex items-center justify-between">
             <div>
               <div className="text-white text-sm">{o.orderNumber}</div>
-              <div className="text-xs text-muted-foreground">{o.customerName}</div>
+              <div className="text-xs text-muted-foreground">{o.customer ? `${o.customer.firstName} ${o.customer.lastName}` : "—"}</div>
             </div>
             <div className="text-xs text-muted-foreground">{new Date(o.registeredAt || "").toLocaleString()}</div>
           </div>

@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import type { Vehicle } from "@/lib/types";
 import type { VehicleFormData } from "@/lib/schemas/vehicle";
 import { createClient } from "@/lib/supabase/client";
+import { getCompanyId } from "@/lib/supabase/get-company-id";
 
 function mapVehicle(
   row: Record<string, unknown>,
@@ -70,9 +71,11 @@ export function useVehicles() {
 
   const createVehicle = useCallback(
     async (data: VehicleFormData): Promise<Vehicle> => {
+      const company_id = await getCompanyId();
       const { data: created, error: err } = await supabase
         .from("vehicles")
         .insert({
+          company_id,
           plate: data.plate,
           color: data.color,
           brand: data.brand,
@@ -129,9 +132,11 @@ export function useVehicles() {
 
   const restoreVehicle = useCallback(
     async (vehicle: Vehicle): Promise<void> => {
+      const company_id = await getCompanyId();
       const { data, error: err } = await supabase
         .from("vehicles")
         .insert({
+          company_id,
           id: vehicle.id,
           plate: vehicle.plate,
           color: vehicle.color,

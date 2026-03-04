@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import type { Promotion } from "@/lib/types";
 import type { PromotionFormData } from "@/lib/schemas/promotion";
 import { createClient } from "@/lib/supabase/client";
+import { getCompanyId } from "@/lib/supabase/get-company-id";
 
 function mapPromotion(
   row: Record<string, unknown>,
@@ -78,8 +79,9 @@ export function usePromotions() {
         .eq("promotion_id", promotionId);
 
       if (newScopeIds.length > 0) {
+        const company_id = await getCompanyId();
         await supabase.from("promotion_scopes").insert(
-          newScopeIds.map((scope_ref_id) => ({ promotion_id: promotionId, scope_ref_id }))
+          newScopeIds.map((scope_ref_id) => ({ promotion_id: promotionId, scope_ref_id, company_id }))
         );
       }
     },
@@ -88,9 +90,11 @@ export function usePromotions() {
 
   const createPromotion = useCallback(
     async (data: PromotionFormData): Promise<Promotion> => {
+      const company_id = await getCompanyId();
       const { data: created, error: err } = await supabase
         .from("promotions")
         .insert({
+          company_id,
           name: data.name,
           description: data.description ?? null,
           discount_type: data.discountType,
@@ -151,9 +155,11 @@ export function usePromotions() {
 
   const restorePromotion = useCallback(
     async (promotion: Promotion): Promise<void> => {
+      const company_id = await getCompanyId();
       const { data, error: err } = await supabase
         .from("promotions")
         .insert({
+          company_id,
           id: promotion.id,
           name: promotion.name,
           description: promotion.description ?? null,

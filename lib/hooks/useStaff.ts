@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import type { StaffMember } from "@/lib/types";
 import type { StaffFormData } from "@/lib/schemas/staff";
 import { createClient } from "@/lib/supabase/client";
+import { getCompanyId } from "@/lib/supabase/get-company-id";
 
 function mapStaff(row: Record<string, unknown>): StaffMember {
   return {
@@ -52,9 +53,11 @@ export function useStaff() {
 
   const createStaff = useCallback(
     async (data: StaffFormData): Promise<StaffMember> => {
+      const company_id = await getCompanyId();
       const { data: created, error: err } = await supabase
         .from("staff_members")
         .insert({
+          company_id,
           first_name: data.firstName,
           last_name: data.lastName,
           doc_type: data.docType ?? null,
@@ -109,9 +112,11 @@ export function useStaff() {
 
   const restoreStaff = useCallback(
     async (member: StaffMember): Promise<void> => {
+      const company_id = await getCompanyId();
       const { data, error: err } = await supabase
         .from("staff_members")
         .insert({
+          company_id,
           id: member.id,
           first_name: member.firstName,
           last_name: member.lastName,

@@ -34,7 +34,7 @@ export default async function OrderPage({ params }: Props) {
        created_at,
        updated_at,
        customers ( first_name, last_name ),
-       vehicles ( plate, brand, model ),
+       vehicles ( id, plate, brand, model, color ),
        order_items ( id, service_id, service_name, unit_price, quantity, subtotal ),
        order_staff ( id, staff_id, staff_name, role_snapshot ),
        order_status_history ( id, status, changed_by, note, created_at ),
@@ -48,7 +48,7 @@ export default async function OrderPage({ params }: Props) {
   const raw = data as Record<string, unknown>;
 
   const customers = raw.customers as { first_name: string; last_name: string } | null;
-  const vehicles = raw.vehicles as { plate: string; brand: string; model: string | null } | null;
+  const vehicles = raw.vehicles as { id: string; plate: string; brand: string; model: string | null; color: string } | null;
 
   type RawItem = { id: string; service_id: string | null; service_name: string; unit_price: number; quantity: number; subtotal: number };
   type RawStaff = { id: string; staff_id: string | null; staff_name: string; role_snapshot: string | null };
@@ -58,11 +58,12 @@ export default async function OrderPage({ params }: Props) {
   const order: Order = {
     id: raw.id as string,
     orderNumber: raw.order_number as string,
-    customerId: (raw.customer_id as string) ?? undefined,
-    customerName: customers ? `${customers.first_name} ${customers.last_name}` : "Cliente desconocido",
-    vehicleId: (raw.vehicle_id as string) ?? undefined,
-    vehiclePlate: vehicles?.plate ?? "",
-    vehicleMakeModel: vehicles ? `${vehicles.brand}${vehicles.model ? " " + vehicles.model : ""}` : "",
+    customer: customers && raw.customer_id
+      ? { id: raw.customer_id as string, firstName: customers.first_name, lastName: customers.last_name }
+      : undefined,
+    vehicle: vehicles
+      ? { id: vehicles.id, plate: vehicles.plate, brand: vehicles.brand, model: vehicles.model, color: vehicles.color }
+      : undefined,
     subtotal: raw.subtotal as number,
     discounts: (raw.discounts as number) ?? 0,
     total: raw.total as number,

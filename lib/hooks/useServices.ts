@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import type { Service } from "@/lib/types";
 import type { ServiceFormData } from "@/lib/schemas/service";
 import { createClient } from "@/lib/supabase/client";
+import { getCompanyId } from "@/lib/supabase/get-company-id";
 
 function mapService(row: Record<string, unknown>): Service {
   return {
@@ -48,9 +49,11 @@ export function useServices() {
 
   const createService = useCallback(
     async (data: ServiceFormData): Promise<Service> => {
+      const company_id = await getCompanyId();
       const { data: created, error: err } = await supabase
         .from("services")
         .insert({
+          company_id,
           name: data.name,
           description: data.description ?? null,
           category: data.category,
@@ -97,9 +100,11 @@ export function useServices() {
 
   const restoreService = useCallback(
     async (service: Service): Promise<void> => {
+      const company_id = await getCompanyId();
       const { data, error: err } = await supabase
         .from("services")
         .insert({
+          company_id,
           id: service.id,
           name: service.name,
           description: service.description ?? null,

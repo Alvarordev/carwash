@@ -26,7 +26,7 @@ type RawOrder = {
     created_at: string;
     updated_at: string;
     customers: { first_name: string; last_name: string } | null;
-    vehicles: { plate: string; brand: string; model: string | null } | null;
+    vehicles: { id: string; plate: string; brand: string; model: string | null; color: string } | null;
     order_items: {
         id: string;
         service_id: string | null;
@@ -44,14 +44,13 @@ type RawOrder = {
 };
 
 function mapOrder(raw: RawOrder): Order {
-    const customerName = raw.customers
-        ? `${raw.customers.first_name} ${raw.customers.last_name}`
-        : "Cliente desconocido";
+    const customer = raw.customers && raw.customer_id
+        ? { id: raw.customer_id, firstName: raw.customers.first_name, lastName: raw.customers.last_name }
+        : undefined;
 
-    const vehiclePlate = raw.vehicles?.plate ?? "";
-    const vehicleMakeModel = raw.vehicles
-        ? `${raw.vehicles.brand}${raw.vehicles.model ? " " + raw.vehicles.model : ""}`
-        : "";
+    const vehicle = raw.vehicles
+        ? { id: raw.vehicles.id, plate: raw.vehicles.plate, brand: raw.vehicles.brand, model: raw.vehicles.model, color: raw.vehicles.color }
+        : undefined;
 
     const items: OrderItem[] = (raw.order_items ?? []).map((i) => ({
         serviceId: i.service_id ?? i.id,
@@ -70,11 +69,8 @@ function mapOrder(raw: RawOrder): Order {
     return {
         id: raw.id,
         orderNumber: raw.order_number,
-        customerId: raw.customer_id ?? undefined,
-        customerName,
-        vehicleId: raw.vehicle_id ?? undefined,
-        vehiclePlate,
-        vehicleMakeModel,
+        customer,
+        vehicle,
         items,
         subtotal: raw.subtotal,
         discounts: raw.discounts,
@@ -159,7 +155,7 @@ export function useDashboard(): UseDashboardReturn {
                          status, payment_status, payment_method, notes, cancel_reason,
                          created_at, updated_at,
                          customers ( first_name, last_name ),
-                         vehicles ( plate, brand, model ),
+                         vehicles ( id, plate, brand, model, color ),
                          order_items ( id, service_id, service_name, unit_price, quantity, subtotal ),
                          order_staff ( id, staff_id, staff_name, role_snapshot )`
                     )
@@ -184,7 +180,7 @@ export function useDashboard(): UseDashboardReturn {
             const ingresosHoy = todayOrders.reduce((s, o) => s + (o.total ?? 0), 0);
             const ordenesHoy = todayOrders.length;
             const ordersEnProceso = todayOrders.filter((o) => o.status === "En Proceso").length;
-            const ordersEsperando = todayOrders.filter((o) => o.status === "Pendiente").length;
+            const ordersEsperando = todayOrders.filter((o) => o.status === "Terminado").length;
             const avgServiceTime = calcAvgServiceTime(todayOrders);
 
             const seriesMes = buildMonthSeries(orders);

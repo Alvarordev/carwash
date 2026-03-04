@@ -1,7 +1,4 @@
-// order.ts
-// Main type definitions for Order entity in system
-
-export type OrderStatus = "Pendiente" | "En Proceso" | "Cancelado" | "Entregado";
+export type OrderStatus = "En Proceso" | "Terminado" | "Entregado" | "Cancelado";
 
 export type OrderItem = {
   serviceId: string;
@@ -24,14 +21,25 @@ export type OrderStatusHistoryEntry = {
   note?: string;
 };
 
+export type OrderCustomer = {
+  id: string;
+  firstName: string;
+  lastName: string;
+};
+
+export type OrderVehicle = {
+  id: string;
+  plate: string;
+  brand: string;
+  model: string | null;
+  color: string;
+};
+
 export interface Order {
   id: string | number;
   orderNumber: string;
-  customerId?: string;
-  customerName: string;
-  vehicleId?: string;
-  vehiclePlate: string;
-  vehicleMakeModel: string;
+  customer?: OrderCustomer;
+  vehicle?: OrderVehicle;
   items: OrderItem[];
   subtotal: number;
   discounts?: number;

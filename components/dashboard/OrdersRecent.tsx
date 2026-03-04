@@ -24,8 +24,8 @@ export default function OrdersRecent({ orders }: { orders: Order[] }) {
           {orders.map((o) => (
             <TableRow key={o.id}>
               <TableCell className="font-mono">{o.orderNumber}</TableCell>
-              <TableCell>{o.customerName}</TableCell>
-              <TableCell>{o.vehiclePlate}</TableCell>
+              <TableCell>{o.customer ? `${o.customer.firstName} ${o.customer.lastName}` : "—"}</TableCell>
+              <TableCell>{o.vehicle?.plate ?? "—"}</TableCell>
               <TableCell>S/ {o.total.toFixed(2)}</TableCell>
               <TableCell>{o.status}</TableCell>
               <TableCell className="text-right"><Button size="sm">Ver</Button></TableCell>

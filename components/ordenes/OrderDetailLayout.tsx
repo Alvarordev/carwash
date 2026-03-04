@@ -39,14 +39,18 @@ export default function OrderDetailLayout({ order }: Props) {
                 <Car className="size-5 text-primary mr-2" />
                 <p className="font-semibold">Informacion del vehículo</p>
               </div>
-              <div className="flex-1 grid grid-cols-3 gap-4">
+              <div className="flex-1 grid grid-cols-4 gap-4">
                 <div className="bg-background p-3 rounded-sm">
                   <div className="text-xs text-muted-foreground">Placa</div>
-                  <div className="text-base font-semibold text-foreground">{order.vehiclePlate}</div>
+                  <div className="text-base font-semibold text-foreground">{order.vehicle?.plate ?? "—"}</div>
                 </div>
                 <div className="bg-background p-3 rounded-sm">
                   <div className="text-xs text-muted-foreground">Marca y Modelo</div>
-                  <div className="text-base font-semibold text-foreground">{order.vehicleMakeModel}</div>
+                  <div className="text-base font-semibold text-foreground">{order.vehicle ? `${order.vehicle.brand}${order.vehicle.model ? " " + order.vehicle.model : ""}` : "—"}</div>
+                </div>
+                <div className="bg-background p-3 rounded-sm">
+                  <div className="text-xs text-muted-foreground">Color</div>
+                  <div className="text-base font-semibold text-foreground">{order.vehicle?.color ?? "—"}</div>
                 </div>
                 <div className="bg-background p-3 rounded-sm">
                   <div className="text-xs text-muted-foreground">Notas</div>

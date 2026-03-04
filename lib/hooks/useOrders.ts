@@ -2,8 +2,9 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
-import type { Order, OrderItem, OrderStaffAssignment, OrderStatusHistoryEntry } from "@/lib/types/order";
+import type { Order, OrderItem, OrderStaffAssignment, OrderStatusHistoryEntry, OrderCustomer, OrderVehicle } from "@/lib/types/order";
 import { createClient } from "@/lib/supabase/client";
+import { getCompanyId } from "@/lib/supabase/get-company-id";
 
 
 function mapOrderItems(rows: Record<string, unknown>[]): OrderItem[] {
@@ -37,16 +38,15 @@ function mapOrder(
   row: Record<string, unknown>,
   items: OrderItem[],
   staff: OrderStaffAssignment[],
-  statusHistory: OrderStatusHistoryEntry[]
+  statusHistory: OrderStatusHistoryEntry[],
+  customer?: OrderCustomer,
+  vehicle?: OrderVehicle,
 ): Order {
   return {
     id: row.id as string,
     orderNumber: row.order_number as string,
-    customerId: (row.customer_id as string) ?? undefined,
-    customerName: "",   // se resolverá via join en versiones futuras
-    vehicleId: (row.vehicle_id as string) ?? undefined,
-    vehiclePlate: "",   // idem
-    vehicleMakeModel: "",
+    customer,
+    vehicle,
     items,
     subtotal: row.subtotal as number,
     discounts: (row.discounts as number) ?? 0,
@@ -80,17 +80,33 @@ export function useOrders() {
         { data: itemRows, error: iErr },
         { data: staffRows, error: sErr },
         { data: historyRows, error: hErr },
+        { data: customerRows, error: cErr },
+        { data: vehicleRows, error: vErr },
       ] = await Promise.all([
         supabase.from("orders").select("*").order("created_at", { ascending: false }),
         supabase.from("order_items").select("*"),
         supabase.from("order_staff").select("*"),
         supabase.from("order_status_history").select("*").order("created_at"),
+        supabase.from("customers").select("id, first_name, last_name"),
+        supabase.from("vehicles").select("id, plate, brand, model, color"),
       ]);
 
       if (oErr) throw new Error(oErr.message);
       if (iErr) throw new Error(iErr.message);
       if (sErr) throw new Error(sErr.message);
       if (hErr) throw new Error(hErr.message);
+      if (cErr) throw new Error(cErr.message);
+      if (vErr) throw new Error(vErr.message);
+
+      // Build lookup maps
+      const customerMap = new Map<string, OrderCustomer>();
+      for (const c of customerRows ?? []) {
+        customerMap.set(c.id, { id: c.id, firstName: c.first_name, lastName: c.last_name });
+      }
+      const vehicleMap = new Map<string, OrderVehicle>();
+      for (const v of vehicleRows ?? []) {
+        vehicleMap.set(v.id, { id: v.id, plate: v.plate, brand: v.brand, model: v.model, color: v.color });
+      }
 
       type OrderRow = { id: string;[key: string]: unknown };
       type ItemRow = { order_id: string;[key: string]: unknown };
@@ -106,7 +122,9 @@ export function useOrders() {
         const history = mapStatusHistory(
           (historyRows ?? []).filter((r: ItemRow) => r.order_id === oId) as Record<string, unknown>[]
         );
-        return mapOrder(o as Record<string, unknown>, items, staff, history);
+        const customer = o.customer_id ? customerMap.get(o.customer_id as string) : undefined;
+        const vehicle = o.vehicle_id ? vehicleMap.get(o.vehicle_id as string) : undefined;
+        return mapOrder(o as Record<string, unknown>, items, staff, history, customer, vehicle);
       });
 
       setOrders(mapped);
@@ -170,7 +188,9 @@ export function useOrders() {
 
         if (err) throw new Error(err.message);
 
+        const company_id = await getCompanyId();
         await supabase.from("order_status_history").insert({
+          company_id,
           order_id: orderId,
           status: newStatus,
         });
@@ -237,7 +257,9 @@ export function useOrders() {
 
         if (err) throw new Error(err.message);
 
+        const company_id = await getCompanyId();
         await supabase.from("order_status_history").insert({
+          company_id,
           order_id: orderId,
           status: "Cancelado",
           note: reason,
