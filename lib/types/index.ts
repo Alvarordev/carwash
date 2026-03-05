@@ -7,3 +7,12 @@ export type { DiscountType, PromotionScope, Promotion } from "./promotion";
 export type { StaffRole, StaffMember } from "./staff";
 export type { OrderStatus, OrderItem, OrderStaffAssignment, OrderCustomer, OrderVehicle, Order } from "./order";
 export type { InventoryItem } from "./inventory";
+export type {
+  WhatsAppTriggerType,
+  WhatsAppMessageStatus,
+  WhatsAppConfig,
+  WhatsAppTemplate,
+  WhatsAppServiceRule,
+  WhatsAppScheduledMessage,
+  WhatsAppMessageLog,
+} from "./whatsapp";

@@ -140,6 +140,28 @@ export function useOrders() {
     fetchOrders();
   }, [fetchOrders]);
 
+  // Realtime subscription: re-fetch on any change to orders, order_items, or order_status_history
+  useEffect(() => {
+    const debounceRef = { timer: null as ReturnType<typeof setTimeout> | null };
+    const debouncedFetch = () => {
+      if (debounceRef.timer) clearTimeout(debounceRef.timer);
+      debounceRef.timer = setTimeout(() => {
+        fetchOrders();
+      }, 500);
+    };
+
+    const channel = supabase
+      .channel("orders-realtime")
+      .on("postgres_changes", { event: "*", schema: "public", table: "orders" }, debouncedFetch)
+      .on("postgres_changes", { event: "*", schema: "public", table: "order_items" }, debouncedFetch)
+      .on("postgres_changes", { event: "*", schema: "public", table: "order_status_history" }, debouncedFetch)
+      .subscribe();
+
+    return () => {
+      if (debounceRef.timer) clearTimeout(debounceRef.timer);
+      supabase.removeChannel(channel);
+    };
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const updateOrderStatus = useCallback(
     async (id: string | number, newStatus: Order["status"]) => {

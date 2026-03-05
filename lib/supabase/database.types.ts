@@ -804,6 +804,255 @@ export type Database = {
           },
         ]
       }
+      whatsapp_config: {
+        Row: {
+          access_token: string
+          company_id: string
+          created_at: string
+          id: string
+          is_active: boolean
+          phone_number_id: string
+          updated_at: string
+        }
+        Insert: {
+          access_token: string
+          company_id: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          phone_number_id: string
+          updated_at?: string
+        }
+        Update: {
+          access_token?: string
+          company_id?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          phone_number_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "whatsapp_config_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: true
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      whatsapp_message_log: {
+        Row: {
+          company_id: string
+          created_at: string
+          error: string | null
+          id: string
+          meta_message_id: string | null
+          order_id: string | null
+          phone: string
+          sent_at: string | null
+          status: Database["public"]["Enums"]["whatsapp_message_status"]
+          template_body: string
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          error?: string | null
+          id?: string
+          meta_message_id?: string | null
+          order_id?: string | null
+          phone: string
+          sent_at?: string | null
+          status?: Database["public"]["Enums"]["whatsapp_message_status"]
+          template_body: string
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          error?: string | null
+          id?: string
+          meta_message_id?: string | null
+          order_id?: string | null
+          phone?: string
+          sent_at?: string | null
+          status?: Database["public"]["Enums"]["whatsapp_message_status"]
+          template_body?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "whatsapp_message_log_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "whatsapp_message_log_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      whatsapp_scheduled_messages: {
+        Row: {
+          company_id: string
+          created_at: string
+          error: string | null
+          id: string
+          order_id: string
+          phone: string
+          scheduled_at: string
+          sent_at: string | null
+          status: Database["public"]["Enums"]["whatsapp_message_status"]
+          template_id: string
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          error?: string | null
+          id?: string
+          order_id: string
+          phone: string
+          scheduled_at: string
+          sent_at?: string | null
+          status?: Database["public"]["Enums"]["whatsapp_message_status"]
+          template_id: string
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          error?: string | null
+          id?: string
+          order_id?: string
+          phone?: string
+          scheduled_at?: string
+          sent_at?: string | null
+          status?: Database["public"]["Enums"]["whatsapp_message_status"]
+          template_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "whatsapp_scheduled_messages_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "whatsapp_scheduled_messages_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "whatsapp_scheduled_messages_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "whatsapp_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      whatsapp_service_rules: {
+        Row: {
+          company_id: string
+          created_at: string
+          delay_days: number
+          id: string
+          is_active: boolean
+          service_id: string
+          template_id: string
+          updated_at: string
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          delay_days?: number
+          id?: string
+          is_active?: boolean
+          service_id: string
+          template_id: string
+          updated_at?: string
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          delay_days?: number
+          id?: string
+          is_active?: boolean
+          service_id?: string
+          template_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "whatsapp_service_rules_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "whatsapp_service_rules_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "services"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "whatsapp_service_rules_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "whatsapp_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      whatsapp_templates: {
+        Row: {
+          body: string
+          company_id: string
+          created_at: string
+          id: string
+          is_active: boolean
+          name: string
+          trigger_type: Database["public"]["Enums"]["whatsapp_trigger_type"]
+          updated_at: string
+        }
+        Insert: {
+          body: string
+          company_id: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name: string
+          trigger_type: Database["public"]["Enums"]["whatsapp_trigger_type"]
+          updated_at?: string
+        }
+        Update: {
+          body?: string
+          company_id?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+          trigger_type?: Database["public"]["Enums"]["whatsapp_trigger_type"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "whatsapp_templates_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -820,6 +1069,8 @@ export type Database = {
       service_category: "exterior" | "interior" | "detalle" | "añadido"
       staff_role: "admin" | "washer" | "cashier" | "supervisor"
       status: "active" | "inactive"
+      whatsapp_message_status: "pending" | "sent" | "failed"
+      whatsapp_trigger_type: "delivery" | "scheduled"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -955,6 +1206,8 @@ export const Constants = {
       service_category: ["exterior", "interior", "detalle", "añadido"],
       staff_role: ["admin", "washer", "cashier", "supervisor"],
       status: ["active", "inactive"],
+      whatsapp_message_status: ["pending", "sent", "failed"],
+      whatsapp_trigger_type: ["delivery", "scheduled"],
     },
   },
 } as const
