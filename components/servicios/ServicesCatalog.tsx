@@ -5,8 +5,8 @@ import { toast } from "sonner";
 import { Plus } from "iconoir-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Card, CardHeader, CardTitle, CardAction, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+// import { Card, CardHeader, CardTitle, CardAction, CardContent } from "@/components/ui/card";
+// import { Badge } from "@/components/ui/badge";
 import { useServices } from "@/lib/hooks/useServices";
 import type { Service, ServiceCategory } from "@/lib/types";
 import type { ServiceFormData } from "@/lib/schemas/service";
@@ -21,11 +21,11 @@ const FILTERS = [
   { value: "añadido", label: "Añadidos" },
 ] as const;
 
-import { usePromotions } from '@/lib/hooks/usePromotions';
+// import { usePromotions } from '@/lib/hooks/usePromotions';
 
 export default function ServicesCatalog() {
   const { services, loading, error, createService, updateService, deleteService } = useServices();
-  const { promotions } = usePromotions();
+  // const { promotions } = usePromotions();
   
   const [activeFilter, setActiveFilter] = useState<"all" | ServiceCategory>("all");
   
@@ -105,9 +105,7 @@ export default function ServicesCatalog() {
           Agregar Servicio
         </Button>
       </div>
-      {/* Stat cards section */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-2">
-        {/* Total services */}
+      {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-2">
         <Card className="shadow-md bg-card border border-card">
           <CardHeader>
             <CardTitle>Servicios Totales</CardTitle>
@@ -119,7 +117,6 @@ export default function ServicesCatalog() {
             <span className="text-muted-foreground text-xs">Todos los registrados</span>
           </CardContent>
         </Card>
-        {/* Active services */}
         <Card className="shadow-md bg-card border border-card">
           <CardHeader>
             <CardTitle>Activos</CardTitle>
@@ -131,7 +128,6 @@ export default function ServicesCatalog() {
             <span className="text-muted-foreground text-xs">Actualmente disponibles</span>
           </CardContent>
         </Card>
-        {/* Promos */}
         <Card className="shadow-md bg-card border border-card">
           <CardHeader>
             <CardTitle>Promociones</CardTitle>
@@ -155,7 +151,6 @@ export default function ServicesCatalog() {
             <span className="text-muted-foreground text-xs">Servicios para exteriores</span>
           </CardContent>
         </Card>
-        {/* Interior */}
         <Card className="shadow-md bg-card border border-card">
           <CardHeader>
             <CardTitle>Interior</CardTitle>
@@ -167,7 +162,9 @@ export default function ServicesCatalog() {
             <span className="text-muted-foreground text-xs">Servicios de interior</span>
           </CardContent>
         </Card>
-      </div>
+      </div> */}
+
+      
       <div className="flex flex-wrap gap-2">
         {FILTERS.map((filter) => (
           <Button

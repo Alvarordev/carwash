@@ -13,6 +13,8 @@ function mapService(row: Record<string, unknown>): Service {
     description: (row.description as string) ?? null,
     category: row.category as Service["category"],
     status: row.status as Service["status"],
+    color: (row.color as string) ?? null,
+    icon: (row.icon as string) ?? null,
     createdAt: row.created_at as string,
     updatedAt: row.updated_at as string,
   };
@@ -58,6 +60,8 @@ export function useServices() {
           description: data.description ?? null,
           category: data.category,
           status: data.status ?? "active",
+          color: data.color ?? null,
+          icon: data.icon ?? null,
         })
         .select()
         .single();
@@ -79,6 +83,8 @@ export function useServices() {
           description: data.description ?? null,
           category: data.category,
           status: data.status,
+          color: data.color ?? null,
+          icon: data.icon ?? null,
         })
         .eq("id", id)
         .select()
@@ -110,6 +116,8 @@ export function useServices() {
           description: service.description ?? null,
           category: service.category,
           status: service.status,
+          color: service.color ?? null,
+          icon: service.icon ?? null,
         })
         .select()
         .single();

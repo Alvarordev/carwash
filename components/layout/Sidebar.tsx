@@ -9,7 +9,6 @@ import {
   Car,
   Sparks,
   Community,
-  Box,
   Percentage,
   Settings,
   Menu,
@@ -30,7 +29,6 @@ const navItems: NavItem[] = [
   { label: "Vehículos", href: "/vehiculos", icon: Car },
   { label: "Servicios", href: "/servicios", icon: Sparks },
   { label: "Personal", href: "/personal", icon: Community },
-  { label: "Inventario", href: "/inventario", icon: Box },
   { label: "Promociones", href: "/promociones", icon: Percentage },
   { label: "Configuración", href: "/configuracion", icon: Settings },
 ];

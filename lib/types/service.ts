@@ -8,6 +8,8 @@ export type Service = {
   description: string | null;
   category: ServiceCategory;
   status: Status;
+  color: string | null;
+  icon: string | null;
 } & Timestamps;
 
 export type ServicePricing = {

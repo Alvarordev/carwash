@@ -1,15 +1,36 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { toast } from "sonner";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { WhatsAppTemplate, WhatsAppTriggerType } from "@/lib/types";
 import { useWhatsApp } from "@/lib/hooks/useWhatsApp";
 import { WhatsAppConfigCard } from "@/components/configuracion/WhatsAppConfigCard";
 import { WhatsAppTemplateList } from "@/components/configuracion/WhatsAppTemplateList";
 import { WhatsAppTemplateDialog } from "@/components/configuracion/WhatsAppTemplateDialog";
+import { RolesSection } from "@/components/configuracion/negocio/RolesSection";
+import { VehicleTypesSection } from "@/components/configuracion/negocio/VehicleTypesSection";
+import { ServiceCategoriesSection } from "@/components/configuracion/negocio/ServiceCategoriesSection";
+import { PaymentMethodsSection } from "@/components/configuracion/negocio/PaymentMethodsSection";
+
+const TABS = [
+  { value: "business", label: "Información del Negocio" },
+  { value: "whatsapp", label: "Notificaciones WhatsApp" },
+] as const;
+
+type TabValue = (typeof TABS)[number]["value"];
 
 export default function ConfiguracionPage() {
+  const [activeTab, setActiveTab] = useState<TabValue>("business");
+  const tabRefs = useRef<Record<string, HTMLButtonElement | null>>({});
+  const [indicator, setIndicator] = useState({ left: 0, width: 0 });
+
+  useEffect(() => {
+    const el = tabRefs.current[activeTab];
+    if (el) {
+      setIndicator({ left: el.offsetLeft, width: el.offsetWidth });
+    }
+  }, [activeTab]);
+
   const {
     config,
     templates,
@@ -30,9 +51,9 @@ export default function ConfiguracionPage() {
   }) {
     try {
       await upsertConfig(data);
-      toast.success("WhatsApp configuration saved");
+      toast.success("Configuración de WhatsApp guardada");
     } catch {
-      toast.error("Error saving configuration");
+      toast.error("Error al guardar la configuración");
     }
   }
 
@@ -44,13 +65,13 @@ export default function ConfiguracionPage() {
     try {
       if (editingTemplate) {
         await updateTemplate(editingTemplate.id, data);
-        toast.success("Template updated");
+        toast.success("Plantilla actualizada");
       } else {
         await createTemplate(data);
-        toast.success("Template created");
+        toast.success("Plantilla creada");
       }
     } catch {
-      toast.error("Error saving template");
+      toast.error("Error al guardar la plantilla");
     }
   }
 
@@ -58,7 +79,7 @@ export default function ConfiguracionPage() {
     try {
       await toggleTemplateActive(id);
     } catch {
-      toast.error("Error toggling template");
+      toast.error("Error al cambiar el estado de la plantilla");
     }
   }
 
@@ -75,35 +96,52 @@ export default function ConfiguracionPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold">Configuration</h1>
+        <h1 className="text-2xl font-semibold">Configuración</h1>
         <p className="text-sm text-muted-foreground">
-          Manage your carwash business settings and integrations.
+          Administra la información y ajustes de tu negocio.
         </p>
       </div>
 
-      <Tabs defaultValue="whatsapp">
-        <TabsList>
-          <TabsTrigger value="business">Business Info</TabsTrigger>
-          <TabsTrigger value="payments">Payment Methods</TabsTrigger>
-          <TabsTrigger value="vehicles">Vehicle Types</TabsTrigger>
-          <TabsTrigger value="whatsapp">WhatsApp Notifications</TabsTrigger>
-        </TabsList>
+      {/* Animated tab bar */}
+      <div className="relative border-b border-border">
+        <div className="flex">
+          {TABS.map((tab) => (
+            <button
+              key={tab.value}
+              ref={(el) => {
+                tabRefs.current[tab.value] = el;
+              }}
+              onClick={() => setActiveTab(tab.value)}
+              className={`px-4 py-3 text-sm transition-colors ${
+                activeTab === tab.value
+                  ? "text-foreground font-medium"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+        <div
+          className="absolute bottom-0 h-[2px] bg-primary transition-all duration-300 ease-in-out"
+          style={{ left: indicator.left, width: indicator.width }}
+        />
+      </div>
 
-        <TabsContent value="business" className="mt-6">
-          <p className="text-muted-foreground">Business info settings coming soon.</p>
-        </TabsContent>
+      {/* Tab content */}
+      {activeTab === "business" && (
+        <div className="space-y-8">
+          <RolesSection />
+          <VehicleTypesSection />
+          <ServiceCategoriesSection />
+          <PaymentMethodsSection />
+        </div>
+      )}
 
-        <TabsContent value="payments" className="mt-6">
-          <p className="text-muted-foreground">Payment methods settings coming soon.</p>
-        </TabsContent>
-
-        <TabsContent value="vehicles" className="mt-6">
-          <p className="text-muted-foreground">Vehicle types settings coming soon.</p>
-        </TabsContent>
-
-        <TabsContent value="whatsapp" className="mt-6 space-y-6">
+      {activeTab === "whatsapp" && (
+        <div className="space-y-6">
           {loading ? (
-            <p className="text-muted-foreground">Loading...</p>
+            <p className="text-muted-foreground">Cargando...</p>
           ) : (
             <>
               <WhatsAppConfigCard config={config} onSave={handleSaveConfig} />
@@ -115,8 +153,8 @@ export default function ConfiguracionPage() {
               />
             </>
           )}
-        </TabsContent>
-      </Tabs>
+        </div>
+      )}
 
       <WhatsAppTemplateDialog
         open={dialogOpen}

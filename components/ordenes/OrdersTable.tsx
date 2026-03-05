@@ -19,6 +19,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useOrders } from "@/lib/hooks/useOrders";
 import OrderStatusDialog from "./OrderStatusDialog";
 import type { Order, OrderItem } from "@/lib/types/order";
+import { cn } from "@/lib/utils";
 
 export default function OrdersTable() {
   const { orders, loading, error, updateOrderStatus, cancelOrder } = useOrders();
@@ -171,12 +172,24 @@ export default function OrdersTable() {
                   <TableCell>{order.vehicle ? `${order.vehicle.plate} - ${order.vehicle.brand}${order.vehicle.model ? " " + order.vehicle.model : ""}` : "—"}</TableCell>
                   <TableCell>
                     {order.items.map((it: OrderItem) => (
-                      <span key={it.serviceId} className="inline-block bg-secondary text-xs rounded px-2 py-1 mr-1 mb-1">{it.name}</span>
+                      <span key={it.serviceId} className="inline-block bg-foreground text-background text-xs rounded px-2 py-1 mr-1 mb-1">{it.name}</span>
                     ))}
                   </TableCell>
                   <TableCell>S/ {order.total.toFixed(2)}</TableCell>
                   <TableCell>
-                    <Badge className={order.status === "Entregado" ? "bg-[#16A34A] text-white" : order.status === "Cancelado" ? "bg-[#FD2A2A] text-white" : "bg-background text-white"}>
+                    <Badge className='bg-background h-8 border-border'>
+                      <span className={cn("size-2 mr-0.5 rounded-full animate-pulse", (() => {
+                        switch (order.status) {
+                          case "Entregado":
+                            return "bg-status-3 text-white";
+                          case "Cancelado":
+                            return "bg-destructive text-white";
+                          case "Terminado":
+                            return "bg-status-2 text-white";
+                          default:
+                            return "bg-status-1 text-white";
+                        }
+                      })())}></span>
                       {order.status}
                     </Badge>
                   </TableCell>

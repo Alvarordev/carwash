@@ -7,6 +7,24 @@ export const SERVICE_CATEGORIES = [
   { value: "añadido", label: "Añadidos" },
 ] as const;
 
+export const SERVICE_ICONS = [
+  { value: "car", label: "Auto" },
+  { value: "droplet", label: "Agua" },
+  { value: "star", label: "Estrella" },
+  { value: "soap", label: "Jabón" },
+  { value: "leaf", label: "Eco" },
+  { value: "flash", label: "Express" },
+  { value: "sun", label: "Sol" },
+  { value: "wind", label: "Viento" },
+  { value: "wrench", label: "Servicio" },
+  { value: "tools", label: "Detalle" },
+  { value: "shield", label: "Protección" },
+  { value: "flame", label: "Tratamiento" },
+  { value: "bright-star", label: "Brillo" },
+] as const;
+
+export type ServiceIconKey = (typeof SERVICE_ICONS)[number]["value"];
+
 export const serviceSchema = z.object({
   name: z
     .string()
@@ -19,6 +37,8 @@ export const serviceSchema = z.object({
     .optional(),
   category: z.enum(["exterior", "interior", "detalle", "añadido"]),
   status: z.enum(["active", "inactive"]),
+  color: z.string().nullable().optional(),
+  icon: z.string().nullable().optional(),
 });
 
 export type ServiceFormData = z.infer<typeof serviceSchema>;

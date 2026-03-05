@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
-import { MoreHoriz, Plus, EditPencil, Trash, Minus, Plus as PlusIcon, Car, PageSearch, ReportColumns } from "iconoir-react";
+import { MoreHoriz, Plus, EditPencil, Trash, Minus, Plus as PlusIcon, Car, PageSearch, ReportColumns, Droplet, Star, Soap, Leaf, Flash, SunLight, Wind, Wrench, Tools, Shield, FireFlame, BrightStar } from "iconoir-react";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
@@ -27,13 +27,33 @@ type ServiceCardProps = {
   initiallyExpanded?: boolean;
 };
 
-// use React.ReactElement for icon elements
-const SERVICE_ICONS: Record<ServiceCategory, React.ReactElement> = {
-  exterior: <Car className="w-5 h-5 text-primary" />,
-  interior: <PageSearch className="w-5 h-5 text-primary" />,
-  detalle: <ReportColumns className="w-5 h-5 text-primary" />,
-  añadido: <PlusIcon className="w-5 h-5 text-primary" />,
+const CATEGORY_ICONS: Record<ServiceCategory, React.ReactElement> = {
+  exterior: <Car className="w-5 h-5" />,
+  interior: <PageSearch className="w-5 h-5" />,
+  detalle: <ReportColumns className="w-5 h-5" />,
+  añadido: <PlusIcon className="w-5 h-5" />,
 };
+
+const ICON_MAP: Record<string, React.ReactElement> = {
+  car: <Car className="w-5 h-5" />,
+  droplet: <Droplet className="w-5 h-5" />,
+  star: <Star className="w-5 h-5" />,
+  soap: <Soap className="w-5 h-5" />,
+  leaf: <Leaf className="w-5 h-5" />,
+  flash: <Flash className="w-5 h-5" />,
+  sun: <SunLight className="w-5 h-5" />,
+  wind: <Wind className="w-5 h-5" />,
+  wrench: <Wrench className="w-5 h-5" />,
+  tools: <Tools className="w-5 h-5" />,
+  shield: <Shield className="w-5 h-5" />,
+  flame: <FireFlame className="w-5 h-5" />,
+  "bright-star": <BrightStar className="w-5 h-5" />,
+};
+
+function getServiceIcon(service: Service): React.ReactElement {
+  if (service.icon && ICON_MAP[service.icon]) return ICON_MAP[service.icon];
+  return CATEGORY_ICONS[service.category];
+}
 
 export default function ServiceCard({ service, onEdit, onDelete, initiallyExpanded = false }: ServiceCardProps) {
   const { toggleServiceStatus } = useServices();
@@ -124,8 +144,11 @@ export default function ServiceCard({ service, onEdit, onDelete, initiallyExpand
        >
         <div className="flex items-center justify-between p-4">
           <div className="flex items-center gap-4 flex-1 min-w-0">
-            <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-2xl shrink-0">
-              {SERVICE_ICONS[service.category]}
+            <div
+              className={`w-12 h-12 rounded-full flex items-center justify-center shrink-0${service.color ? "" : " bg-primary/10 text-primary"}`}
+              style={service.color ? { backgroundColor: `${service.color}1A`, color: service.color } : undefined}
+            >
+              {getServiceIcon(service)}
             </div>
              <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1">

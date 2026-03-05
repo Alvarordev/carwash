@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -21,8 +21,39 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { serviceSchema, SERVICE_CATEGORIES, type ServiceFormData } from "@/lib/schemas/service";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Car, Droplet, Star, Soap, Leaf, Flash, SunLight, Wind, Wrench, Tools, Shield, FireFlame, BrightStar,
+  NavArrowDown, Check,
+} from "iconoir-react";
+import { serviceSchema, SERVICE_CATEGORIES, SERVICE_ICONS, type ServiceFormData } from "@/lib/schemas/service";
 import type { Service } from "@/lib/types";
+
+const ICON_COMPONENTS: Record<string, React.ReactElement> = {
+  car: <Car className="w-5 h-5" />,
+  droplet: <Droplet className="w-5 h-5" />,
+  star: <Star className="w-5 h-5" />,
+  soap: <Soap className="w-5 h-5" />,
+  leaf: <Leaf className="w-5 h-5" />,
+  flash: <Flash className="w-5 h-5" />,
+  sun: <SunLight className="w-5 h-5" />,
+  wind: <Wind className="w-5 h-5" />,
+  wrench: <Wrench className="w-5 h-5" />,
+  tools: <Tools className="w-5 h-5" />,
+  shield: <Shield className="w-5 h-5" />,
+  flame: <FireFlame className="w-5 h-5" />,
+  "bright-star": <BrightStar className="w-5 h-5" />,
+};
+
+const COLOR_PALETTE = [
+  "#3B82F6", "#06B6D4", "#22C55E", "#10B981", "#84CC16",
+  "#A855F7", "#8B5CF6", "#EC4899", "#EF4444", "#F97316",
+  "#EAB308", "#F59E0B", "#6B7280", "#0F172A", "#FFFFFF",
+];
 
 type ServiceFormDialogProps = {
   open: boolean;
@@ -40,6 +71,8 @@ export default function ServiceFormDialog({
   isSubmitting,
 }: ServiceFormDialogProps) {
   const isEditing = !!service;
+  const [iconOpen, setIconOpen] = useState(false);
+  const [colorOpen, setColorOpen] = useState(false);
 
   const {
     register,
@@ -54,6 +87,8 @@ export default function ServiceFormDialog({
       description: "",
       category: "exterior",
       status: "active",
+      color: null,
+      icon: null,
     },
   });
 
@@ -65,6 +100,8 @@ export default function ServiceFormDialog({
           description: service.description ?? "",
           category: service.category,
           status: service.status,
+          color: service.color ?? null,
+          icon: service.icon ?? null,
         });
       } else {
         reset({
@@ -72,6 +109,8 @@ export default function ServiceFormDialog({
           description: "",
           category: "exterior",
           status: "active",
+          color: null,
+          icon: null,
         });
       }
     }
@@ -120,6 +159,125 @@ export default function ServiceFormDialog({
             {errors.description && (
               <p className="text-destructive text-xs">{errors.description.message}</p>
             )}
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="flex flex-col gap-1.5">
+              <Label className="text-foreground text-sm font-medium">
+                Ícono
+              </Label>
+              <Controller
+                control={control}
+                name="icon"
+                render={({ field }) => {
+                  const selected = SERVICE_ICONS.find((i) => i.value === field.value);
+                  return (
+                    <DropdownMenu open={iconOpen} onOpenChange={setIconOpen}>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          className="w-full justify-between bg-card border-border rounded-md font-normal"
+                        >
+                          <span className="flex items-center gap-2">
+                            {selected ? (
+                              <>
+                                {ICON_COMPONENTS[selected.value]}
+                                <span>{selected.label}</span>
+                              </>
+                            ) : (
+                              <span className="text-muted-foreground">Elige un ícono</span>
+                            )}
+                          </span>
+                          <NavArrowDown className="w-4 h-4 text-muted-foreground" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent className="bg-card border-border rounded-md p-2 w-[220px]">
+                        <div className="grid grid-cols-4 gap-1">
+                          {SERVICE_ICONS.map((icon) => (
+                            <button
+                              key={icon.value}
+                              type="button"
+                              onClick={() => {
+                                field.onChange(icon.value);
+                                setIconOpen(false);
+                              }}
+                              className={`flex flex-col items-center justify-center gap-1 w-14 h-14 rounded-md text-xs transition-colors hover:bg-accent ${field.value === icon.value ? "bg-accent ring-1 ring-primary" : ""}`}
+                            >
+                              {ICON_COMPONENTS[icon.value]}
+                              <span className="leading-tight text-center text-[10px]">{icon.label}</span>
+                            </button>
+                          ))}
+                        </div>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  );
+                }}
+              />
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <Label className="text-foreground text-sm font-medium">
+                Color
+              </Label>
+              <Controller
+                control={control}
+                name="color"
+                render={({ field }) => (
+                  <DropdownMenu open={colorOpen} onOpenChange={setColorOpen}>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="w-full justify-between bg-card border-border rounded-md font-normal"
+                      >
+                        <span className="flex items-center gap-2">
+                          {field.value ? (
+                            <>
+                              <span
+                                className="w-5 h-5 rounded-full border border-border shrink-0"
+                                style={{ backgroundColor: field.value }}
+                              />
+                              <span className="font-mono text-sm">{field.value}</span>
+                            </>
+                          ) : (
+                            <>
+                              <span className="w-5 h-5 rounded-full border border-border shrink-0" />
+                              <span className="text-muted-foreground">Elige un color</span>
+                            </>
+                          )}
+                        </span>
+                        <NavArrowDown className="w-4 h-4 text-muted-foreground" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="bg-card border-border rounded-md p-3 w-[180px]">
+                      <div className="grid grid-cols-5 gap-2">
+                        {COLOR_PALETTE.map((color) => (
+                          <button
+                            key={color}
+                            type="button"
+                            onClick={() => {
+                              field.onChange(color);
+                              setColorOpen(false);
+                            }}
+                            className="relative w-7 h-7 rounded-full border border-border transition-transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-primary"
+                            style={{ backgroundColor: color }}
+                            title={color}
+                          >
+                            {field.value === color && (
+                              <Check
+                                className="absolute inset-0 m-auto w-3.5 h-3.5"
+                                style={{ color: color === "#FFFFFF" || color === "#EAB308" || color === "#84CC16" ? "#000" : "#fff" }}
+                              />
+                            )}
+                          </button>
+                        ))}
+                      </div>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                )}
+              />
+            </div>
           </div>
 
           <div className="grid grid-cols-2 gap-4">

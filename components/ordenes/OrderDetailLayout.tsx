@@ -23,7 +23,7 @@ export default function OrderDetailLayout({ order }: Props) {
         </div>
 
         <div className="flex items-center gap-3">
-          <Badge className={order.status === "Entregado" ? "bg-[#16A34A] text-white" : order.status === "Cancelado" ? "bg-[#FD2A2A] text-white" : "bg-primary text-white"}>
+          <Badge className={`bg-background h-8 border-border font-semibold ${order.status === "Entregado" ? "bg-status-3 text-background" : order.status === "Cancelado" ? "bg-destructive text-white" : order.status === "Terminado" ? "bg-status-2 text-white" : "bg-status-1 text-white"}`}>
             {order.status}
           </Badge>
           <Button variant="outline" size="sm">Edit Order</Button>
@@ -60,7 +60,7 @@ export default function OrderDetailLayout({ order }: Props) {
             </div>
           </section>
 
-          <section className="bg-card/80 border border-border rounded-sm p-4">
+          {/* <section className="bg-card/80 border border-border rounded-sm p-4">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center">
                 <ReportColumns className="size-5 text-primary mr-2" />
@@ -76,7 +76,7 @@ export default function OrderDetailLayout({ order }: Props) {
               <div className="flex items-center gap-2"><span className="h-2 w-2 rounded-full bg-[#FD7A48] inline-block"></span>Marked Damage</div>
               <div className="flex items-center gap-2"><span className="h-2 w-2 rounded-full bg-[#3FC56D] inline-block"></span>Previous Damage</div>
             </div>
-          </section>
+          </section> */}
 
           <section className="bg-card/80 border border-border rounded-sm p-4">
             <div className="flex items-center justify-between mb-3">
@@ -137,7 +137,7 @@ export default function OrderDetailLayout({ order }: Props) {
             <div className="flex flex-col gap-4">
               {(order.statusHistory || []).map((h, i) => (
                 <div key={i} className="flex items-start gap-3">
-                  <div className="mt-1 h-2 w-2 rounded-full bg-primary" />
+                  <div className={`mt-1 h-2 w-2 rounded-full ${h.status == 'En Proceso' ? 'bg-status-1' : h.status == 'Terminado' ? 'bg-status-2' : h.status == 'Entregado' ? 'bg-status-3' : 'bg-destructive'}`} />
                   <div>
                     <div className="text-sm text-white">{h.status}</div>
                     <div className="text-xs text-muted-foreground">{new Date(h.at).toLocaleString("es-PE")}</div>
