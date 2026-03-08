@@ -39,7 +39,6 @@ export const staffSchema = z.object({
     .optional(),
   email: z
     .string()
-    .email("Email inválido")
     .max(100, "Máximo 100 caracteres")
     .nullable()
     .optional(),

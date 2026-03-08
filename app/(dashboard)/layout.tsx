@@ -1,18 +1,31 @@
-import Sidebar from "@/components/layout/Sidebar";
-import Topbar from "@/components/layout/Topbar";
+import { createClient } from "@/lib/supabase/server";
+import DashboardShell from "@/components/layout/DashboardShell";
 
-export default function DashboardLayout({
+export default async function DashboardLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
-  return (
-    <div className="flex min-h-screen bg-background">
-      <Sidebar />
-      <div className="flex flex-col flex-1 min-w-0">
-        <Topbar />
-        <main className="flex-1 p-6">{children}</main>
-      </div>
-    </div>
-  );
+}: Readonly<{ children: React.ReactNode }>) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  let displayName = "Usuario";
+
+  if (user) {
+    const { data: profile } = await supabase
+      .from("user_profiles")
+      .select("*")
+      .eq("id", user.id)
+      .single();
+
+    console.log("aqui", user.id)
+
+    if (profile) {
+      displayName = `${profile.first_name} ${profile.last_name}`.trim();
+    } else {
+      displayName = user.user_metadata?.display_name ?? user.email ?? "Usuario";
+    }
+  }
+
+  console.log(user?.id)
+
+  return <DashboardShell displayName={displayName}>{children}</DashboardShell>;
 }

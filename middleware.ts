@@ -2,6 +2,7 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 const PUBLIC_ROUTES = ["/login"];
+const SUPER_ADMIN_EMAIL = "alvaro@gmail.com";
 
 export async function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl;
@@ -35,14 +36,22 @@ export async function middleware(request: NextRequest) {
         data: { user },
     } = await supabase.auth.getUser();
 
+    const isAdminRoute = pathname.startsWith("/admin");
+
     if (user && isPublic) {
-        return NextResponse.redirect(new URL("/dashboard", request.url));
+        const dest = user.email === SUPER_ADMIN_EMAIL ? "/admin" : "/dashboard";
+        return NextResponse.redirect(new URL(dest, request.url));
     }
 
     if (!user && !isPublic) {
         const loginUrl = new URL("/login", request.url);
         loginUrl.searchParams.set("next", pathname);
         return NextResponse.redirect(loginUrl);
+    }
+
+    // Block non-super-admin users from /admin
+    if (user && isAdminRoute && user.email !== SUPER_ADMIN_EMAIL) {
+        return NextResponse.redirect(new URL("/dashboard", request.url));
     }
 
     return response;

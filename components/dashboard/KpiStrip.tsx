@@ -29,8 +29,8 @@ export default function KpiStrip({
   const isOverTarget = avgServiceTime > TARGET_MINUTES;
 
   return (
-    <div className="grid grid-cols-4 gap-4">
-      <div className="flex flex-col col-span-2 bg-card-alt rounded-2xl p-6 relative overflow-hidden shadow-lg">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="flex flex-col sm:col-span-2 bg-card-alt rounded-2xl p-4 sm:p-6 relative overflow-hidden shadow-lg">
         <p className="font-medium text-primary mb-1">Rendimiento del día</p>
         <h2 className="text-3xl font-bold text-white leading-tight">
           Se completaron{" "}

@@ -150,7 +150,7 @@ export default function CustomerFormDialog({
         </DialogHeader>
 
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5 pt-1">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="flex flex-col gap-1.5">
               <Label htmlFor="firstName" className="text-foreground text-sm font-medium">
                 Nombre <span className="text-destructive">*</span>
@@ -182,7 +182,7 @@ export default function CustomerFormDialog({
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="flex flex-col gap-1.5">
               <Label className="text-foreground text-sm font-medium">Tipo de documento</Label>
               <Controller
@@ -226,7 +226,7 @@ export default function CustomerFormDialog({
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="flex flex-col gap-1.5">
               <Label htmlFor="phone" className="text-foreground text-sm font-medium">
                 Teléfono
@@ -326,7 +326,7 @@ export default function CustomerFormDialog({
                           }`}
                       >
                         <span
-                          className={`size-4 rounded border flex-shrink-0 flex items-center justify-center transition-colors ${isSelected ? "bg-primary border-primary" : "border-border"
+                          className={`size-4 rounded border shrink-0 flex items-center justify-center transition-colors ${isSelected ? "bg-primary border-primary" : "border-border"
                             }`}
                         >
                           {isSelected && (

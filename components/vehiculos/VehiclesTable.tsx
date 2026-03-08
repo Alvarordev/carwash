@@ -156,11 +156,11 @@ export default function VehiclesTable() {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex w-full justify-between items-center">
-        <h1 className="text-3xl font-semibold tracking-tight text-foreground pb-4 w-full">Gestión de Vehículos</h1>
+      <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+        <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-foreground">Gestión de Vehículos</h1>
 
-        <div className="flex gap-4 w-full justify-end items-center">
-          <div className="relative flex-1 min-w-48 max-w-xs flex">
+        <div className="flex gap-3 sm:ml-auto items-center">
+          <div className="relative flex-1 sm:flex-initial sm:w-64 flex">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Buscar placa, marca, modelo..."
@@ -171,14 +171,13 @@ export default function VehiclesTable() {
           </div>
           <Button
             onClick={handleOpenCreate}
-            className="bg-primary text-foreground px-6 font-semibold gap-1 shrink-0 rounded-sm cursor-pointer transition-all"
-            size={"lg"}
+            className="bg-primary text-foreground px-4 sm:px-6 font-semibold gap-1 shrink-0 rounded-sm cursor-pointer transition-all"
+            size="lg"
           >
             <Plus className="size-5 stroke-2" />
-            Nuevo registro
+            <span className="hidden sm:inline">Nuevo registro</span>
           </Button>
         </div>
-
       </div>
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between bg-card/80 border border-border px-4 py-5 rounded-sm">
@@ -225,7 +224,7 @@ export default function VehiclesTable() {
         </Button>
       </div>
 
-      <div className="rounded-md border border-border overflow-hidden">
+      <div className="rounded-md border border-border overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow className="border-border bg-card/20 ">

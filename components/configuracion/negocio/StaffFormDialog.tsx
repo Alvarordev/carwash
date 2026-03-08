@@ -103,7 +103,7 @@ export function StaffFormDialog({
         </DialogHeader>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1.5">
               <Label>Nombre</Label>
               <Input {...register("firstName")} placeholder="Juan" />
@@ -145,7 +145,7 @@ export function StaffFormDialog({
             )}
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1.5">
               <Label>Tipo de documento</Label>
               <Controller
@@ -176,7 +176,7 @@ export function StaffFormDialog({
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1.5">
               <Label>Teléfono</Label>
               <Input {...register("phone")} placeholder="Opcional" />

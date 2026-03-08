@@ -104,7 +104,7 @@ export default function StaffFormDialog({
         </DialogHeader>
 
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5 pt-1">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="flex flex-col gap-1.5">
               <Label htmlFor="firstName" className="text-foreground text-sm font-medium">
                 Nombre <span className="text-destructive">*</span>
@@ -136,7 +136,7 @@ export default function StaffFormDialog({
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="flex flex-col gap-1.5">
               <Label className="text-foreground text-sm font-medium">Tipo de documento</Label>
               <Controller
@@ -180,7 +180,7 @@ export default function StaffFormDialog({
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="flex flex-col gap-1.5">
               <Label className="text-foreground text-sm font-medium">
                 Rol <span className="text-destructive">*</span>

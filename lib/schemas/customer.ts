@@ -26,15 +26,14 @@ export const customerSchema = z.object({
     .optional(),
   phone: z
     .string()
-    .max(20, "Máximo 20 caracteres")
-    .nullable()
-    .optional(),
+    .max(20, "Máximo 20 caracteres"),
   email: z
     .string()
     .email("Email inválido")
     .max(100, "Máximo 100 caracteres")
+    .optional()
     .nullable()
-    .optional(),
+    .or(z.literal("")),
   status: z.enum(["active", "inactive"]),
   vehicleIds: z.array(z.string()).default([]),
 });

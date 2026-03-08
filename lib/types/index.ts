@@ -17,3 +17,4 @@ export type {
   WhatsAppScheduledMessage,
   WhatsAppMessageLog,
 } from "./whatsapp";
+export type { Company, UserProfile, UserRole } from "./company";

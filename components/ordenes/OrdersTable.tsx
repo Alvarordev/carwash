@@ -69,11 +69,11 @@ export default function OrdersTable() {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex w-full justify-between items-center">
-        <h1 className="text-3xl font-semibold tracking-tight text-foreground pb-4 w-full">Gestión de Órdenes</h1>
+      <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+        <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-foreground">Gestión de Órdenes</h1>
 
-        <div className="flex gap-4 w-full justify-end items-center">
-          <div className="relative flex-1 min-w-48 max-w-xs flex">
+        <div className="flex gap-3 sm:ml-auto items-center">
+          <div className="relative flex-1 sm:flex-initial sm:w-64 flex">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Buscar orden, cliente, placa..."
@@ -118,17 +118,17 @@ export default function OrdersTable() {
         </div>
       </div>
 
-      <div className="rounded-md border border-border overflow-hidden">
+      <div className="rounded-md border border-border overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow className="border-border bg-card/20 ">
               <TableHead className="text-white font-medium pl-4"># Orden</TableHead>
               <TableHead className="text-white font-medium">Cliente</TableHead>
-              <TableHead className="text-white font-medium">Vehículo</TableHead>
-              <TableHead className="text-white font-medium">Servicios</TableHead>
+              <TableHead className="text-white font-medium table-cell">Vehículo</TableHead>
+              <TableHead className="text-white font-medium hidden lg:table-cell">Servicios</TableHead>
               <TableHead className="text-white font-medium">Total</TableHead>
               <TableHead className="text-white font-medium">Estado</TableHead>
-              <TableHead className="text-white font-medium">Registrado</TableHead>
+              <TableHead className="text-white font-medium hidden lg:table-cell">Registrado</TableHead>
               <TableHead className="text-white font-medium text-right pr-4">Acciones</TableHead>
             </TableRow>
           </TableHeader>
@@ -138,11 +138,11 @@ export default function OrdersTable() {
                 <TableRow key={i} className="border-border bg-card">
                   <TableCell><Skeleton className="h-4 w-24 bg-muted" /></TableCell>
                   <TableCell><Skeleton className="h-4 w-32 bg-muted" /></TableCell>
-                  <TableCell><Skeleton className="h-4 w-24 bg-muted" /></TableCell>
-                  <TableCell><Skeleton className="h-4 w-36 bg-muted" /></TableCell>
+                  <TableCell className="hidden md:table-cell"><Skeleton className="h-4 w-24 bg-muted" /></TableCell>
+                  <TableCell className="hidden lg:table-cell"><Skeleton className="h-4 w-36 bg-muted" /></TableCell>
+                  <TableCell className="hidden sm:table-cell"><Skeleton className="h-4 w-20 bg-muted" /></TableCell>
                   <TableCell><Skeleton className="h-4 w-20 bg-muted" /></TableCell>
-                  <TableCell><Skeleton className="h-4 w-20 bg-muted" /></TableCell>
-                  <TableCell><Skeleton className="h-4 w-28 bg-muted" /></TableCell>
+                  <TableCell className="hidden lg:table-cell"><Skeleton className="h-4 w-28 bg-muted" /></TableCell>
                   <TableCell>
                     <div className="flex justify-end gap-2">
                       <Skeleton className="h-8 w-20 rounded-md bg-muted" />
@@ -173,7 +173,7 @@ export default function OrdersTable() {
                   <TableCell className="font-mono text-sm font-medium text-white pl-4">{order.orderNumber}</TableCell>
                   <TableCell>{order.customer ? `${order.customer.firstName} ${order.customer.lastName}` : "—"}</TableCell>
                   <TableCell>{order.vehicle ? `${order.vehicle.plate} - ${order.vehicle.brand}${order.vehicle.model ? " " + order.vehicle.model : ""}` : "—"}</TableCell>
-                  <TableCell className="flex flex-wrap">
+                  <TableCell className="flex-wrap hidden sm:flex" >
                     {order.items.map((it: OrderItem) => {
                       const color = it.color || "var(--primary)";
                       const getServiceIcon = (item: OrderItem) => {
@@ -189,7 +189,7 @@ export default function OrdersTable() {
                     })}
                   </TableCell>
                   <TableCell>S/ {order.total.toFixed(2)}</TableCell>
-                  <TableCell>
+                  <TableCell >
                     <Badge className='bg-background h-8 border-border'>
                       <span className={cn("size-2 mr-0.5 rounded-full animate-pulse", (() => {
                         switch (order.status) {
@@ -206,7 +206,7 @@ export default function OrdersTable() {
                       {order.status}
                     </Badge>
                   </TableCell>
-                  <TableCell>{new Date(order.registeredAt).toLocaleString("es-PE")}</TableCell>
+                  <TableCell className="hidden sm:table-cell">{new Date(order.registeredAt).toLocaleString("es-PE")}</TableCell>
                   <TableCell>
                     <div className="flex items-center justify-end gap-2" onClick={(e) => e.stopPropagation()}>
                       <Button size="sm" variant="outline">

@@ -182,7 +182,7 @@ export default function PromotionFormDialog({
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="flex flex-col gap-1.5">
               <Label className="text-foreground text-sm font-medium">
                 Tipo de descuento <span className="text-destructive">*</span>
@@ -324,7 +324,7 @@ export default function PromotionFormDialog({
             </div>
           )}
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="flex flex-col gap-1.5">
               <Label htmlFor="startDate" className="text-foreground text-sm font-medium">
                 Fecha de inicio
