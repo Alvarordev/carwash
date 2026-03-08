@@ -81,6 +81,8 @@ export default async function OrderPage({ params }: Props) {
       price: i.unit_price,
       quantity: i.quantity,
       subtotal: i.subtotal,
+      color: null,
+      icon: null
     })),
     staff: ((raw.order_staff ?? []) as RawStaff[]).map((s) => ({
       staffId: s.staff_id ?? s.id,
