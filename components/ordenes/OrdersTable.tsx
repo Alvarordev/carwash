@@ -20,9 +20,12 @@ import { useOrders } from "@/lib/hooks/useOrders";
 import OrderStatusDialog from "./OrderStatusDialog";
 import type { Order, OrderItem } from "@/lib/types/order";
 import { cn } from "@/lib/utils";
+import { ICON_MAP } from "../servicios/ServiceCard";
 
 export default function OrdersTable() {
   const { orders, loading, error, updateOrderStatus, cancelOrder } = useOrders();
+
+  console.log(orders)
 
   const [search, setSearch] = useState("");
   const [filterStatus, setFilterStatus] = useState<string>("all");
@@ -170,10 +173,20 @@ export default function OrdersTable() {
                   <TableCell className="font-mono text-sm font-medium text-white pl-4">{order.orderNumber}</TableCell>
                   <TableCell>{order.customer ? `${order.customer.firstName} ${order.customer.lastName}` : "—"}</TableCell>
                   <TableCell>{order.vehicle ? `${order.vehicle.plate} - ${order.vehicle.brand}${order.vehicle.model ? " " + order.vehicle.model : ""}` : "—"}</TableCell>
-                  <TableCell>
-                    {order.items.map((it: OrderItem) => (
-                      <span key={it.serviceId} className="inline-block bg-foreground text-background text-xs rounded px-2 py-1 mr-1 mb-1">{it.name}</span>
-                    ))}
+                  <TableCell className="flex flex-wrap">
+                    {order.items.map((it: OrderItem) => {
+                      const color = it.color || "var(--primary)";
+                      const getServiceIcon = (item: OrderItem) => {
+                        if (item.icon) return ICON_MAP[item.icon];
+                        return <div className="size-5 bg-muted rounded-full" />;
+                      }
+                      return (
+                        <div key={it.serviceId} style={{ color: color }} className="flex items-center h-8 gap-2 px-2 bg-background border border-border rounded-xl">
+                          {getServiceIcon(it)}
+                          <span className={`font-medium text-xs rounded-xl`}>{it.name}</span>
+                        </div>
+                      );
+                    })}
                   </TableCell>
                   <TableCell>S/ {order.total.toFixed(2)}</TableCell>
                   <TableCell>

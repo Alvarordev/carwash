@@ -34,7 +34,7 @@ const CATEGORY_ICONS: Record<ServiceCategory, React.ReactElement> = {
   añadido: <PlusIcon className="w-5 h-5" />,
 };
 
-const ICON_MAP: Record<string, React.ReactElement> = {
+export const ICON_MAP: Record<string, React.ReactElement> = {
   car: <Car className="w-5 h-5" />,
   droplet: <Droplet className="w-5 h-5" />,
   star: <Star className="w-5 h-5" />,
@@ -138,10 +138,10 @@ export default function ServiceCard({ service, onEdit, onDelete, initiallyExpand
 
   return (
     <>
-       <div
-         className="bg-card shadow-xl rounded-xl border border-border overflow-hidden cursor-pointer transition-all duration-200 hover:border-primary/30 hover:shadow-2xl"
-         onClick={() => setIsExpanded(!isExpanded)}
-       >
+      <div
+        className="bg-card shadow-xl rounded-xl border border-border overflow-hidden cursor-pointer transition-all duration-200 hover:border-primary/30 hover:shadow-2xl"
+        onClick={() => setIsExpanded(!isExpanded)}
+      >
         <div className="flex items-center justify-between p-4">
           <div className="flex items-center gap-4 flex-1 min-w-0">
             <div
@@ -150,17 +150,15 @@ export default function ServiceCard({ service, onEdit, onDelete, initiallyExpand
             >
               {getServiceIcon(service)}
             </div>
-             <div className="flex-1 min-w-0">
+            <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1">
                 <h3 className="text-lg font-bold text-foreground truncate">
                   {service.name}
                 </h3>
-                {/* Category pill/tag */}
                 <Badge variant="secondary" className="text-xs font-semibold capitalize mr-2">
                   {service.category}
                 </Badge>
               </div>
-              {/* Subtitle or detail pill for 'detalle' or 'añadido' */}
               {(service.category === "detalle" || service.category === "añadido") && (
                 <Badge variant="outline" className="text-xs">
                   {service.category === "detalle" ? "Especialidad" : "Extra"}
@@ -175,25 +173,25 @@ export default function ServiceCard({ service, onEdit, onDelete, initiallyExpand
 
           <div className="flex items-center gap-2 shrink-0">
             <div onClick={e => e.stopPropagation()} className="flex items-center">
-               <Switch
-                 checked={localStatus === "active"}
-                 size="default"
-                 disabled={isToggling}
-                 onCheckedChange={async (checked) => {
-                   setIsToggling(true);
-                   setLocalStatus(checked ? "active" : "inactive");
-                   try {
-                     await handleToggleStatus();
-                   } finally {
-                     setIsToggling(false);
-                   }
-                 }}
-                 aria-label="Alternar estado"
-                 className="mr-2"
-               />
-<span className={`text-xs font-medium ${localStatus === "active" ? "text-primary" : "text-muted-foreground"}`}>
-                 {localStatus === "active" ? "Activo" : "Inactivo"}
-               </span>
+              <Switch
+                checked={localStatus === "active"}
+                size="default"
+                disabled={isToggling}
+                onCheckedChange={async (checked) => {
+                  setIsToggling(true);
+                  setLocalStatus(checked ? "active" : "inactive");
+                  try {
+                    await handleToggleStatus();
+                  } finally {
+                    setIsToggling(false);
+                  }
+                }}
+                aria-label="Alternar estado"
+                className="mr-2"
+              />
+              <span className={`text-xs font-medium ${localStatus === "active" ? "text-primary" : "text-muted-foreground"}`}>
+                {localStatus === "active" ? "Activo" : "Inactivo"}
+              </span>
             </div>
 
             <DropdownMenu>

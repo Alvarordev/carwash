@@ -5,16 +5,24 @@ import { toast } from "sonner";
 import type { Order, OrderItem, OrderStaffAssignment, OrderStatusHistoryEntry, OrderCustomer, OrderVehicle } from "@/lib/types/order";
 import { createClient } from "@/lib/supabase/client";
 import { getCompanyId } from "@/lib/supabase/get-company-id";
+import { Service } from "@/lib/types/service";
 
 
-function mapOrderItems(rows: Record<string, unknown>[]): OrderItem[] {
-  return rows.map((r) => ({
-    serviceId: (r.service_id as string) ?? "",
-    name: r.service_name as string,
-    price: r.unit_price as number,
-    quantity: r.quantity as number,
-    subtotal: r.subtotal as number,
-  }));
+function mapOrderItems(rows: Record<string, unknown>[], servicesMap: Map<string, { icon: Service["icon"]; color: Service["color"] }>): OrderItem[] {
+  return rows.map((r) => {
+    const serviceId = (r.service_id as string) ?? "";
+    const serviceData = servicesMap.get(serviceId)
+
+    return {
+      serviceId: (r.service_id as string) ?? "",
+      name: r.service_name as string,
+      price: r.unit_price as number,
+      quantity: r.quantity as number,
+      subtotal: r.subtotal as number,
+      icon: serviceData?.icon ?? null,
+      color: serviceData?.color ?? null,
+    }
+  });
 }
 
 function mapOrderStaff(rows: Record<string, unknown>[]): OrderStaffAssignment[] {
@@ -82,6 +90,7 @@ export function useOrders() {
         { data: historyRows, error: hErr },
         { data: customerRows, error: cErr },
         { data: vehicleRows, error: vErr },
+        { data: serviceRows, error: svErr },
       ] = await Promise.all([
         supabase.from("orders").select("*").order("created_at", { ascending: false }),
         supabase.from("order_items").select("*"),
@@ -89,6 +98,7 @@ export function useOrders() {
         supabase.from("order_status_history").select("*").order("created_at"),
         supabase.from("customers").select("id, first_name, last_name"),
         supabase.from("vehicles").select("id, plate, brand, model, color"),
+        supabase.from("services").select("id, icon, color"),
       ]);
 
       if (oErr) throw new Error(oErr.message);
@@ -97,8 +107,12 @@ export function useOrders() {
       if (hErr) throw new Error(hErr.message);
       if (cErr) throw new Error(cErr.message);
       if (vErr) throw new Error(vErr.message);
+      if (svErr) throw new Error(svErr.message);
 
-      // Build lookup maps
+      const serviceMap = new Map();
+      for (const s of serviceRows ?? []) {
+        serviceMap.set(s.id, { icon: s.icon, color: s.color });
+      }
       const customerMap = new Map<string, OrderCustomer>();
       for (const c of customerRows ?? []) {
         customerMap.set(c.id, { id: c.id, firstName: c.first_name, lastName: c.last_name });
@@ -114,7 +128,8 @@ export function useOrders() {
       const mapped = (orderRows ?? []).map((o: OrderRow) => {
         const oId = o.id;
         const items = mapOrderItems(
-          (itemRows ?? []).filter((r: ItemRow) => r.order_id === oId) as Record<string, unknown>[]
+          (itemRows ?? []).filter((r: ItemRow) => r.order_id === oId) as Record<string, unknown>[],
+          serviceMap
         );
         const staff = mapOrderStaff(
           (staffRows ?? []).filter((r: ItemRow) => r.order_id === oId) as Record<string, unknown>[]
@@ -140,7 +155,6 @@ export function useOrders() {
     fetchOrders();
   }, [fetchOrders]);
 
-  // Realtime subscription: re-fetch on any change to orders, order_items, or order_status_history
   useEffect(() => {
     const debounceRef = { timer: null as ReturnType<typeof setTimeout> | null };
     const debouncedFetch = () => {

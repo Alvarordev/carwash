@@ -6,6 +6,8 @@ export type OrderItem = {
   price: number;
   quantity: number;
   subtotal: number;
+  color: string | null;
+  icon: string | null;
 };
 
 export type OrderStaffAssignment = {
