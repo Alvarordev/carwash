@@ -16,16 +16,11 @@ export default async function DashboardLayout({
       .eq("id", user.id)
       .single();
 
-    console.log("aqui", user.id)
-
     if (profile) {
       displayName = `${profile.first_name} ${profile.last_name}`.trim();
     } else {
       displayName = user.user_metadata?.display_name ?? user.email ?? "Usuario";
     }
   }
-
-  console.log(user?.id)
-
   return <DashboardShell displayName={displayName}>{children}</DashboardShell>;
 }

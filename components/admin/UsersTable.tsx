@@ -19,7 +19,6 @@ const ROLE_LABELS: Record<string, string> = {
 };
 
 export default function UsersTable({ users }: Props) {
-  console.log(users)
   return (
     <div className="rounded-md border border-border overflow-x-auto">
       <Table>

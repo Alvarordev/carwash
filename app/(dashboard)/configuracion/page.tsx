@@ -51,7 +51,7 @@ export default function ConfiguracionPage() {
           ))}
         </div>
         <div
-          className="absolute bottom-0 h-[2px] bg-primary transition-all duration-300 ease-in-out"
+          className="absolute bottom-0 h-0.5 bg-primary transition-all duration-300 ease-in-out"
           style={{ left: indicator.left, width: indicator.width }}
         />
       </div>

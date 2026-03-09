@@ -59,6 +59,13 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
     matcher: [
-        "/((?!_next/static|_next/image|favicon.ico|fonts/).*)",
+        /*
+         * Match all request paths EXCEPT:
+         * - _next/static (static files)
+         * - _next/image (image optimization)
+         * - _next/data (RSC data fetching — avoids parallel token refresh races)
+         * - favicon.ico, fonts, and common static extensions
+         */
+        "/((?!_next/static|_next/image|_next/data|favicon.ico|fonts/|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)",
     ],
 };

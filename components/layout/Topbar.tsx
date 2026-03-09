@@ -39,7 +39,6 @@ export default function Topbar({ onToggleSidebar, mobileOpen, displayName }: Top
         )}
       </button>
 
-      {/* Spacer */}
       <div className="flex-1" />
 
       <DropdownMenu>

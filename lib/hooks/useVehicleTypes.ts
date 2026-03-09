@@ -53,6 +53,7 @@ export function useVehicleTypes() {
         .single();
 
       if (error) throw new Error(error.message);
+
       const newType = mapVehicleType(created as Record<string, unknown>);
       setAllVehicleTypes((prev) =>
         [...prev, newType].sort((a, b) => a.name.localeCompare(b.name))
