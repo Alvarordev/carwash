@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { VehicleTypesSection } from "@/components/configuracion/negocio/VehicleTypesSection";
 import { ServiceCategoriesSection } from "@/components/configuracion/negocio/ServiceCategoriesSection";
 import { PaymentMethodsSection } from "@/components/configuracion/negocio/PaymentMethodsSection";
+import { ExpenseCategoriesSection } from "@/components/configuracion/negocio/ExpenseCategoriesSection";
 
 const TABS = [
   { value: "business", label: "Información del Negocio" },
@@ -61,6 +62,7 @@ export default function ConfiguracionPage() {
           <VehicleTypesSection />
           <ServiceCategoriesSection />
           <PaymentMethodsSection />
+          <ExpenseCategoriesSection />
         </div>
       )}
     </div>

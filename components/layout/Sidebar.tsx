@@ -10,6 +10,7 @@ import {
   Sparks,
   Community,
   Percentage,
+  HandCash,
   Settings,
 } from "iconoir-react";
 
@@ -27,6 +28,7 @@ const navItems: NavItem[] = [
   { label: "Servicios", href: "/servicios", icon: Sparks },
   { label: "Personal", href: "/personal", icon: Community },
   { label: "Promociones", href: "/promociones", icon: Percentage },
+  { label: "Gastos", href: "/gastos", icon: HandCash },
   { label: "Configuración", href: "/configuracion", icon: Settings },
 ];
 

@@ -18,3 +18,5 @@ export type {
   WhatsAppMessageLog,
 } from "./whatsapp";
 export type { Company, UserProfile, UserRole } from "./company";
+export type { ExpenseCategory } from "./expenseCategory";
+export type { Expense } from "./expense";
