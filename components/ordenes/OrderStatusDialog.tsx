@@ -30,7 +30,7 @@ export default function OrderStatusDialog({
 
   const handleSave = async () => {
     if (!status) return;
-    if (status === "Cancelado") {
+    if (status === "Anulado") {
       const parsed = reasonSchema.safeParse(reason);
       if (!parsed.success) {
         toast.error(parsed.error.errors[0].message);
@@ -39,7 +39,7 @@ export default function OrderStatusDialog({
     }
     setIsSubmitting(true);
     try {
-      await onConfirm(status, status === "Cancelado" ? reason : undefined);
+      await onConfirm(status, status === "Anulado" ? reason : undefined);
       onOpenChange(false);
     } catch {
       // handled by hook
@@ -48,7 +48,7 @@ export default function OrderStatusDialog({
     }
   };
 
-  const disableCancel = order.status === "Entregado";
+  const disableCancel = order.status === "Entregado" || order.status === "Anulado";
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -64,15 +64,16 @@ export default function OrderStatusDialog({
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="En Proceso">En Proceso</SelectItem>
+              <SelectItem value="Lavando">Lavando</SelectItem>
               <SelectItem value="Terminado">Terminado</SelectItem>
               <SelectItem value="Entregado">Entregado</SelectItem>
-              <SelectItem value="Cancelado" disabled={disableCancel}>Cancelado</SelectItem>
+              <SelectItem value="Anulado" disabled={disableCancel}>Anulado</SelectItem>
             </SelectContent>
           </Select>
 
-          {status === "Cancelado" && (
+          {status === "Anulado" && (
             <div className="mt-3">
-              <Textarea placeholder="Razón de cancelación" value={reason} onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setReason(e.target.value)} />
+              <Textarea placeholder="Razón de anulación" value={reason} onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setReason(e.target.value)} />
             </div>
           )}
         </div>

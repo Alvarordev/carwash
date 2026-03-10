@@ -1,4 +1,4 @@
-export type OrderStatus = "En Proceso" | "Terminado" | "Entregado" | "Cancelado";
+export type OrderStatus = "En Proceso" | "Lavando" | "Terminado" | "Entregado" | "Anulado";
 
 export type OrderItem = {
   serviceId: string;

@@ -654,6 +654,50 @@ export type Database = {
           },
         ]
       }
+      service_categories: {
+        Row: {
+          color: string | null
+          company_id: string
+          created_at: string | null
+          description: string | null
+          icon: string | null
+          id: string
+          name: string
+          status: string
+          updated_at: string | null
+        }
+        Insert: {
+          color?: string | null
+          company_id: string
+          created_at?: string | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          name: string
+          status?: string
+          updated_at?: string | null
+        }
+        Update: {
+          color?: string | null
+          company_id?: string
+          created_at?: string | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          name?: string
+          status?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "service_categories_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       service_pricing: {
         Row: {
           company_id: string
@@ -711,7 +755,7 @@ export type Database = {
       }
       services: {
         Row: {
-          category: Database["public"]["Enums"]["service_category"]
+          category_id: string
           color: string | null
           company_id: string
           created_at: string
@@ -723,7 +767,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
-          category: Database["public"]["Enums"]["service_category"]
+          category_id: string
           color?: string | null
           company_id: string
           created_at?: string
@@ -735,7 +779,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
-          category?: Database["public"]["Enums"]["service_category"]
+          category_id?: string
           color?: string | null
           company_id?: string
           created_at?: string
@@ -747,6 +791,13 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "services_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "service_categories"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "services_company_id_fkey"
             columns: ["company_id"]
@@ -1017,7 +1068,7 @@ export type Database = {
           {
             foreignKeyName: "whatsapp_config_company_id_fkey"
             columns: ["company_id"]
-            isOneToOne: true
+            isOneToOne: false
             referencedRelation: "companies"
             referencedColumns: ["id"]
           },
@@ -1244,7 +1295,12 @@ export type Database = {
     Enums: {
       discount_type: "percentage" | "fixed"
       document_type: "dni" | "carnet_extranjeria" | "pasaporte"
-      order_status: "En Proceso" | "Terminado" | "Entregado" | "Cancelado"
+      order_status:
+        | "En Proceso"
+        | "Lavando"
+        | "Terminado"
+        | "Entregado"
+        | "Anulado"
       payment_status: "pendiente" | "pagado" | "parcial"
       promotion_scope_type: "all" | "service" | "vehicleType"
       service_category: "exterior" | "interior" | "detalle" | "añadido"
@@ -1381,7 +1437,13 @@ export const Constants = {
     Enums: {
       discount_type: ["percentage", "fixed"],
       document_type: ["dni", "carnet_extranjeria", "pasaporte"],
-      order_status: ["En Proceso", "Terminado", "Entregado", "Cancelado"],
+      order_status: [
+        "En Proceso",
+        "Lavando",
+        "Terminado",
+        "Entregado",
+        "Anulado",
+      ],
       payment_status: ["pendiente", "pagado", "parcial"],
       promotion_scope_type: ["all", "service", "vehicleType"],
       service_category: ["exterior", "interior", "detalle", "añadido"],

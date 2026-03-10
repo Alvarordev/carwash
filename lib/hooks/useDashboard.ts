@@ -8,7 +8,6 @@ import {
     isSameDay,
 } from "@/lib/utils/dashboard";
 import type { Order, OrderItem, OrderStaffAssignment } from "@/lib/types/order";
-import type { ServiceCategory } from "@/lib/types/service";
 
 type RawOrder = {
     id: string;
@@ -86,7 +85,7 @@ function mapOrder(raw: RawOrder): Order {
     };
 }
 
-export type TopService = { serviceId: string; name: string; count: number; category: ServiceCategory | null };
+export type TopService = { serviceId: string; name: string; count: number; categoryId: string | null };
 export type WeekPoint = { date: string; ingresos: number; ordenes: number };
 
 export type DashboardData = {
@@ -160,15 +159,15 @@ export function useDashboard(): UseDashboardReturn {
                          order_staff ( id, staff_id, staff_name, role_snapshot )`
                     )
                     .order("created_at", { ascending: false }),
-                supabase.from("services").select("id, name, category"),
+                supabase.from("services").select("id, name, category_id"),
             ]);
 
             if (err) throw new Error(err.message);
 
             const serviceMap = new Map(
-                (svcRows ?? []).map((s: { id: string; name: string; category: ServiceCategory }) => [
+                (svcRows ?? []).map((s: { id: string; name: string; category_id: string }) => [
                     s.id,
-                    { name: s.name, category: s.category },
+                    { name: s.name, categoryId: s.category_id },
                 ])
             );
 
@@ -179,7 +178,7 @@ export function useDashboard(): UseDashboardReturn {
             );
             const ingresosHoy = todayOrders.reduce((s, o) => s + (o.total ?? 0), 0);
             const ordenesHoy = todayOrders.length;
-            const ordersEnProceso = todayOrders.filter((o) => o.status === "En Proceso").length;
+            const ordersEnProceso = todayOrders.filter((o) => o.status === "En Proceso" || o.status === "Lavando").length;
             const ordersEsperando = todayOrders.filter((o) => o.status === "Terminado").length;
             const avgServiceTime = calcAvgServiceTime(todayOrders);
 
@@ -190,7 +189,7 @@ export function useDashboard(): UseDashboardReturn {
             const topServices: TopService[] = rawTop.map((r) => {
                 const svc = serviceMap.get(r.serviceId);
                 const fallbackName = orders.flatMap((o) => o.items).find((i) => i.serviceId === r.serviceId)?.name ?? r.serviceId;
-                return { ...r, name: svc?.name ?? fallbackName, category: svc?.category ?? null };
+                return { ...r, name: svc?.name ?? fallbackName, categoryId: svc?.categoryId ?? null };
             });
 
             setData({

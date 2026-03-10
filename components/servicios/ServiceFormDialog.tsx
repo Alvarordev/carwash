@@ -30,8 +30,9 @@ import {
   Car, Droplet, Star, Soap, Leaf, Flash, SunLight, Wind, Wrench, Tools, Shield, FireFlame, BrightStar,
   NavArrowDown, Check,
 } from "iconoir-react";
-import { serviceSchema, SERVICE_CATEGORIES, SERVICE_ICONS, type ServiceFormData } from "@/lib/schemas/service";
+import { serviceSchema, SERVICE_ICONS, type ServiceFormData } from "@/lib/schemas/service";
 import type { Service } from "@/lib/types";
+import { useServiceCategories } from "@/lib/hooks/useServiceCategories";
 
 const ICON_COMPONENTS: Record<string, React.ReactElement> = {
   car: <Car className="w-5 h-5" />,
@@ -73,6 +74,7 @@ export default function ServiceFormDialog({
   const isEditing = !!service;
   const [iconOpen, setIconOpen] = useState(false);
   const [colorOpen, setColorOpen] = useState(false);
+  const { categories } = useServiceCategories();
 
   const {
     register,
@@ -85,7 +87,7 @@ export default function ServiceFormDialog({
     defaultValues: {
       name: "",
       description: "",
-      category: "exterior",
+      categoryId: "",
       status: "active",
       color: null,
       icon: null,
@@ -98,7 +100,7 @@ export default function ServiceFormDialog({
         reset({
           name: service.name,
           description: service.description ?? "",
-          category: service.category,
+          categoryId: service.categoryId,
           status: service.status,
           color: service.color ?? null,
           icon: service.icon ?? null,
@@ -107,7 +109,7 @@ export default function ServiceFormDialog({
         reset({
           name: "",
           description: "",
-          category: "exterior",
+          categoryId: "",
           status: "active",
           color: null,
           icon: null,
@@ -287,27 +289,27 @@ export default function ServiceFormDialog({
               </Label>
               <Controller
                 control={control}
-                name="category"
+                name="categoryId"
                 render={({ field }) => (
                   <Select
                     value={field.value}
-                    onValueChange={(val) => field.onChange(val as ServiceFormData["category"])}
+                    onValueChange={(val) => field.onChange(val)}
                   >
                     <SelectTrigger className="bg-card border-border rounded-md w-full">
                       <SelectValue placeholder="Seleccionar" />
                     </SelectTrigger>
                     <SelectContent className="bg-card border-border rounded-md">
-                      {SERVICE_CATEGORIES.map((cat) => (
-                        <SelectItem key={cat.value} value={cat.value}>
-                          {cat.label}
+                      {categories.map((cat) => (
+                        <SelectItem key={cat.id} value={cat.id}>
+                          {cat.name}
                         </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
                 )}
               />
-              {errors.category && (
-                <p className="text-destructive text-xs">{errors.category.message}</p>
+              {errors.categoryId && (
+                <p className="text-destructive text-xs">{errors.categoryId.message}</p>
               )}
             </div>
 

@@ -1,12 +1,20 @@
 import type { UUID, Timestamps, Status } from "./common";
 
-export type ServiceCategory = "exterior" | "interior" | "detalle" | "añadido";
+export type ServiceCategory = {
+  id: UUID;
+  name: string;
+  description: string | null;
+  color: string | null;
+  icon: string | null;
+  status: Status;
+  companyId: string;
+} & Timestamps;
 
 export type Service = {
   id: UUID;
   name: string;
   description: string | null;
-  category: ServiceCategory;
+  categoryId: string;
   status: Status;
   color: string | null;
   icon: string | null;

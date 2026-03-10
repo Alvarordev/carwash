@@ -1,12 +1,5 @@
 import { z } from "zod";
 
-export const SERVICE_CATEGORIES = [
-  { value: "exterior", label: "Exterior" },
-  { value: "interior", label: "Interior y Detalle" },
-  { value: "detalle", label: "Detalle" },
-  { value: "añadido", label: "Añadidos" },
-] as const;
-
 export const SERVICE_ICONS = [
   { value: "car", label: "Auto" },
   { value: "droplet", label: "Agua" },
@@ -35,7 +28,7 @@ export const serviceSchema = z.object({
     .max(500, "Máximo 500 caracteres")
     .nullable()
     .optional(),
-  category: z.enum(["exterior", "interior", "detalle", "añadido"]),
+  categoryId: z.string().min(1, "La categoría es requerida"),
   status: z.enum(["active", "inactive"]),
   color: z.string().nullable().optional(),
   icon: z.string().nullable().optional(),

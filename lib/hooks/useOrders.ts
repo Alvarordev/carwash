@@ -246,20 +246,20 @@ export function useOrders() {
       if (index === -1) throw new Error("Orden no encontrada");
       const prev = orders[index];
 
-      if (prev.status === "Entregado") {
-        toast.error("No se puede cancelar una orden entregada");
-        throw new Error("No se puede cancelar una orden entregada");
+      if (prev.status === "Entregado" || prev.status === "Anulado") {
+        toast.error("No se puede anular esta orden");
+        throw new Error("No se puede anular esta orden");
       }
 
       const backup = [...orders];
       const optimistic: Order = {
         ...prev,
-        status: "Cancelado",
+        status: "Anulado",
         cancelReason: reason,
         updatedAt: new Date().toISOString(),
         statusHistory: [
           ...(prev.statusHistory || []),
-          { status: "Cancelado", at: new Date().toISOString(), note: reason },
+          { status: "Anulado", at: new Date().toISOString(), note: reason },
         ],
       };
 
@@ -273,14 +273,14 @@ export function useOrders() {
               .from("orders")
               .update({ status: prev.status, cancel_reason: null })
               .eq("id", orderId);
-            toast.success("Cancelación revertida");
+            toast.success("Anulación revertida");
           } catch {
-            toast.error("No se pudo revertir la cancelación");
+            toast.error("No se pudo revertir la anulación");
           }
         })();
       };
 
-      toast.success("Orden cancelada", {
+      toast.success("Orden anulada", {
         duration: 8000,
         action: { label: "Deshacer", onClick: undo },
       });
@@ -288,7 +288,7 @@ export function useOrders() {
       try {
         const { error: err } = await supabase
           .from("orders")
-          .update({ status: "Cancelado", cancel_reason: reason })
+          .update({ status: "Anulado", cancel_reason: reason })
           .eq("id", orderId);
 
         if (err) throw new Error(err.message);
@@ -297,12 +297,12 @@ export function useOrders() {
         await supabase.from("order_status_history").insert({
           company_id,
           order_id: orderId,
-          status: "Cancelado",
+          status: "Anulado",
           note: reason,
         });
       } catch (err) {
         setOrders(backup);
-        toast.error("No se pudo cancelar la orden");
+        toast.error("No se pudo anular la orden");
         throw err;
       }
     },

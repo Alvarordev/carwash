@@ -41,6 +41,7 @@
   --color-status-1: var(--status-1);
   --color-status-2: var(--status-2);
   --color-status-3: var(--status-3);
+  --color-status-4: var(--status-4);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -98,6 +99,7 @@
   --status-1: oklch(62.31% 0.1881 259.83);
   --status-2: oklch(59.07% 0.22163 291.739);
   --status-3: oklch(85.107% 0.22784 149.426);
+  --status-4: oklch(72% 0.14 200);
 }
 
 .dark {

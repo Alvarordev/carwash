@@ -23,7 +23,7 @@ export default function OrderDetailLayout({ order }: Props) {
         </div>
 
         <div className="flex items-center gap-3">
-          <Badge className={`bg-background h-8 border-border font-semibold ${order.status === "Entregado" ? "bg-status-3 text-background" : order.status === "Cancelado" ? "bg-destructive text-white" : order.status === "Terminado" ? "bg-status-2 text-white" : "bg-status-1 text-white"}`}>
+          <Badge className={`bg-background h-8 border-border font-semibold ${order.status === "Entregado" ? "bg-status-3 text-background" : order.status === "Anulado" ? "bg-destructive text-white" : order.status === "Terminado" ? "bg-status-2 text-white" : order.status === "Lavando" ? "bg-status-4 text-white" : "bg-status-1 text-white"}`}>
             {order.status}
           </Badge>
           <Button variant="outline" size="sm">Edit Order</Button>
@@ -137,7 +137,7 @@ export default function OrderDetailLayout({ order }: Props) {
             <div className="flex flex-col gap-4">
               {(order.statusHistory || []).map((h, i) => (
                 <div key={i} className="flex items-start gap-3">
-                  <div className={`mt-1 h-2 w-2 rounded-full ${h.status == 'En Proceso' ? 'bg-status-1' : h.status == 'Terminado' ? 'bg-status-2' : h.status == 'Entregado' ? 'bg-status-3' : 'bg-destructive'}`} />
+                  <div className={`mt-1 h-2 w-2 rounded-full ${h.status === 'En Proceso' ? 'bg-status-1' : h.status === 'Lavando' ? 'bg-status-4' : h.status === 'Terminado' ? 'bg-status-2' : h.status === 'Entregado' ? 'bg-status-3' : 'bg-destructive'}`} />
                   <div>
                     <div className="text-sm text-white">{h.status}</div>
                     <div className="text-xs text-muted-foreground">{new Date(h.at).toLocaleString("es-PE")}</div>
