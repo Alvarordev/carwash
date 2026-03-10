@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
-import { MoreHoriz, Plus, EditPencil, Trash, Minus, Plus as PlusIcon, Car, PageSearch, ReportColumns, Droplet, Star, Soap, Leaf, Flash, SunLight, Wind, Wrench, Tools, Shield, FireFlame, BrightStar } from "iconoir-react";
+import { MoreHoriz, Plus, EditPencil, Trash, Minus, Plus as PlusIcon, Car, Droplet, Star, Soap, Leaf, Flash, SunLight, Wind, Wrench, Tools, Shield, FireFlame, BrightStar } from "iconoir-react";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
@@ -15,23 +15,17 @@ import {
 import { useServices } from "@/lib/hooks/useServices";
 import { useServicePricings } from "@/lib/hooks/useServicePricings";
 import { useVehicleTypes } from "@/lib/hooks/useVehicleTypes";
-import type { Service, ServicePricing, ServiceCategory } from "@/lib/types";
+import type { Service, ServicePricing } from "@/lib/types";
 import PricingCard from "./PricingCard";
 import PricingFormDialog from "./PricingFormDialog";
 import DeletePricingDialog from "./DeletePricingDialog";
 
 type ServiceCardProps = {
   service: Service;
+  categoryName: string | null;
   onEdit: (service: Service) => void;
   onDelete: (service: Service) => void;
   initiallyExpanded?: boolean;
-};
-
-const CATEGORY_ICONS: Record<ServiceCategory, React.ReactElement> = {
-  exterior: <Car className="w-5 h-5" />,
-  interior: <PageSearch className="w-5 h-5" />,
-  detalle: <ReportColumns className="w-5 h-5" />,
-  añadido: <PlusIcon className="w-5 h-5" />,
 };
 
 export const ICON_MAP: Record<string, React.ReactElement> = {
@@ -52,10 +46,10 @@ export const ICON_MAP: Record<string, React.ReactElement> = {
 
 function getServiceIcon(service: Service): React.ReactElement {
   if (service.icon && ICON_MAP[service.icon]) return ICON_MAP[service.icon];
-  return CATEGORY_ICONS[service.category];
+  return <Car className="w-5 h-5" />;
 }
 
-export default function ServiceCard({ service, onEdit, onDelete, initiallyExpanded = false }: ServiceCardProps) {
+export default function ServiceCard({ service, categoryName, onEdit, onDelete, initiallyExpanded = false }: ServiceCardProps) {
   const { toggleServiceStatus } = useServices();
   const { getPricingsByService, createPricing, updatePricing, deletePricing } = useServicePricings();
   const { vehicleTypes } = useVehicleTypes();
@@ -155,15 +149,12 @@ export default function ServiceCard({ service, onEdit, onDelete, initiallyExpand
                 <h3 className="text-lg font-bold text-foreground truncate">
                   {service.name}
                 </h3>
-                <Badge variant="secondary" className="text-xs font-semibold capitalize mr-2">
-                  {service.category}
-                </Badge>
+                {categoryName && (
+                  <Badge variant="secondary" className="text-xs font-semibold capitalize mr-2">
+                    {categoryName}
+                  </Badge>
+                )}
               </div>
-              {(service.category === "detalle" || service.category === "añadido") && (
-                <Badge variant="outline" className="text-xs">
-                  {service.category === "detalle" ? "Especialidad" : "Extra"}
-                </Badge>
-              )}
 
               <p className="text-sm text-muted-foreground truncate mt-1">
                 {service.description ?? "Sin descripción"}

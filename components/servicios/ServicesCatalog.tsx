@@ -5,30 +5,20 @@ import { toast } from "sonner";
 import { Plus } from "iconoir-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-// import { Card, CardHeader, CardTitle, CardAction, CardContent } from "@/components/ui/card";
-// import { Badge } from "@/components/ui/badge";
 import { useServices } from "@/lib/hooks/useServices";
-import type { Service, ServiceCategory } from "@/lib/types";
+import { useServiceCategories } from "@/lib/hooks/useServiceCategories";
+import type { Service } from "@/lib/types";
 import type { ServiceFormData } from "@/lib/schemas/service";
 import ServiceCard from "./ServiceCard";
 import ServiceFormDialog from "./ServiceFormDialog";
 import DeleteServiceDialog from "./DeleteServiceDialog";
 
-const FILTERS = [
-  { value: "all", label: "Todos los servicios" },
-  { value: "exterior", label: "Exterior" },
-  { value: "interior", label: "Interior y Detalle" },
-  { value: "añadido", label: "Añadidos" },
-] as const;
-
-// import { usePromotions } from '@/lib/hooks/usePromotions';
-
 export default function ServicesCatalog() {
   const { services, loading, error, createService, updateService, deleteService } = useServices();
-  // const { promotions } = usePromotions();
-  
-  const [activeFilter, setActiveFilter] = useState<"all" | ServiceCategory>("all");
-  
+  const { allCategories } = useServiceCategories();
+
+  const [activeFilter, setActiveFilter] = useState<"all" | string>("all");
+
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingService, setEditingService] = useState<Service | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -39,7 +29,7 @@ export default function ServicesCatalog() {
 
   const filteredServices = services.filter((s) => {
     if (activeFilter === "all") return true;
-    return s.category === activeFilter;
+    return s.categoryId === activeFilter;
   });
 
   const handleOpenCreate = () => {
@@ -90,6 +80,8 @@ export default function ServicesCatalog() {
     }
   };
 
+  const categoryMap = new Map(allCategories.map((c) => [c.id, c.name]));
+
   return (
     <div className="flex flex-col gap-6">
       <div className="flex w-full justify-between items-center">
@@ -105,79 +97,31 @@ export default function ServicesCatalog() {
           Agregar Servicio
         </Button>
       </div>
-      {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-2">
-        <Card className="shadow-md bg-card border border-card">
-          <CardHeader>
-            <CardTitle>Servicios Totales</CardTitle>
-            <CardAction>
-              <Badge variant="default">{services.length}</Badge>
-            </CardAction>
-          </CardHeader>
-          <CardContent>
-            <span className="text-muted-foreground text-xs">Todos los registrados</span>
-          </CardContent>
-        </Card>
-        <Card className="shadow-md bg-card border border-card">
-          <CardHeader>
-            <CardTitle>Activos</CardTitle>
-            <CardAction>
-              <Badge variant="secondary">{services.filter(s => s.status === "active").length}</Badge>
-            </CardAction>
-          </CardHeader>
-          <CardContent>
-            <span className="text-muted-foreground text-xs">Actualmente disponibles</span>
-          </CardContent>
-        </Card>
-        <Card className="shadow-md bg-card border border-card">
-          <CardHeader>
-            <CardTitle>Promociones</CardTitle>
-            <CardAction>
-              <Badge variant="outline">{promotions.filter(p => p.status === "active" && (p.scope === "service" || p.scope === "all")).length}</Badge>
-            </CardAction>
-          </CardHeader>
-          <CardContent>
-            <span className="text-muted-foreground text-xs">Servicios con descuento</span>
-          </CardContent>
-        </Card>
 
-        <Card className="shadow-md bg-card border border-card">
-          <CardHeader>
-            <CardTitle>Exterior</CardTitle>
-            <CardAction>
-              <Badge variant="ghost">{services.filter(s => s.category === "exterior").length}</Badge>
-            </CardAction>
-          </CardHeader>
-          <CardContent>
-            <span className="text-muted-foreground text-xs">Servicios para exteriores</span>
-          </CardContent>
-        </Card>
-        <Card className="shadow-md bg-card border border-card">
-          <CardHeader>
-            <CardTitle>Interior</CardTitle>
-            <CardAction>
-              <Badge variant="ghost">{services.filter(s => s.category === "interior").length}</Badge>
-            </CardAction>
-          </CardHeader>
-          <CardContent>
-            <span className="text-muted-foreground text-xs">Servicios de interior</span>
-          </CardContent>
-        </Card>
-      </div> */}
-
-      
       <div className="flex flex-wrap gap-2">
-        {FILTERS.map((filter) => (
+        <Button
+          variant="outline"
+          onClick={() => setActiveFilter("all")}
+          className={`rounded-sm px-4 h-9 text-sm font-medium transition-all ${
+            activeFilter === "all"
+              ? "bg-foreground text-background border-foreground hover:bg-foreground hover:text-background"
+              : "bg-transparent border-border text-muted-foreground hover:bg-muted hover:text-foreground"
+          }`}
+        >
+          Todos los servicios
+        </Button>
+        {allCategories.map((cat) => (
           <Button
-            key={filter.value}
+            key={cat.id}
             variant="outline"
-            onClick={() => setActiveFilter(filter.value as "all" | ServiceCategory)}
+            onClick={() => setActiveFilter(cat.id)}
             className={`rounded-sm px-4 h-9 text-sm font-medium transition-all ${
-              activeFilter === filter.value
+              activeFilter === cat.id
                 ? "bg-foreground text-background border-foreground hover:bg-foreground hover:text-background"
                 : "bg-transparent border-border text-muted-foreground hover:bg-muted hover:text-foreground"
             }`}
           >
-            {filter.label}
+            {cat.name}
           </Button>
         ))}
       </div>
@@ -199,9 +143,6 @@ export default function ServicesCatalog() {
         ) : error ? (
           <div className="bg-card/80 rounded-lg border border-border p-8 text-center">
             <p className="text-muted-foreground">Error al cargar los servicios.</p>
-            <p className="text-sm text-muted-foreground mt-1">
-              Asegúrate de que json-server esté corriendo en el puerto 3001.
-            </p>
           </div>
         ) : filteredServices.length === 0 ? (
           <div className="bg-card/80 rounded-lg border border-border p-8 text-center">
@@ -224,6 +165,7 @@ export default function ServicesCatalog() {
             <ServiceCard
               key={service.id}
               service={service}
+              categoryName={categoryMap.get(service.categoryId) ?? null}
               onEdit={handleOpenEdit}
               onDelete={handleOpenDelete}
               initiallyExpanded={i === 0}
