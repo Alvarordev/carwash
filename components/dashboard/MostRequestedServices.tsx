@@ -1,8 +1,7 @@
 import type { FC, SVGProps } from "react";
 import { Car, Sparks, Sofa, PlusCircle } from "iconoir-react";
-import type { ServiceCategory } from "@/lib/types/service";
 
-type TopItem = { serviceId: string; count: number; name?: string; category: ServiceCategory | null };
+type TopItem = { serviceId: string; count: number; name?: string; categoryId: string | null };
 
 type CategoryConfig = {
   Icon: FC<SVGProps<SVGSVGElement>>;
@@ -11,7 +10,7 @@ type CategoryConfig = {
   bar: string;
 };
 
-const CATEGORY_CONFIG: Record<ServiceCategory, CategoryConfig> = {
+const CATEGORY_CONFIG: Record<string, CategoryConfig> = {
   exterior: { Icon: Car, bg: "bg-orange-500/15", text: "text-orange-400", bar: "#f97316" },
   interior: { Icon: Sofa, bg: "bg-blue-500/15", text: "text-blue-400", bar: "#3b82f6" },
   detalle: { Icon: Sparks, bg: "bg-violet-500/15", text: "text-violet-400", bar: "#8b5cf6" },
@@ -42,8 +41,8 @@ export default function MostRequestedServices({ top }: { top: TopItem[] }) {
       <div className="space-y-5">
         {top.map((t, idx) => {
           const pct = Math.round((t.count / total) * 100);
-          const cfg = t.category
-            ? CATEGORY_CONFIG[t.category]
+          const cfg = t.categoryId
+            ? CATEGORY_CONFIG[t.categoryId]
             : FALLBACK_CONFIGS[idx % FALLBACK_CONFIGS.length];
           const { Icon } = cfg;
           return (
