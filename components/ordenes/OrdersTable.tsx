@@ -46,7 +46,7 @@ export default function OrdersTable() {
 
   const handleConfirmStatus = async (status: Order["status"], reason?: string) => {
     if (!editingOrder) return;
-    if (status === "Cancelado") {
+    if (status === "Anulado") {
       await cancelOrder(editingOrder.id, reason ?? "");
     } else {
       await updateOrderStatus(editingOrder.id, status);
@@ -101,7 +101,7 @@ export default function OrdersTable() {
               <SelectItem value="En Proceso">En Proceso</SelectItem>
               <SelectItem value="Terminado">Terminado</SelectItem>
               <SelectItem value="Entregado">Entregado</SelectItem>
-              <SelectItem value="Cancelado">Cancelado</SelectItem>
+              <SelectItem value="Anulado">Anulado</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -195,7 +195,7 @@ export default function OrdersTable() {
                         switch (order.status) {
                           case "Entregado":
                             return "bg-status-3 text-white";
-                          case "Cancelado":
+                          case "Anulado":
                             return "bg-destructive text-white";
                           case "Terminado":
                             return "bg-status-2 text-white";
