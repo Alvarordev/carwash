@@ -8,7 +8,10 @@ export const createUserSchema = z.object({
   role: z.enum(["admin", "operator"]),
   // Either pick an existing company or create a new one
   companyId: z.string().uuid().optional(),
-  newCompanyName: z.string().min(2).max(100).optional(),
+  newCompanyName: z.preprocess(
+    (v) => (v === "" ? undefined : v),
+    z.string().min(2, "Mínimo 2 caracteres").max(100).optional()
+  ),
 }).refine(
   (data) => data.companyId || data.newCompanyName,
   {
