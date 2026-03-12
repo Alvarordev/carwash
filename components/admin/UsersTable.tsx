@@ -24,11 +24,11 @@ export default function UsersTable({ users }: Props) {
       <Table>
         <TableHeader>
           <TableRow className="border-border bg-card/20">
-            <TableHead className="text-white font-medium pl-4">Nombre</TableHead>
-            <TableHead className="text-white font-medium hidden sm:table-cell">Email</TableHead>
-            <TableHead className="text-white font-medium">Rol</TableHead>
-            <TableHead className="text-white font-medium hidden md:table-cell">Empresa</TableHead>
-            <TableHead className="text-white font-medium hidden lg:table-cell">Creado</TableHead>
+            <TableHead className="text-foreground font-medium pl-4">Nombre</TableHead>
+            <TableHead className="text-foreground font-medium hidden sm:table-cell">Email</TableHead>
+            <TableHead className="text-foreground font-medium">Rol</TableHead>
+            <TableHead className="text-foreground font-medium hidden md:table-cell">Empresa</TableHead>
+            <TableHead className="text-foreground font-medium hidden lg:table-cell">Creado</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -41,14 +41,14 @@ export default function UsersTable({ users }: Props) {
           ) : (
             users.map((u) => (
               <TableRow key={u.id} className="border-border bg-card hover:bg-card/40 transition-colors">
-                <TableCell className="pl-4 font-medium text-white">
+                <TableCell className="pl-4 font-medium text-foreground">
                   {u.firstName} {u.lastName}
                 </TableCell>
                 <TableCell className="hidden sm:table-cell text-sm text-muted-foreground">
                   {u.email || <span className="italic">—</span>}
                 </TableCell>
                 <TableCell>
-                  <Badge className="bg-background py-1 px-2.5 text-white rounded-md font-normal">
+                  <Badge className="bg-background py-1 px-2.5 text-foreground rounded-md font-normal">
                     {ROLE_LABELS[u.role] ?? u.role}
                   </Badge>
                 </TableCell>

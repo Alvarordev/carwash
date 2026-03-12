@@ -272,7 +272,7 @@ export default function CustomerFormDialog({
                   <SelectTrigger className="bg-card border-border rounded-md">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent className="bg-popover border-border rounded-md">
+                  <SelectContent className="bg-background border-border rounded-md">
                     <SelectItem value="active">Activo</SelectItem>
                     <SelectItem value="inactive">Inactivo</SelectItem>
                   </SelectContent>
@@ -341,7 +341,7 @@ export default function CustomerFormDialog({
                             </svg>
                           )}
                         </span>
-                        <span className="font-mono text-xs font-semibold w-20 shrink-0 text-white">
+                        <span className="font-mono text-xs font-semibold w-20 shrink-0 text-foreground">
                           {vehicle.plate}
                         </span>
                         <span className={`flex-1 truncate ${isSelected ? "text-foreground" : "text-muted-foreground"}`}>

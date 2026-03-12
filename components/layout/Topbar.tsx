@@ -1,7 +1,8 @@
 "use client";
 
 import { useTransition } from "react";
-import { Menu, Xmark, LogOut, User } from "iconoir-react";
+import { Menu, Xmark, LogOut, User, SunLight, HalfMoon } from "iconoir-react";
+import { useTheme } from "next-themes";
 import { signOut } from "@/lib/actions/auth";
 import {
   DropdownMenu,
@@ -18,6 +19,7 @@ type TopbarProps = {
 
 export default function Topbar({ onToggleSidebar, mobileOpen, displayName }: TopbarProps) {
   const [isPending, startTransition] = useTransition();
+  const { resolvedTheme, setTheme } = useTheme();
 
   const handleSignOut = () => {
     startTransition(async () => {
@@ -40,6 +42,18 @@ export default function Topbar({ onToggleSidebar, mobileOpen, displayName }: Top
       </button>
 
       <div className="flex-1" />
+
+      <button
+        onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
+        className="rounded-lg p-2 text-muted-foreground hover:bg-card hover:text-foreground transition-colors"
+        aria-label="Cambiar tema"
+      >
+        {resolvedTheme === "dark" ? (
+          <SunLight className="size-5" />
+        ) : (
+          <HalfMoon className="size-5" />
+        )}
+      </button>
 
       <DropdownMenu>
         <DropdownMenuTrigger asChild>

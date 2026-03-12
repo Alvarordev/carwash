@@ -212,19 +212,19 @@ export default function StaffTable() {
         </Button>
       </div>
 
-      <div className="rounded-md border border-border overflow-x-auto">
+      <div className="rounded-md shadow-sm overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow className="border-border bg-card/20">
-              <TableHead className="text-white font-medium pl-4">Nombre</TableHead>
-              <TableHead className="text-white font-medium">Rol</TableHead>
-              <TableHead className="text-white font-medium hidden sm:table-cell">Teléfono</TableHead>
-              <TableHead className="text-white font-medium hidden md:table-cell">Email</TableHead>
-              <TableHead className="text-white font-medium hidden lg:table-cell">
+              <TableHead className="text-foreground font-medium pl-4">Nombre</TableHead>
+              <TableHead className="text-foreground font-medium">Rol</TableHead>
+              <TableHead className="text-foreground font-medium hidden sm:table-cell">Teléfono</TableHead>
+              <TableHead className="text-foreground font-medium hidden md:table-cell">Email</TableHead>
+              <TableHead className="text-foreground font-medium hidden lg:table-cell">
                 Nro. Doc.
               </TableHead>
-              <TableHead className="text-white font-medium">Estado</TableHead>
-              <TableHead className="text-white font-medium text-right pr-4">Acciones</TableHead>
+              <TableHead className="text-foreground font-medium">Estado</TableHead>
+              <TableHead className="text-foreground font-medium text-right pr-4">Acciones</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -262,7 +262,7 @@ export default function StaffTable() {
                 <TableCell colSpan={7} className="text-center py-12">
                   <div className="flex flex-col items-center gap-3 text-muted-foreground">
                     <User className="h-10 w-10 opacity-30" />
-                    <p className="text-sm text-white">Error al cargar el personal.</p>
+                    <p className="text-sm text-foreground">Error al cargar el personal.</p>
                     <p className="text-xs">
                       Asegúrate de que json-server esté corriendo en el puerto 3001.
                     </p>
@@ -274,7 +274,7 @@ export default function StaffTable() {
                 <TableCell colSpan={7} className="text-center py-12">
                   <div className="flex flex-col items-center gap-3 text-muted-foreground">
                     <User className="h-10 w-10 opacity-30" />
-                    <p className="text-sm text-white">
+                    <p className="text-sm text-foreground">
                       {hasActiveFilters
                         ? "No se encontró personal con los filtros aplicados."
                         : "No hay personal registrado aún."}
@@ -300,7 +300,7 @@ export default function StaffTable() {
                   className="border-border bg-card/80 hover:bg-card/40 transition-colors"
                 >
                   <TableCell className="pl-4">
-                    <span className="font-medium text-white">
+                    <span className="font-medium text-foreground">
                       {member.firstName} {member.lastName}
                     </span>
                   </TableCell>
@@ -318,13 +318,13 @@ export default function StaffTable() {
                       {ROLE_LABELS[member.role]}
                     </Badge>
                   </TableCell>
-                  <TableCell className="hidden sm:table-cell text-sm text-white">
+                  <TableCell className="hidden sm:table-cell text-sm text-foreground">
                     {member.phone ?? <span className="text-muted-foreground italic">—</span>}
                   </TableCell>
-                  <TableCell className="hidden md:table-cell text-sm text-white">
+                  <TableCell className="hidden md:table-cell text-sm text-foreground">
                     {member.email ?? <span className="text-muted-foreground italic">—</span>}
                   </TableCell>
-                  <TableCell className="hidden lg:table-cell text-sm text-white">
+                  <TableCell className="hidden lg:table-cell text-sm text-foreground">
                     {member.docNumber ? (
                       <span className="font-mono">{member.docNumber}</span>
                     ) : (
@@ -333,7 +333,7 @@ export default function StaffTable() {
                   </TableCell>
                   <TableCell>
                     <Badge
-                      className="bg-background py-1 px-2.5 gap-2 text-white rounded-md font-normal"
+                      className="bg-background py-1 px-2.5 gap-2 text-foreground rounded-md font-normal"
                     >
                       <span
                         className={`size-2 rounded-full ${member.status === "active" ? "bg-primary" : "bg-[#FD542A]"
@@ -355,7 +355,7 @@ export default function StaffTable() {
                       <Button
                         size="sm"
                         onClick={() => handleOpenDelete(member)}
-                        className="text-white gap-1.5 rounded-sm h-8 px-3 text-xs font-medium cursor-pointer"
+                        className="text-foreground gap-1.5 rounded-sm h-8 px-3 text-xs font-medium cursor-pointer"
                         style={{ backgroundColor: "#FD2A2A" }}
                       >
                         <Trash className="h-3.5 w-3.5" />

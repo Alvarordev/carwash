@@ -1,7 +1,8 @@
 import type { FC, SVGProps } from "react";
 import { Car, Sparks, Sofa, PlusCircle } from "iconoir-react";
+import { ServiceCategory } from "@/lib/types";
 
-type TopItem = { serviceId: string; count: number; name?: string; categoryId: string | null };
+type TopItem = { serviceId: string; count: number; name?: string; categoryId: string | null; category: ServiceCategory | null };
 
 type CategoryConfig = {
   Icon: FC<SVGProps<SVGSVGElement>>;
@@ -27,6 +28,8 @@ const FALLBACK_CONFIGS: CategoryConfig[] = [
 export default function MostRequestedServices({ top }: { top: TopItem[] }) {
   const total = top.reduce((s, t) => s + t.count, 0) || 1;
 
+  console.log()
+
   return (
     <div className="bg-card border border-border rounded-2xl p-5">
       <div className="flex items-center justify-between mb-5">
@@ -41,9 +44,9 @@ export default function MostRequestedServices({ top }: { top: TopItem[] }) {
       <div className="space-y-5">
         {top.map((t, idx) => {
           const pct = Math.round((t.count / total) * 100);
-          const cfg = t.categoryId
-            ? CATEGORY_CONFIG[t.categoryId]
-            : FALLBACK_CONFIGS[idx % FALLBACK_CONFIGS.length];
+          const cfg =
+            (t.category?.name ? CATEGORY_CONFIG[t.category.name] : undefined) ??
+            FALLBACK_CONFIGS[idx % FALLBACK_CONFIGS.length];
           const { Icon } = cfg;
           return (
             <div key={t.serviceId}>

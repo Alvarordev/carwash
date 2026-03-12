@@ -50,7 +50,7 @@ export default function DeletePricingDialog({
               e.preventDefault();
               onConfirm();
             }}
-            className="bg-destructive text-white hover:bg-destructive/90"
+            className="bg-destructive text-foreground hover:bg-destructive/90"
             disabled={isDeleting}
           >
             {isDeleting ? "Eliminando..." : "Eliminar"}

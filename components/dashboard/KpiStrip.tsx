@@ -30,21 +30,21 @@ export default function KpiStrip({
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      <div className="flex flex-col sm:col-span-2 bg-card-alt rounded-2xl p-4 sm:p-6 relative overflow-hidden shadow-lg">
-        <p className="font-medium text-primary mb-1">Rendimiento del día</p>
-        <h2 className="text-3xl font-bold text-white leading-tight">
+      <div className="flex flex-col sm:col-span-2 bg-primary rounded-2xl p-4 sm:p-6 relative overflow-hidden shadow-lg">
+        <p className="font-medium text-card dark:text-foreground mb-1">Rendimiento del día</p>
+        <h2 className="text-3xl font-bold text-card dark:text-foreground leading-tight">
           Se completaron{" "}
-          <span className="text-white">{ordenesHoy}</span> servicios hoy
+          <span className="text-card dark:text-foreground">{ordenesHoy}</span> servicios hoy
         </h2>
 
         <div className="flex flex-1 items-end gap-3">
           <div className="bg-white/15 backdrop-blur-sm rounded-lg px-4 py-2 text-center">
-            <p className="text-xs text-white/60">En proceso</p>
-            <p className="text-xl font-bold text-white">{ordersEnProceso}</p>
+            <p className="text-xs text-card dark:text-foreground">En proceso</p>
+            <p className="text-xl font-bold text-card dark:text-foreground">{ordersEnProceso}</p>
           </div>
           <div className="bg-white/15 backdrop-blur-sm rounded-lg px-4 py-2 text-center">
-            <p className="text-xs text-white/60">Esperando</p>
-            <p className="text-xl font-bold text-white">{ordersEsperando}</p>
+            <p className="text-xs text-card dark:text-foreground">Esperando</p>
+            <p className="text-xl font-bold text-card dark:text-foreground">{ordersEsperando}</p>
           </div>
           <Button
             size="lg"

@@ -8,6 +8,7 @@ import {
     isSameDay,
 } from "@/lib/utils/dashboard";
 import type { Order, OrderItem, OrderStaffAssignment } from "@/lib/types/order";
+import type { ServiceCategory } from "@/lib/types";
 
 type RawOrder = {
     id: string;
@@ -85,7 +86,7 @@ function mapOrder(raw: RawOrder): Order {
     };
 }
 
-export type TopService = { serviceId: string; name: string; count: number; categoryId: string | null };
+export type TopService = { serviceId: string; name: string; count: number; categoryId: string | null; category: ServiceCategory | null };
 export type WeekPoint = { date: string; ingresos: number; ordenes: number };
 
 export type DashboardData = {
@@ -146,7 +147,7 @@ export function useDashboard(): UseDashboardReturn {
             setLoading(true);
             setError(null);
 
-            const [{ data: rows, error: err }, { data: svcRows }] = await Promise.all([
+            const [{ data: rows, error: err }, { data: svcRows }, { data: catRows }] = await Promise.all([
                 supabase
                     .from("orders")
                     .select(
@@ -160,6 +161,7 @@ export function useDashboard(): UseDashboardReturn {
                     )
                     .order("created_at", { ascending: false }),
                 supabase.from("services").select("id, name, category_id"),
+                supabase.from("service_categories").select("id, name, description, color, icon, status, company_id, created_at, updated_at"),
             ]);
 
             if (err) throw new Error(err.message);
@@ -168,6 +170,24 @@ export function useDashboard(): UseDashboardReturn {
                 (svcRows ?? []).map((s: { id: string; name: string; category_id: string }) => [
                     s.id,
                     { name: s.name, categoryId: s.category_id },
+                ])
+            );
+
+            type RawCategory = { id: string; name: string; description: string | null; color: string | null; icon: string | null; status: string; company_id: string; created_at: string | null; updated_at: string | null };
+            const categoryMap = new Map<string, ServiceCategory>(
+                (catRows ?? []).map((c: RawCategory) => [
+                    c.id,
+                    {
+                        id: c.id,
+                        name: c.name,
+                        description: c.description,
+                        color: c.color,
+                        icon: c.icon,
+                        status: c.status as ServiceCategory["status"],
+                        companyId: c.company_id,
+                        createdAt: c.created_at ?? "",
+                        updatedAt: c.updated_at ?? "",
+                    },
                 ])
             );
 
@@ -189,7 +209,9 @@ export function useDashboard(): UseDashboardReturn {
             const topServices: TopService[] = rawTop.map((r) => {
                 const svc = serviceMap.get(r.serviceId);
                 const fallbackName = orders.flatMap((o) => o.items).find((i) => i.serviceId === r.serviceId)?.name ?? r.serviceId;
-                return { ...r, name: svc?.name ?? fallbackName, categoryId: svc?.categoryId ?? null };
+                const categoryId = svc?.categoryId ?? null;
+                const category = categoryId ? (categoryMap.get(categoryId) ?? null) : null;
+                return { ...r, name: svc?.name ?? fallbackName, categoryId, category };
             });
 
             setData({

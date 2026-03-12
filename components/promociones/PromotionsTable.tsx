@@ -228,12 +228,12 @@ export default function PromotionsTable() {
         <Table>
           <TableHeader>
             <TableRow className="border-border bg-card/20">
-              <TableHead className="text-white font-medium pl-4">Nombre</TableHead>
-              <TableHead className="text-white font-medium">Descuento</TableHead>
-              <TableHead className="text-white font-medium hidden sm:table-cell">Alcance</TableHead>
-              <TableHead className="text-white font-medium hidden md:table-cell">Vigencia</TableHead>
-              <TableHead className="text-white font-medium">Estado</TableHead>
-              <TableHead className="text-white font-medium text-right pr-4">Acciones</TableHead>
+              <TableHead className="text-foreground font-medium pl-4">Nombre</TableHead>
+              <TableHead className="text-foreground font-medium">Descuento</TableHead>
+              <TableHead className="text-foreground font-medium hidden sm:table-cell">Alcance</TableHead>
+              <TableHead className="text-foreground font-medium hidden md:table-cell">Vigencia</TableHead>
+              <TableHead className="text-foreground font-medium">Estado</TableHead>
+              <TableHead className="text-foreground font-medium text-right pr-4">Acciones</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -258,7 +258,7 @@ export default function PromotionsTable() {
                 <TableCell colSpan={6} className="text-center py-12">
                   <div className="flex flex-col items-center gap-3 text-muted-foreground">
                     <Car className="h-10 w-10 opacity-30" />
-                    <p className="text-sm text-white">Error al cargar las promociones.</p>
+                    <p className="text-sm text-foreground">Error al cargar las promociones.</p>
                     <p className="text-xs">
                       Asegúrate de que json-server esté corriendo en el puerto 3001.
                     </p>
@@ -270,7 +270,7 @@ export default function PromotionsTable() {
                 <TableCell colSpan={6} className="text-center py-12">
                   <div className="flex flex-col items-center gap-3 text-muted-foreground">
                     <Car className="h-10 w-10 opacity-30" />
-                    <p className="text-sm text-white">
+                    <p className="text-sm text-foreground">
                       {hasActiveFilters
                         ? "No se encontraron promociones con los filtros aplicados."
                         : "No hay promociones registradas aún."}
@@ -297,7 +297,7 @@ export default function PromotionsTable() {
                 >
                   <TableCell className="pl-4">
                     <div>
-                      <span className="font-medium text-white block">
+                      <span className="font-medium text-foreground block">
                         {promotion.name}
                       </span>
                       {promotion.description && (
@@ -314,15 +314,15 @@ export default function PromotionsTable() {
                       {formatDiscount(promotion)}
                     </Badge>
                   </TableCell>
-                  <TableCell className="hidden sm:table-cell text-sm text-white">
+                  <TableCell className="hidden sm:table-cell text-sm text-foreground">
                     {getScopeLabel(promotion)}
                   </TableCell>
-                  <TableCell className="hidden md:table-cell text-sm text-white">
+                  <TableCell className="hidden md:table-cell text-sm text-foreground">
                     {formatDate(promotion.startDate)} - {formatDate(promotion.endDate)}
                   </TableCell>
                   <TableCell>
                     <Badge
-                      className="bg-background py-1 px-2.5 gap-2 text-white rounded-md font-normal"
+                      className="bg-background py-1 px-2.5 gap-2 text-foreground rounded-md font-normal"
                     >
                       <span
                         className={`size-2 rounded-full ${promotion.status === "active" ? "bg-primary" : "bg-[#FD542A]"
@@ -336,7 +336,7 @@ export default function PromotionsTable() {
                       <Button
                         size="sm"
                         onClick={() => handleOpenEdit(promotion)}
-                        className="bg-primary hover:bg-primary/90 text-white gap-1.5 rounded-sm h-8 px-3 text-xs font-medium cursor-pointer"
+                        className="bg-primary hover:bg-primary/90 text-foreground gap-1.5 rounded-sm h-8 px-3 text-xs font-medium cursor-pointer"
                       >
                         <EditPencil className="h-3.5 w-3.5" />
                         Editar
@@ -344,7 +344,7 @@ export default function PromotionsTable() {
                       <Button
                         size="sm"
                         onClick={() => handleOpenDelete(promotion)}
-                        className="text-white gap-1.5 rounded-sm h-8 px-3 text-xs font-medium cursor-pointer"
+                        className="text-foreground gap-1.5 rounded-sm h-8 px-3 text-xs font-medium cursor-pointer"
                         style={{ backgroundColor: "#FD2A2A" }}
                       >
                         <Trash className="h-3.5 w-3.5" />

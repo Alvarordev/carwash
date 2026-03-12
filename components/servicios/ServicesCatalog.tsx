@@ -104,8 +104,8 @@ export default function ServicesCatalog() {
           onClick={() => setActiveFilter("all")}
           className={`rounded-sm px-4 h-9 text-sm font-medium transition-all ${
             activeFilter === "all"
-              ? "bg-foreground text-background border-foreground hover:bg-foreground hover:text-background"
-              : "bg-transparent border-border text-muted-foreground hover:bg-muted hover:text-foreground"
+              ? "bg-foreground dark:bg-foreground text-background border border-foreground hover:bg-foreground dark:hover:bg-foreground hover:text-background dark:hover:text-background"
+              : "bg-background border-border text-muted-foreground hover:bg-muted hover:text-foreground"
           }`}
         >
           Todos los servicios
@@ -117,8 +117,8 @@ export default function ServicesCatalog() {
             onClick={() => setActiveFilter(cat.id)}
             className={`rounded-sm px-4 h-9 text-sm font-medium transition-all ${
               activeFilter === cat.id
-                ? "bg-foreground text-background border-foreground hover:bg-foreground hover:text-background"
-                : "bg-transparent border-border text-muted-foreground hover:bg-muted hover:text-foreground"
+                ? "bg-foreground dark:bg-foreground text-background border border-border hover:bg-foreground dark:hover:bg-foreground  hover:text-background dark:hover:text-background"
+                : "bg-card dark:bg-background border-border text-muted-foreground hover:bg-muted hover:text-foreground"
             }`}
           >
             {cat.name}

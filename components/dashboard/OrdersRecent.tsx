@@ -6,7 +6,7 @@ export default function OrdersRecent({ orders }: { orders: Order[] }) {
   return (
     <div className="bg-card/80 border border-border rounded-2xl p-4">
       <div className="flex items-center justify-between mb-3">
-        <h3 className="text-lg font-medium text-white">Órdenes recientes</h3>
+        <h3 className="text-lg font-medium text-foreground">Órdenes recientes</h3>
         <a className="text-sm text-primary">Ver todas</a>
       </div>
       <Table>

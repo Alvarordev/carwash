@@ -140,7 +140,7 @@ export default function ServiceCard({ service, categoryName, onEdit, onDelete, i
           <div className="flex items-center gap-4 flex-1 min-w-0">
             <div
               className={`w-12 h-12 rounded-full flex items-center justify-center shrink-0${service.color ? "" : " bg-primary/10 text-primary"}`}
-              style={service.color ? { backgroundColor: `${service.color}1A`, color: service.color } : undefined}
+              style={service.color ? { backgroundColor: `${service.color}`, color: "var(--background)" } : undefined}
             >
               {getServiceIcon(service)}
             </div>

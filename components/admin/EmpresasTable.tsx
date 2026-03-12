@@ -19,10 +19,10 @@ export default function EmpresasTable({ companies }: Props) {
       <Table>
         <TableHeader>
           <TableRow className="border-border bg-card/20">
-            <TableHead className="text-white font-medium pl-4">Empresa</TableHead>
-            <TableHead className="text-white font-medium hidden sm:table-cell">Slug</TableHead>
-            <TableHead className="text-white font-medium">Estado</TableHead>
-            <TableHead className="text-white font-medium hidden md:table-cell">Creado</TableHead>
+            <TableHead className="text-foreground font-medium pl-4">Empresa</TableHead>
+            <TableHead className="text-foreground font-medium hidden sm:table-cell">Slug</TableHead>
+            <TableHead className="text-foreground font-medium">Estado</TableHead>
+            <TableHead className="text-foreground font-medium hidden md:table-cell">Creado</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -35,12 +35,12 @@ export default function EmpresasTable({ companies }: Props) {
           ) : (
             companies.map((c) => (
               <TableRow key={c.id} className="border-border bg-card hover:bg-card/40 transition-colors">
-                <TableCell className="pl-4 font-medium text-white">{c.name}</TableCell>
+                <TableCell className="pl-4 font-medium text-foreground">{c.name}</TableCell>
                 <TableCell className="hidden sm:table-cell font-mono text-sm text-muted-foreground">
                   {c.slug}
                 </TableCell>
                 <TableCell>
-                  <Badge className="bg-background py-1 px-2.5 gap-2 text-white rounded-md font-normal">
+                  <Badge className="bg-background py-1 px-2.5 gap-2 text-foreground rounded-md font-normal">
                     <span
                       className={`size-2 rounded-full ${c.status === "active" ? "bg-primary" : "bg-[#FD542A]"}`}
                     />

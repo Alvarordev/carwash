@@ -59,12 +59,12 @@ export default function Sidebar({ mobileOpen, setMobileOpen }: SidebarProps) {
               onClick={() => setMobileOpen(false)}
               className={`flex items-center gap-3 rounded-2xl px-3 py-2 text-base font-medium transition-colors ${
                 isActive(href)
-                  ? "bg-card text-white"
-                  : "text-muted-foreground hover:bg-card hover:text-foreground"
+                  ? "bg-background dark:bg-card text-foreground"
+                  : "text-muted dark:text-muted-foreground hover:bg-background dark:hover:bg-card hover:text-foreground"
               }`}
             >
               <Icon
-                className={`size-5 shrink-0 ${isActive(href) ? "fill-white" : ""}`}
+                className={`size-5 shrink-0 ${isActive(href) ? "fill-foreground" : ""}`}
               />
               {label}
             </Link>
@@ -76,7 +76,7 @@ export default function Sidebar({ mobileOpen, setMobileOpen }: SidebarProps) {
 
   return (
     <>
-      <aside className="hidden xl:flex xl:w-57.5 xl:shrink-0 flex-col bg-background border-r border-border min-h-screen">
+      <aside className="hidden xl:flex xl:w-57.5 xl:shrink-0 flex-col bg-card dark:bg-background border-r border-border min-h-screen">
         {navContent}
       </aside>
 

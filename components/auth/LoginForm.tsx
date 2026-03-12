@@ -50,7 +50,7 @@ export default function LoginForm() {
             <div className="relative w-full max-w-sm">
                 <div className="text-center mb-8">
                     <div className="inline-flex items-center gap-2 mb-3">
-                        <span className="text-3xl font-bold text-primary">CarWash</span>
+                        <span className="text-3xl font-bold text-primary">CarWash Pro</span>
                     </div>
                     <p className="text-sm text-muted-foreground">
                         Sistema de gestión — Inicia sesión para continuar

@@ -43,7 +43,7 @@ export function DeleteExpenseCategoryDialog({
         <AlertDialogFooter>
           <AlertDialogCancel>Cancelar</AlertDialogCancel>
           <AlertDialogAction
-            className="bg-destructive text-white hover:bg-destructive/90"
+            className="bg-destructive text-foreground hover:bg-destructive/90"
             onClick={(e) => {
               e.preventDefault();
               onConfirm();

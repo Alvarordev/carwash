@@ -87,7 +87,7 @@ export function PaymentMethodsSection() {
   }
 
   return (
-    <div className="bg-card border border-border rounded-xl overflow-hidden">
+    <div className="bg-card shadow-sm rounded-xl overflow-hidden">
       <div className="flex items-center justify-between px-6 py-4 border-b border-border">
         <div>
           <h2 className="text-base font-semibold">Métodos de Pago</h2>

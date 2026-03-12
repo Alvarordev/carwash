@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import { Calendar, Car, Camera, ReportColumns, PageSearch, ClockRotateRight, WarningTriangle } from "iconoir-react";
+import { Calendar, Car, Camera, PageSearch, ClockRotateRight, WarningTriangle } from "iconoir-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -23,11 +23,11 @@ export default function OrderDetailLayout({ order }: Props) {
         </div>
 
         <div className="flex items-center gap-3">
-          <Badge className={`bg-background h-8 border-border font-semibold ${order.status === "Entregado" ? "bg-status-3 text-background" : order.status === "Anulado" ? "bg-destructive text-white" : order.status === "Terminado" ? "bg-status-2 text-white" : order.status === "Lavando" ? "bg-status-4 text-white" : "bg-status-1 text-white"}`}>
+          <Badge className={`bg-background h-8 border-border font-semibold ${order.status === "Entregado" ? "bg-status-3 text-background" : order.status === "Anulado" ? "bg-destructive text-foreground" : order.status === "Terminado" ? "bg-status-2 text-foreground" : order.status === "Lavando" ? "bg-status-4 text-foreground" : "bg-status-1 text-foreground"}`}>
             {order.status}
           </Badge>
           <Button variant="outline" size="sm">Edit Order</Button>
-          <Button size="sm" className="bg-[#FD2A2A] text-white">Cancel</Button>
+          <Button size="sm" className="bg-[#FD2A2A] text-foreground">Cancel</Button>
         </div>
       </div>
 
@@ -64,7 +64,7 @@ export default function OrderDetailLayout({ order }: Props) {
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center">
                 <ReportColumns className="size-5 text-primary mr-2" />
-                <h3 className="font-medium text-white">Detalles del Auto</h3>
+                <h3 className="font-medium text-foreground">Detalles del Auto</h3>
 
               </div>
               <span className="text-xs text-muted-foreground">Read-only view</span>
@@ -82,7 +82,7 @@ export default function OrderDetailLayout({ order }: Props) {
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center">
                 <Camera className="size-5 text-primary mr-2" />
-                <h3 className="font-medium text-white">Fotos del Vehiculo</h3>
+                <h3 className="font-medium text-foreground">Fotos del Vehiculo</h3>
               </div>
               <a className="text-sm text-primary">Ver Todos</a>
             </div>
@@ -108,16 +108,16 @@ export default function OrderDetailLayout({ order }: Props) {
           <div className="bg-card/80 border border-border rounded-sm p-4">
             <div className="flex items-center mb-3">
               <PageSearch className="size-5 text-primary mr-2" />
-              <h3 className="font-semibold text-lg text-white">Facturación</h3>
+              <h3 className="font-semibold text-lg text-foreground">Facturación</h3>
             </div>
             <div className="divide-y divide-border">
               {order.items.map((it) => (
                 <div key={it.serviceId} className="py-3 flex items-center justify-between">
                   <div>
-                    <div className="font-medium text-white">{it.name}</div>
+                    <div className="font-medium text-foreground">{it.name}</div>
                     <div className="text-xs text-muted-foreground">{it.quantity} × S/ {it.price.toFixed(2)}</div>
                   </div>
-                  <div className="text-white">S/ {(it.subtotal).toFixed(2)}</div>
+                  <div className="text-foreground">S/ {(it.subtotal).toFixed(2)}</div>
                 </div>
               ))}
             </div>
@@ -131,7 +131,7 @@ export default function OrderDetailLayout({ order }: Props) {
           <div className="bg-card border border-border rounded-sm p-4">
             <div className="flex items-center mb-3">
               <ClockRotateRight className="size-5 text-primary mr-2" />
-              <h3 className="font-medium text-white">Timeline</h3>
+              <h3 className="font-medium text-foreground">Timeline</h3>
             </div>
 
             <div className="flex flex-col gap-4">
@@ -139,7 +139,7 @@ export default function OrderDetailLayout({ order }: Props) {
                 <div key={i} className="flex items-start gap-3">
                   <div className={`mt-1 h-2 w-2 rounded-full ${h.status === 'En Proceso' ? 'bg-status-1' : h.status === 'Lavando' ? 'bg-status-4' : h.status === 'Terminado' ? 'bg-status-2' : h.status === 'Entregado' ? 'bg-status-3' : 'bg-destructive'}`} />
                   <div>
-                    <div className="text-sm text-white">{h.status}</div>
+                    <div className="text-sm text-foreground">{h.status}</div>
                     <div className="text-xs text-muted-foreground">{new Date(h.at).toLocaleString("es-PE")}</div>
                   </div>
                 </div>
@@ -150,7 +150,7 @@ export default function OrderDetailLayout({ order }: Props) {
           <div className="bg-card border border-border rounded-sm p-4">
             <div className="flex items-center mb-2">
               <WarningTriangle className="size-4 text-warning mr-2 text-orange-600" />
-              <h3 className="font-medium text-white">Indicaciones del cliente</h3>
+              <h3 className="font-medium text-foreground">Indicaciones del cliente</h3>
             </div>
             <div className="text-sm text-muted-foreground">{order.cancelReason ?? order.notes ?? "No notes"}</div>
           </div>

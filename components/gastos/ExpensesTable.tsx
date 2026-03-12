@@ -223,16 +223,16 @@ export default function ExpensesTable() {
         </Button>
       </div>
 
-      <div className="rounded-md border border-border overflow-x-auto">
+      <div className="rounded-md shadow-sm overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow className="border-border bg-card/20">
-              <TableHead className="text-white font-medium pl-4">Fecha</TableHead>
-              <TableHead className="text-white font-medium">Detalle</TableHead>
-              <TableHead className="text-white font-medium">Categoría</TableHead>
-              <TableHead className="text-white font-medium hidden md:table-cell">Personal</TableHead>
-              <TableHead className="text-white font-medium text-right">Monto</TableHead>
-              <TableHead className="text-white font-medium text-right pr-4">Acciones</TableHead>
+              <TableHead className="text-foreground font-medium pl-4">Fecha</TableHead>
+              <TableHead className="text-foreground font-medium">Detalle</TableHead>
+              <TableHead className="text-foreground font-medium">Categoría</TableHead>
+              <TableHead className="text-foreground font-medium hidden md:table-cell">Personal</TableHead>
+              <TableHead className="text-foreground font-medium text-right">Monto</TableHead>
+              <TableHead className="text-foreground font-medium text-right pr-4">Acciones</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -257,7 +257,7 @@ export default function ExpensesTable() {
                 <TableCell colSpan={6} className="text-center py-12">
                   <div className="flex flex-col items-center gap-3 text-muted-foreground">
                     <HandCash className="h-10 w-10 opacity-30" />
-                    <p className="text-sm text-white">Error al cargar los gastos.</p>
+                    <p className="text-sm text-foreground">Error al cargar los gastos.</p>
                   </div>
                 </TableCell>
               </TableRow>
@@ -266,7 +266,7 @@ export default function ExpensesTable() {
                 <TableCell colSpan={6} className="text-center py-12">
                   <div className="flex flex-col items-center gap-3 text-muted-foreground">
                     <HandCash className="h-10 w-10 opacity-30" />
-                    <p className="text-sm text-white">
+                    <p className="text-sm text-foreground">
                       {hasActiveFilters
                         ? "No se encontraron gastos con los filtros aplicados."
                         : "No hay gastos registrados aún."}
@@ -292,23 +292,23 @@ export default function ExpensesTable() {
                   className="border-border bg-card hover:bg-card/40 transition-colors"
                 >
                   <TableCell className="pl-4">
-                    <span className="text-sm text-white font-mono">
+                    <span className="text-sm text-foreground font-mono">
                       {formatDate(expense.date)}
                     </span>
                   </TableCell>
                   <TableCell>
-                    <span className="text-sm text-white">{expense.detail}</span>
+                    <span className="text-sm text-foreground">{expense.detail}</span>
                   </TableCell>
                   <TableCell>
-                    <span className="text-sm text-white">
+                    <span className="text-sm text-foreground">
                       {expense.categoryName ?? <span className="text-muted-foreground italic">—</span>}
                     </span>
                   </TableCell>
-                  <TableCell className="hidden md:table-cell text-sm text-white">
+                  <TableCell className="hidden md:table-cell text-sm text-foreground">
                     {expense.staffMemberName ?? <span className="text-muted-foreground italic">—</span>}
                   </TableCell>
                   <TableCell className="text-right">
-                    <span className="text-sm text-white font-medium">
+                    <span className="text-sm text-foreground font-medium">
                       {formatCurrency(expense.amount)}
                     </span>
                   </TableCell>
@@ -325,7 +325,7 @@ export default function ExpensesTable() {
                       <Button
                         size="sm"
                         onClick={() => handleOpenDelete(expense)}
-                        className="text-white gap-1.5 rounded-sm h-8 px-3 text-xs font-medium cursor-pointer"
+                        className="text-foreground gap-1.5 rounded-sm h-8 px-3 text-xs font-medium cursor-pointer"
                         style={{ backgroundColor: "#FD2A2A" }}
                       >
                         <Trash className="h-3.5 w-3.5" />

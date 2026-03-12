@@ -25,7 +25,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useCustomers } from "@/lib/hooks/useCustomers";
 import { useVehicles } from "@/lib/hooks/useVehicles";
 import type { Customer } from "@/lib/types";
-import { DOC_TYPES, type CustomerFormData } from "@/lib/schemas/customer";
+import { type CustomerFormData } from "@/lib/schemas/customer";
 import CustomerFormDialog from "./CustomerFormDialog";
 import DeleteCustomerDialog from "./DeleteCustomerDialog";
 
@@ -194,18 +194,17 @@ export default function CustomersTable() {
         </Button>
       </div>
 
-      <div className="rounded-md border border-border overflow-x-auto">
+      <div className="rounded-md shadow-sm overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow className="border-border bg-card/20">
-              <TableHead className="text-white font-medium pl-4">Tipo Doc.</TableHead>
-              <TableHead className="text-white font-medium">Nro. Doc.</TableHead>
-              <TableHead className="text-white font-medium">Nombre</TableHead>
-              <TableHead className="text-white font-medium hidden sm:table-cell">Teléfono</TableHead>
-              <TableHead className="text-white font-medium hidden md:table-cell">Email</TableHead>
-              <TableHead className="text-white font-medium hidden lg:table-cell">Vehículos</TableHead>
-              <TableHead className="text-white font-medium">Estado</TableHead>
-              <TableHead className="text-white font-medium text-right pr-4">Acciones</TableHead>
+              <TableHead className="text-foreground font-medium">Nro. Doc.</TableHead>
+              <TableHead className="text-foreground font-medium">Nombre</TableHead>
+              <TableHead className="text-foreground font-medium hidden sm:table-cell">Teléfono</TableHead>
+              <TableHead className="text-foreground font-medium hidden md:table-cell">Email</TableHead>
+              <TableHead className="text-foreground font-medium hidden lg:table-cell">Vehículos</TableHead>
+              <TableHead className="text-foreground font-medium">Estado</TableHead>
+              <TableHead className="text-foreground font-medium text-right pr-4">Acciones</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -232,7 +231,7 @@ export default function CustomersTable() {
                 <TableCell colSpan={8} className="text-center py-12">
                   <div className="flex flex-col items-center gap-3 text-muted-foreground">
                     <Group className="h-10 w-10 opacity-30" />
-                    <p className="text-sm text-white">Error al cargar los clientes.</p>
+                    <p className="text-sm text-foreground">Error al cargar los clientes.</p>
                     <p className="text-xs">
                       Asegúrate de que json-server esté corriendo en el puerto 3001.
                     </p>
@@ -244,7 +243,7 @@ export default function CustomersTable() {
                 <TableCell colSpan={8} className="text-center py-12">
                   <div className="flex flex-col items-center gap-3 text-muted-foreground">
                     <Group className="h-10 w-10 opacity-30" />
-                    <p className="text-sm text-white">
+                    <p className="text-sm text-foreground">
                       {hasActiveFilters
                         ? "No se encontraron clientes con los filtros aplicados."
                         : "No hay clientes registrados aún."}
@@ -266,38 +265,30 @@ export default function CustomersTable() {
             ) : (
               filtered.map((customer) => {
                 const vehicleCount = getVehicleCount(customer.id);
-                const docTypeLabel = customer.docType
-                  ? DOC_TYPES.find((d) => d.value === customer.docType)?.label ?? customer.docType
-                  : null;
                 return (
                   <TableRow
                     key={customer.id}
                     className="border-border bg-card hover:bg-card/40 transition-colors"
                   >
-                    <TableCell className="pl-4">
-                      <span className="text-sm text-white">
-                        {docTypeLabel ?? <span className="text-muted-foreground italic">—</span>}
-                      </span>
-                    </TableCell>
                     <TableCell>
-                      <span className="font-mono text-sm text-white">
+                      <span className="font-mono text-sm text-foreground">
                         {customer.docNumber ?? <span className="text-muted-foreground italic">—</span>}
                       </span>
                     </TableCell>
                     <TableCell>
-                      <span className="font-medium text-white">
+                      <span className="font-medium text-foreground">
                         {customer.firstName} {customer.lastName}
                       </span>
                     </TableCell>
-                    <TableCell className="hidden sm:table-cell text-sm text-white">
+                    <TableCell className="hidden sm:table-cell text-sm text-foreground">
                       {customer.phone ?? <span className="text-muted-foreground italic">—</span>}
                     </TableCell>
-                    <TableCell className="hidden md:table-cell text-sm text-white">
+                    <TableCell className="hidden md:table-cell text-sm text-foreground">
                       {customer.email ?? <span className="text-muted-foreground italic">—</span>}
                     </TableCell>
                     <TableCell className="hidden lg:table-cell text-sm">
                       {vehicleCount > 0 ? (
-                        <span className="text-white">
+                        <span className="text-foreground">
                           {vehicleCount} vehículo{vehicleCount !== 1 ? "s" : ""}
                         </span>
                       ) : (
@@ -306,7 +297,7 @@ export default function CustomersTable() {
                     </TableCell>
                     <TableCell>
                       <Badge
-                        className="bg-background py-1 px-2.5 gap-2 text-white rounded-md font-normal"
+                        className="bg-background py-1 px-2.5 gap-2 text-foreground rounded-md font-normal"
                       >
                         <span
                           className={`size-2 rounded-full ${customer.status === "active" ? "bg-primary" : "bg-[#FD542A]"
@@ -328,7 +319,7 @@ export default function CustomersTable() {
                         <Button
                           size="sm"
                           onClick={() => handleOpenDelete(customer)}
-                          className="text-white gap-1.5 rounded-sm h-8 px-3 text-xs font-medium cursor-pointer"
+                          className="text-background dark:text-foreground gap-1.5 rounded-sm h-8 px-3 text-xs font-medium cursor-pointer"
                           style={{ backgroundColor: "#FD2A2A" }}
                         >
                           <Trash className="h-3.5 w-3.5" />

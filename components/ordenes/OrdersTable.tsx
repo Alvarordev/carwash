@@ -118,18 +118,18 @@ export default function OrdersTable() {
         </div>
       </div>
 
-      <div className="rounded-md border border-border overflow-x-auto">
+      <div className="rounded-md shadow-sm overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow className="border-border bg-card/20 ">
-              <TableHead className="text-white font-medium pl-4"># Orden</TableHead>
-              <TableHead className="text-white font-medium">Cliente</TableHead>
-              <TableHead className="text-white font-medium table-cell">Vehículo</TableHead>
-              <TableHead className="text-white font-medium hidden lg:table-cell">Servicios</TableHead>
-              <TableHead className="text-white font-medium">Total</TableHead>
-              <TableHead className="text-white font-medium">Estado</TableHead>
-              <TableHead className="text-white font-medium hidden lg:table-cell">Registrado</TableHead>
-              <TableHead className="text-white font-medium text-right pr-4">Acciones</TableHead>
+              <TableHead className="text-foreground font-medium pl-4"># Orden</TableHead>
+              <TableHead className="text-foreground font-medium">Cliente</TableHead>
+              <TableHead className="text-foreground font-medium table-cell">Vehículo</TableHead>
+              <TableHead className="text-foreground font-medium hidden lg:table-cell">Servicios</TableHead>
+              <TableHead className="text-foreground font-medium">Total</TableHead>
+              <TableHead className="text-foreground font-medium">Estado</TableHead>
+              <TableHead className="text-foreground font-medium hidden lg:table-cell">Registrado</TableHead>
+              <TableHead className="text-foreground font-medium text-right pr-4">Acciones</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -154,7 +154,7 @@ export default function OrdersTable() {
               <TableRow className="bg-card">
                 <TableCell colSpan={8} className="text-center py-12">
                   <div className="flex flex-col items-center gap-3 text-muted-foreground">
-                    <p className="text-sm text-white">Error al cargar las órdenes.</p>
+                    <p className="text-sm text-foreground">Error al cargar las órdenes.</p>
                     <p className="text-xs">Asegúrate de que json-server esté corriendo en el puerto 3001.</p>
                   </div>
                 </TableCell>
@@ -163,14 +163,14 @@ export default function OrdersTable() {
               <TableRow className="bg-card">
                 <TableCell colSpan={8} className="text-center py-12">
                   <div className="flex flex-col items-center gap-3 text-muted-foreground">
-                    <p className="text-sm text-white">No hay órdenes registradas.</p>
+                    <p className="text-sm text-foreground">No hay órdenes registradas.</p>
                   </div>
                 </TableCell>
               </TableRow>
             ) : (
               filtered.map((order: Order) => (
                 <TableRow key={order.id} className="border-border bg-card/80 hover:bg-card/40 transition-colors cursor-pointer">
-                  <TableCell className="font-mono text-sm font-medium text-white pl-4">{order.orderNumber}</TableCell>
+                  <TableCell className="font-mono text-sm font-medium text-foreground pl-4">{order.orderNumber}</TableCell>
                   <TableCell>{order.customer ? `${order.customer.firstName} ${order.customer.lastName}` : "—"}</TableCell>
                   <TableCell>{order.vehicle ? `${order.vehicle.plate} - ${order.vehicle.brand}${order.vehicle.model ? " " + order.vehicle.model : ""}` : "—"}</TableCell>
                   <TableCell className="flex-wrap hidden sm:flex" >
@@ -190,17 +190,17 @@ export default function OrdersTable() {
                   </TableCell>
                   <TableCell>S/ {order.total.toFixed(2)}</TableCell>
                   <TableCell >
-                    <Badge className='bg-background h-8 border-border'>
+                    <Badge className='bg-background h-8 border border-border text-foreground'>
                       <span className={cn("size-2 mr-0.5 rounded-full animate-pulse", (() => {
                         switch (order.status) {
                           case "Entregado":
-                            return "bg-status-3 text-white";
+                            return "bg-status-3 text-foreground";
                           case "Anulado":
-                            return "bg-destructive text-white";
+                            return "bg-destructive text-foreground";
                           case "Terminado":
-                            return "bg-status-2 text-white";
+                            return "bg-status-2 text-foreground";
                           default:
-                            return "bg-status-1 text-white";
+                            return "bg-status-1 text-foreground";
                         }
                       })())}></span>
                       {order.status}
