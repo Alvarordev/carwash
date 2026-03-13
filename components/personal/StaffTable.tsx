@@ -1,8 +1,10 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Plus, Search, EditPencil, Trash, User, FilterList } from "iconoir-react";
+import { Plus, Search, EditPencil, Trash, User, FilterList, Eye } from "iconoir-react";
 import {
   Table,
   TableBody,
@@ -36,6 +38,7 @@ const ROLE_LABELS: Record<StaffFormData["role"], string> = {
 };
 
 export default function StaffTable() {
+  const router = useRouter();
   const { staff, loading, error, createStaff, updateStaff, deleteStaff, restoreStaff } =
     useStaff();
 
@@ -297,7 +300,8 @@ export default function StaffTable() {
               filtered.map((member) => (
                 <TableRow
                   key={member.id}
-                  className="border-border bg-card/80 hover:bg-card/40 transition-colors"
+                  className="border-border bg-card/80 hover:bg-card/40 transition-colors cursor-pointer"
+                  onClick={() => router.push(`/personal/${member.id}`)}
                 >
                   <TableCell className="pl-4">
                     <span className="font-medium text-foreground">
@@ -343,7 +347,16 @@ export default function StaffTable() {
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    <div className="flex items-center justify-end gap-2">
+                    <div
+                      className="flex items-center justify-end gap-2"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <Button asChild size="sm" variant="outline">
+                        <Link href={`/personal/${member.id}`}>
+                          <Eye className="h-3.5 w-3.5" />
+                          Ver
+                        </Link>
+                      </Button>
                       <Button
                         size="sm"
                         onClick={() => handleOpenEdit(member)}
