@@ -1,18 +1,30 @@
 import Link from "next/link";
 import type { Order } from "@/lib/types/order";
+import { Trophy } from "iconoir-react";
 
 export default function CrewRanking({ orders }: { orders: Order[] }) {
-  const map = new Map<string, number>();
+  const map = new Map<string, { name: string; count: number }>();
   for (const o of orders) {
+    if (o.status !== "Entregado") continue;
+
+    const seenInOrder = new Set<string>();
     for (const s of o.staff || []) {
-      map.set(s.name, (map.get(s.name) || 0) + 1);
+      const staffKey = s.staffId || s.name;
+      if (!staffKey || seenInOrder.has(staffKey)) continue;
+
+      seenInOrder.add(staffKey);
+      const current = map.get(staffKey);
+      if (current) {
+        map.set(staffKey, { ...current, count: current.count + 1 });
+        continue;
+      }
+
+      map.set(staffKey, { name: s.name, count: 1 });
     }
   }
 
-  const top = Array.from(map.entries())
-    .map(([name, count]) => ({ name, count }))
-    .sort((a, b) => b.count - a.count)
-    .slice(0, 3);
+  const top = Array.from(map.values())
+    .sort((a, b) => b.count - a.count);
 
   const initials = (name: string) =>
     name
@@ -31,8 +43,9 @@ export default function CrewRanking({ orders }: { orders: Order[] }) {
   return (
     <div className="bg-card border border-border rounded-2xl p-4 flex-1">
       <div className="flex items-center justify-between mb-4">
-        <h4 className="text-sm font-semibold text-foreground">
-          Ranking del personal 🏆
+        <h4 className="flex gap-2 items-center text-sm font-semibold text-foreground">
+          <span>Ranking del personal</span> 
+          <Trophy className="size-4.5 text-yellow-400 inline" />
         </h4>
         <Link href="/personal" className="text-xs text-primary hover:underline">
           Ver todos

@@ -1,34 +1,19 @@
-import type { FC, SVGProps } from "react";
-import { Car, Sparks, Sofa, PlusCircle } from "iconoir-react";
-import { ServiceCategory } from "@/lib/types";
+import { Car } from "iconoir-react";
+import { ICON_MAP } from "@/components/servicios/ServiceCard";
+import type { Service, ServiceCategory } from "@/lib/types";
 
-type TopItem = { serviceId: string; count: number; name?: string; categoryId: string | null; category: ServiceCategory | null };
-
-type CategoryConfig = {
-  Icon: FC<SVGProps<SVGSVGElement>>;
-  bg: string;
-  text: string;
-  bar: string;
+type TopItem = {
+  serviceId: string;
+  count: number;
+  name?: string;
+  categoryId: string | null;
+  category: ServiceCategory | null;
+  color: Service["color"];
+  icon: Service["icon"];
 };
-
-const CATEGORY_CONFIG: Record<string, CategoryConfig> = {
-  exterior: { Icon: Car, bg: "bg-orange-500/15", text: "text-orange-400", bar: "#f97316" },
-  interior: { Icon: Sofa, bg: "bg-blue-500/15", text: "text-blue-400", bar: "#3b82f6" },
-  detalle: { Icon: Sparks, bg: "bg-violet-500/15", text: "text-violet-400", bar: "#8b5cf6" },
-  añadido: { Icon: PlusCircle, bg: "bg-green-500/15", text: "text-green-400", bar: "#22c55e" },
-};
-
-const FALLBACK_CONFIGS: CategoryConfig[] = [
-  { Icon: Car, bg: "bg-orange-500/15", text: "text-orange-400", bar: "#f97316" },
-  { Icon: Sofa, bg: "bg-blue-500/15", text: "text-blue-400", bar: "#3b82f6" },
-  { Icon: Sparks, bg: "bg-violet-500/15", text: "text-violet-400", bar: "#8b5cf6" },
-  { Icon: PlusCircle, bg: "bg-green-500/15", text: "text-green-400", bar: "#22c55e" },
-];
 
 export default function MostRequestedServices({ top }: { top: TopItem[] }) {
   const total = top.reduce((s, t) => s + t.count, 0) || 1;
-
-  console.log()
 
   return (
     <div className="bg-card border border-border rounded-2xl p-5">
@@ -42,34 +27,32 @@ export default function MostRequestedServices({ top }: { top: TopItem[] }) {
       </div>
 
       <div className="space-y-5">
-        {top.map((t, idx) => {
+        {top.map((t) => {
           const pct = Math.round((t.count / total) * 100);
-          const cfg =
-            (t.category?.name ? CATEGORY_CONFIG[t.category.name] : undefined) ??
-            FALLBACK_CONFIGS[idx % FALLBACK_CONFIGS.length];
-          const { Icon } = cfg;
+          const color = t.color ?? "var(--primary)";
+          const iconElement = t.icon && ICON_MAP[t.icon]
+            ? ICON_MAP[t.icon]
+            : <Car className="size-4" />;
           return (
             <div key={t.serviceId}>
               <div className="flex items-center gap-3 mb-2">
                 <div
-                  className={`size-9 rounded-lg flex items-center justify-center ${cfg.bg}`}
+                  className="size-9 rounded-lg flex items-center justify-center"
+                  style={{ backgroundColor: t.color ? `${t.color}1f` : "rgba(42,123,253,0.15)", color }}
                 >
-                  <Icon
-                    className={`size-4 ${cfg.text}`}
-                    strokeWidth={1.8}
-                  />
+                  {iconElement}
                 </div>
                 <span className="flex-1 text-sm font-medium text-foreground truncate">
                   {t.name ?? t.serviceId}
                 </span>
-                <span className={`text-sm font-semibold tabular-nums ${cfg.text}`}>
+                <span className="text-sm font-semibold tabular-nums" style={{ color }}>
                   {pct}%
                 </span>
               </div>
               <div className="w-full bg-white/8 rounded-full h-1.5">
                 <div
                   className="h-1.5 rounded-full transition-all duration-700"
-                  style={{ width: `${pct}%`, backgroundColor: cfg.bar }}
+                  style={{ width: `${pct}%`, backgroundColor: color }}
                 />
               </div>
             </div>

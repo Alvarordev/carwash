@@ -11,7 +11,7 @@ import {
 
 type WeekPoint = { date: string; ingresos: number; ordenes: number };
 
-export default function WeekChart({ series }: { series: WeekPoint[] }) {
+export default function WeeklyChart({ series }: { series: WeekPoint[] }) {
   const fmt = (v: number) =>
     new Intl.NumberFormat("es-PE", { style: "currency", currency: "PEN" }).format(v);
 
@@ -19,7 +19,7 @@ export default function WeekChart({ series }: { series: WeekPoint[] }) {
     <div className="bg-card border border-border rounded-2xl p-4">
       <div className="flex items-center justify-between mb-3">
         <h4 className="text-sm font-semibold text-foreground">
-          Evolución semanal
+          Weekly chart
         </h4>
       </div>
       <div style={{ width: "100%", height: 140 }}>

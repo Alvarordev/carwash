@@ -2,7 +2,7 @@
 
 import { useDashboard } from "@/lib/hooks/useDashboard";
 import KpiStrip from "./KpiStrip";
-import WeekChart from "./MonthlyChart";
+import WeeklyChart from "./MonthlyChart";
 import MostRequestedServices from "./MostRequestedServices";
 import CrewRanking from "./CrewRanking";
 
@@ -33,8 +33,10 @@ export default function DashboardContent() {
     const {
         ordenesHoy,
         ordersEnProceso,
-        ordersEsperando,
+        ordersLavando,
         ingresosHoy,
+        ingresosSemanaActual,
+        ingresosMesActual,
         avgServiceTime,
         seriesSemana,
         topServices,
@@ -46,8 +48,10 @@ export default function DashboardContent() {
             <KpiStrip
                 ordenesHoy={ordenesHoy}
                 ordersEnProceso={ordersEnProceso}
-                ordersEsperando={ordersEsperando}
+                ordersLavando={ordersLavando}
                 ingresosHoy={ingresosHoy}
+                ingresosSemanaActual={ingresosSemanaActual}
+                ingresosMesActual={ingresosMesActual}
                 avgServiceTime={avgServiceTime}
             />
 
@@ -57,7 +61,7 @@ export default function DashboardContent() {
                 </div>
 
                 <aside className="flex flex-col gap-4">
-                    <WeekChart series={seriesSemana} />
+                    <WeeklyChart series={seriesSemana} />
                     <CrewRanking orders={allOrders} />
                 </aside>
             </div>

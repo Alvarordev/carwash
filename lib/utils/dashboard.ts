@@ -31,7 +31,7 @@ export function buildMonthSeries(orders: Order[], date = new Date()) {
   return series;
 }
 
-export function aggregateTopServices(orders: Order[], top = 4) {
+export function aggregateTopServices(orders: Order[], top?: number) {
   const map = new Map<string, number>();
   for (const o of orders) {
     for (const it of o.items || []) {
@@ -40,5 +40,5 @@ export function aggregateTopServices(orders: Order[], top = 4) {
   }
   const arr = Array.from(map.entries()).map(([serviceId, count]) => ({ serviceId, count }));
   arr.sort((a, b) => b.count - a.count);
-  return arr.slice(0, top);
+  return typeof top === "number" ? arr.slice(0, top) : arr;
 }

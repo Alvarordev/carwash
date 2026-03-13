@@ -7,8 +7,10 @@ import { Button } from "@/components/ui/button";
 type Props = {
   ordenesHoy: number;
   ordersEnProceso: number;
-  ordersEsperando: number;
+  ordersLavando: number;
   ingresosHoy: number;
+  ingresosSemanaActual: number;
+  ingresosMesActual: number;
   avgServiceTime: number;
 };
 
@@ -17,8 +19,10 @@ const TARGET_MINUTES = 45;
 export default function KpiStrip({
   ordenesHoy,
   ordersEnProceso,
-  ordersEsperando,
+  ordersLavando,
   ingresosHoy,
+  ingresosSemanaActual,
+  ingresosMesActual,
   avgServiceTime,
 }: Props) {
   const router = useRouter();
@@ -30,25 +34,27 @@ export default function KpiStrip({
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      <div className="flex flex-col sm:col-span-2 bg-primary rounded-2xl p-4 sm:p-6 relative overflow-hidden shadow-lg">
+      <div className="flex flex-col sm:col-span-2 bg-primary rounded-2xl p-4 sm:p-6 relative overflow-hidden shadow-lg gap-4">
         <p className="font-medium text-card dark:text-foreground mb-1">Rendimiento del día</p>
-        <h2 className="text-3xl font-bold text-card dark:text-foreground leading-tight">
+        <h2 className="text-2xl sm:text-3xl font-bold text-card dark:text-foreground leading-tight">
           Se completaron{" "}
           <span className="text-card dark:text-foreground">{ordenesHoy}</span> servicios hoy
         </h2>
 
-        <div className="flex flex-1 items-end gap-3">
-          <div className="bg-white/15 backdrop-blur-sm rounded-lg px-4 py-2 text-center">
-            <p className="text-xs text-card dark:text-foreground">En proceso</p>
-            <p className="text-xl font-bold text-card dark:text-foreground">{ordersEnProceso}</p>
-          </div>
-          <div className="bg-white/15 backdrop-blur-sm rounded-lg px-4 py-2 text-center">
-            <p className="text-xs text-card dark:text-foreground">Esperando</p>
-            <p className="text-xl font-bold text-card dark:text-foreground">{ordersEsperando}</p>
+        <div className="flex flex-col gap-3 sm:flex-1 sm:flex-row sm:items-end">
+          <div className="grid grid-cols-2 gap-2 sm:flex sm:gap-3">
+            <div className="bg-white/15 backdrop-blur-sm rounded-lg px-4 py-2 text-center">
+              <p className="text-xs text-card dark:text-foreground">En proceso</p>
+              <p className="text-xl font-bold text-card dark:text-foreground">{ordersEnProceso}</p>
+            </div>
+            <div className="bg-white/15 backdrop-blur-sm rounded-lg px-4 py-2 text-center">
+              <p className="text-xs text-card dark:text-foreground">Lavando</p>
+              <p className="text-xl font-bold text-card dark:text-foreground">{ordersLavando}</p>
+            </div>
           </div>
           <Button
             size="lg"
-            className="ml-auto rounded-sm font-semibold"
+            className="w-full sm:w-auto sm:ml-auto rounded-sm font-semibold"
             onClick={() => router.push("/ordenes")}
           >
             Ver Órdenes
@@ -67,10 +73,10 @@ export default function KpiStrip({
         <p className="text-3xl font-bold mt-1 flex-1 pb-11">{fmt(ingresosHoy)}</p>
         <div className="flex justify-between border-t border-border pt-3 mt-3">
           <span className="text-muted-foreground text-xs">
-            Semanal: {fmt(ingresosHoy * 7)}
+            Semanal: {fmt(ingresosSemanaActual)}
           </span>
           <span className="text-muted-foreground text-xs">
-            Mensual: {fmt(ingresosHoy * 30)}
+            Mensual: {fmt(ingresosMesActual)}
           </span>
         </div>
       </div>
@@ -82,7 +88,7 @@ export default function KpiStrip({
           </div>
         </div>
         <p className="text-sm text-muted-foreground">Tiempo promedio de servicio</p>
-        <p className="text-3xl font-bold mt-1 flex-1">
+        <p className="text-3xl font-bold mt-1 flex-1 pb-11">
           {avgServiceTime > 0 ? `${avgServiceTime}m` : "—"}
         </p>
         <div className="mt-auto">
@@ -97,7 +103,7 @@ export default function KpiStrip({
               }}
             />
           </div>
-          <p className="text-muted-foreground text-xs">
+          <p className="flex text-muted-foreground text-xs">
             Objetivo: {TARGET_MINUTES} min máx
           </p>
         </div>
