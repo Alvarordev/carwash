@@ -4,10 +4,23 @@ import { NextResponse, type NextRequest } from "next/server";
 const PUBLIC_ROUTES = ["/login"];
 const SUPER_ADMIN_EMAIL = "alvaro@gmail.com";
 
+function getUserRole(user: { app_metadata?: unknown } | null) {
+    if (!user?.app_metadata || typeof user.app_metadata !== "object") {
+        return "";
+    }
+
+    const role = (user.app_metadata as { role?: unknown }).role;
+    return typeof role === "string" ? role.toLowerCase() : "";
+}
+
 export async function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl;
+    const errorParam = request.nextUrl.searchParams.get("error");
 
     const isPublic = PUBLIC_ROUTES.some((r) => pathname.startsWith(r));
+    const isAdminRoute = pathname.startsWith("/admin");
+    const isDashboardRoute = !isPublic && !isAdminRoute;
+    const superAdminEmail = process.env.SUPER_ADMIN_EMAIL ?? SUPER_ADMIN_EMAIL;
 
     let response = NextResponse.next({ request });
 
@@ -36,11 +49,18 @@ export async function middleware(request: NextRequest) {
         data: { user },
     } = await supabase.auth.getUser();
 
-    const isAdminRoute = pathname.startsWith("/admin");
+    const role = getUserRole(user);
+    const isSuperAdmin = user?.email === superAdminEmail;
+    const canAccessDashboard = isSuperAdmin || role === "admin";
 
-    if (user && isPublic) {
-        const dest = user.email === SUPER_ADMIN_EMAIL ? "/admin" : "/dashboard";
-        return NextResponse.redirect(new URL(dest, request.url));
+    if (user && isPublic && !errorParam) {
+        if (isSuperAdmin) {
+            return NextResponse.redirect(new URL("/admin", request.url));
+        }
+
+        if (canAccessDashboard) {
+            return NextResponse.redirect(new URL("/dashboard", request.url));
+        }
     }
 
     if (!user && !isPublic) {
@@ -50,8 +70,18 @@ export async function middleware(request: NextRequest) {
     }
 
     // Block non-super-admin users from /admin
-    if (user && isAdminRoute && user.email !== SUPER_ADMIN_EMAIL) {
-        return NextResponse.redirect(new URL("/dashboard", request.url));
+    if (user && isAdminRoute && !isSuperAdmin) {
+        await supabase.auth.signOut();
+        const loginUrl = new URL("/login", request.url);
+        loginUrl.searchParams.set("error", "forbidden");
+        return NextResponse.redirect(loginUrl);
+    }
+
+    if (user && isDashboardRoute && !canAccessDashboard) {
+        await supabase.auth.signOut();
+        const loginUrl = new URL("/login", request.url);
+        loginUrl.searchParams.set("error", "forbidden");
+        return NextResponse.redirect(loginUrl);
     }
 
     return response;

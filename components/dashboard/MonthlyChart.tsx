@@ -19,7 +19,7 @@ export default function WeeklyChart({ series }: { series: WeekPoint[] }) {
     <div className="bg-card border border-border rounded-2xl p-4">
       <div className="flex items-center justify-between mb-3">
         <h4 className="text-sm font-semibold text-foreground">
-          Weekly chart
+          Ingresos de la semana
         </h4>
       </div>
       <div style={{ width: "100%", height: 140 }}>

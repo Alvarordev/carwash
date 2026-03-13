@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { Eye, EyeClosed } from "iconoir-react";
@@ -13,20 +13,39 @@ export default function LoginForm() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const next = searchParams.get("next") ?? "/dashboard";
+    const error = searchParams.get("error");
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [showPwd, setShowPwd] = useState(false);
     const [isPending, startTransition] = useTransition();
 
+    useEffect(() => {
+        if (error !== "forbidden") {
+            return;
+        }
+
+        toast.error("Acceso denegado", {
+            description: "No tienes permisos para ingresar al dashboard.",
+        });
+
+        router.replace("/login");
+    }, [error, router]);
+
     const handleSubmit = (e: React.SubmitEvent) => {
         e.preventDefault();
         startTransition(async () => {
             const error = await signIn(email, password);
             if (error) {
-                toast.error("Credenciales inválidas", {
-                    description: "Verifica tu correo y contraseña.",
-                });
+                if (error === "FORBIDDEN_ROLE") {
+                    toast.error("Sin permisos de acceso", {
+                        description: "Tu cuenta no tiene permisos para ingresar. Contacta a tu empresa.",
+                    });
+                } else {
+                    toast.error("Credenciales inválidas", {
+                        description: "Verifica tu correo y contraseña.",
+                    });
+                }
                 return;
             }
             router.push(next);
