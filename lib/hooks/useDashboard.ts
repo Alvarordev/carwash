@@ -282,7 +282,7 @@ export function useDashboard(): UseDashboardReturn {
             const ordenesHoy = todayOrders.filter((o) => o.status === "Entregado").length;
             const ordersEnProceso = todayOrders.filter((o) => o.status === "En Proceso").length;
             const ordersLavando = todayOrders.filter((o) => o.status === "Lavando").length;
-            const avgServiceTime = calcAvgServiceTime(nonCanceledOrders);
+            const avgServiceTime = calcAvgServiceTime(todayOrders);
 
             const seriesMes = buildMonthSeries(nonCanceledOrders);
             const seriesSemana = buildWeekSeries(deliveredOrders);

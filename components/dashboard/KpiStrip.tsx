@@ -14,7 +14,7 @@ type Props = {
   avgServiceTime: number;
 };
 
-const TARGET_MINUTES = 45;
+const TARGET_MINUTES = 55;
 
 export default function KpiStrip({
   ordenesHoy,
@@ -87,7 +87,7 @@ export default function KpiStrip({
             <TimerSolid className="size-5 text-primary" />
           </div>
         </div>
-        <p className="text-sm text-muted-foreground">Tiempo promedio de servicio</p>
+        <p className="text-sm text-muted-foreground">Tiempo promedio de hoy</p>
         <p className="text-3xl font-bold mt-1 flex-1 pb-11">
           {avgServiceTime > 0 ? `${avgServiceTime}m` : "—"}
         </p>

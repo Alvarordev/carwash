@@ -13,7 +13,7 @@ function getUserRole(user: { app_metadata?: unknown } | null) {
     return typeof role === "string" ? role.toLowerCase() : "";
 }
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
     const { pathname } = request.nextUrl;
     const errorParam = request.nextUrl.searchParams.get("error");
 
