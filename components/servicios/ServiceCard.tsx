@@ -136,8 +136,8 @@ export default function ServiceCard({ service, categoryName, onEdit, onDelete, i
         className="bg-card shadow-xl rounded-xl border border-border overflow-hidden cursor-pointer transition-all duration-200 hover:border-primary/30 hover:shadow-2xl"
         onClick={() => setIsExpanded(!isExpanded)}
       >
-        <div className="flex items-center justify-between p-4">
-          <div className="flex items-center gap-4 flex-1 min-w-0">
+        <div className="p-4 sm:flex sm:items-start sm:justify-between sm:gap-4">
+          <div className="flex items-start justify-between gap-3 min-w-0 flex-1 sm:gap-4">
             <div
               className={`w-12 h-12 rounded-full flex items-center justify-center shrink-0${service.color ? "" : " bg-primary/10 text-primary"}`}
               style={service.color ? { backgroundColor: `${service.color}`, color: "var(--background)" } : undefined}
@@ -145,24 +145,25 @@ export default function ServiceCard({ service, categoryName, onEdit, onDelete, i
               {getServiceIcon(service)}
             </div>
             <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 mb-1">
-                <h3 className="text-lg font-bold text-foreground truncate">
+              <div className="mb-1 min-w-0">
+                <h3 className="text-base font-bold text-foreground truncate sm:text-lg">
                   {service.name}
                 </h3>
-                {categoryName && (
-                  <Badge variant="secondary" className="text-xs font-semibold capitalize mr-2">
-                    {categoryName}
-                  </Badge>
-                )}
               </div>
 
-              <p className="text-sm text-muted-foreground truncate mt-1">
+              <p className="text-xs text-muted-foreground truncate mt-1 sm:text-sm">
                 {service.description ?? "Sin descripción"}
               </p>
             </div>
+
+            {categoryName && (
+              <Badge variant="secondary" className="inline-flex shrink-0 self-start text-xs font-semibold capitalize max-w-28 truncate sm:max-w-none sm:mt-1">
+                {categoryName}
+              </Badge>
+            )}
           </div>
 
-          <div className="flex items-center gap-2 shrink-0">
+          <div className="mt-3 flex items-center justify-between gap-2 shrink-0 sm:mt-0 sm:justify-end">
             <div onClick={e => e.stopPropagation()} className="flex items-center">
               <Switch
                 checked={localStatus === "active"}
@@ -185,43 +186,45 @@ export default function ServiceCard({ service, categoryName, onEdit, onDelete, i
               </span>
             </div>
 
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-                <Button variant="ghost" size="icon" className="h-8 w-8 rounded-md">
-                  <MoreHoriz className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="bg-popover border-border rounded-md">
-                <DropdownMenuItem
-                  className="cursor-pointer"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onEdit(service);
-                  }}
-                >
-                  <EditPencil className="w-4 h-4 mr-2" />
-                  Editar
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  className="cursor-pointer text-destructive focus:text-destructive"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onDelete(service);
-                  }}
-                >
-                  <Trash className="w-4 h-4 mr-2" />
-                  Eliminar
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <div className="flex items-center gap-2">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
+                  <Button variant="ghost" size="icon" className="h-8 w-8 rounded-md">
+                    <MoreHoriz className="size-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="bg-popover border-border rounded-md">
+                  <DropdownMenuItem
+                    className="cursor-pointer"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onEdit(service);
+                    }}
+                  >
+                    <EditPencil className="w-4 h-4 mr-2" />
+                    Editar
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    className="cursor-pointer text-destructive focus:text-destructive"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onDelete(service);
+                    }}
+                  >
+                    <Trash className="w-4 h-4 mr-2" />
+                    Eliminar
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
 
-            <Button variant="ghost" size="icon" className="h-8 w-8 rounded-md">
-              {isExpanded ? (
-                <Minus className="h-4 w-4" />
-              ) : (
-                <PlusIcon className="h-4 w-4" />
-              )}
-            </Button>
+              <Button variant="ghost" size="icon" className="h-8 w-8 rounded-md">
+                {isExpanded ? (
+                  <Minus className="h-4 w-4" />
+                ) : (
+                  <PlusIcon className="h-4 w-4" />
+                )}
+              </Button>
+            </div>
           </div>
         </div>
 

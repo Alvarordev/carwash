@@ -88,7 +88,7 @@ export default function Sidebar({ mobileOpen, setMobileOpen }: SidebarProps) {
       )}
 
       <aside
-        className={`xl:hidden fixed inset-y-0 left-0 z-50 w-64 bg-background border-r border-border transform transition-transform duration-300 ${
+        className={`xl:hidden fixed inset-y-0 left-0 z-50 w-64 bg-card dark:bg-background border-r border-border transform transition-transform duration-300 ${
           mobileOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >

@@ -15,7 +15,7 @@ import DeleteServiceDialog from "./DeleteServiceDialog";
 
 export default function ServicesCatalog() {
   const { services, loading, error, createService, updateService, deleteService } = useServices();
-  const { allCategories } = useServiceCategories();
+  const { categories, allCategories } = useServiceCategories();
 
   const [activeFilter, setActiveFilter] = useState<"all" | string>("all");
 
@@ -110,7 +110,7 @@ export default function ServicesCatalog() {
         >
           Todos los servicios
         </Button>
-        {allCategories.map((cat) => (
+        {categories.map((cat) => (
           <Button
             key={cat.id}
             variant="outline"
