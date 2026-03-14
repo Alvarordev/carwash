@@ -2,7 +2,8 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { Search, EditPencil, Eye, Calendar } from "iconoir-react";
+import { toast } from "sonner";
+import { Search, EditPencil, Eye, Calendar, Download } from "iconoir-react";
 import {
   Table,
   TableBody,
@@ -17,6 +18,7 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useOrders } from "@/lib/hooks/useOrders";
+import { exportOrdersToXlsx } from "@/lib/utils/orders-export";
 import OrderStatusDialog from "./OrderStatusDialog";
 import type { Order, OrderItem } from "@/lib/types/order";
 import { cn } from "@/lib/utils";
@@ -25,10 +27,9 @@ import { ICON_MAP } from "../servicios/ServiceCard";
 export default function OrdersTable() {
   const { orders, loading, error, updateOrderStatus, cancelOrder } = useOrders();
 
-  console.log(orders)
-
   const [search, setSearch] = useState("");
   const [filterStatus, setFilterStatus] = useState<string>("all");
+  const [isExporting, setIsExporting] = useState(false);
 
   const clearFilters = () => {
     setSearch("");
@@ -66,6 +67,26 @@ export default function OrdersTable() {
       return matchesSearch && matchesStatus;
     });
   }, [orders, search, filterStatus]);
+
+  const isExportDisabled = loading || !!error || filtered.length === 0 || isExporting;
+
+  const handleExportXlsx = async () => {
+    if (isExportDisabled) return;
+
+    try {
+      setIsExporting(true);
+      await exportOrdersToXlsx(filtered);
+      toast.success("Excel exportado", {
+        description: `Se exportaron ${filtered.length} ordenes.`,
+      });
+    } catch {
+      toast.error("No se pudo exportar Excel", {
+        description: "Intenta nuevamente en unos segundos.",
+      });
+    } finally {
+      setIsExporting(false);
+    }
+  };
 
   return (
     <div className="flex flex-col gap-6">
@@ -107,6 +128,16 @@ export default function OrdersTable() {
         </div>
 
         <div className="flex items-center gap-3">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleExportXlsx}
+            disabled={isExportDisabled}
+            className="gap-1.5 rounded-md"
+          >
+            <Download className="h-3.5 w-3.5" />
+            Exportar Excel
+          </Button>
           <Button
             variant="ghost"
             size="sm"
