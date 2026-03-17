@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import { toast } from "sonner";
 import { Search, EditPencil, Eye, Calendar, Download } from "iconoir-react";
+import type { DateRange } from "react-day-picker";
 import {
   Table,
   TableBody,
@@ -17,6 +18,8 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar as DatePickerCalendar } from "@/components/ui/calendar";
 import { useOrders } from "@/lib/hooks/useOrders";
 import { exportOrdersToXlsx } from "@/lib/utils/orders-export";
 import OrderStatusDialog from "./OrderStatusDialog";
@@ -29,15 +32,94 @@ export default function OrdersTable() {
 
   const [search, setSearch] = useState("");
   const [filterStatus, setFilterStatus] = useState<string>("all");
+  const [filterCustomer, setFilterCustomer] = useState<string>("all");
+  const [filterService, setFilterService] = useState<string>("all");
+  const [filterPaymentMethod, setFilterPaymentMethod] = useState<string>("all");
+  const [dateFilterMode, setDateFilterMode] = useState<"all" | "single" | "range">("all");
+  const [singleDate, setSingleDate] = useState<Date | undefined>(undefined);
+  const [dateRange, setDateRange] = useState<DateRange | undefined>(undefined);
   const [isExporting, setIsExporting] = useState(false);
 
   const clearFilters = () => {
     setSearch("");
     setFilterStatus("all");
+    setFilterCustomer("all");
+    setFilterService("all");
+    setFilterPaymentMethod("all");
+    setDateFilterMode("all");
+    setSingleDate(undefined);
+    setDateRange(undefined);
   };
 
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingOrder, setEditingOrder] = useState<Order | null>(null);
+
+  const customerOptions = useMemo(() => {
+    return Array.from(
+      new Map(
+        orders
+          .filter((order) => order.customer?.id)
+          .map((order) => [
+            String(order.customer!.id),
+            `${order.customer!.firstName} ${order.customer!.lastName}`,
+          ]),
+      ).entries(),
+    ).map(([id, name]) => ({ id, name }));
+  }, [orders]);
+
+  const serviceOptions = useMemo(() => {
+    return Array.from(
+      new Map(
+        orders
+          .flatMap((order) => order.items)
+          .filter((item) => item.serviceId)
+          .map((item) => [String(item.serviceId), item.name]),
+      ).entries(),
+    ).map(([id, name]) => ({ id, name }));
+  }, [orders]);
+
+  const paymentMethodOptions = useMemo(() => {
+    return Array.from(
+      new Set(
+        orders
+          .map((order) => order.paymentMethod?.trim())
+          .filter((method): method is string => Boolean(method)),
+      ),
+    ).sort((a, b) => a.localeCompare(b, "es"));
+  }, [orders]);
+
+  const getDateKey = (date: Date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+
+  const getDateLabel = (date: Date) => {
+    return date.toLocaleDateString("es-PE", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    });
+  };
+
+  const getStartOfDay = (date: Date) => {
+    return new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0, 0);
+  };
+
+  const getEndOfDay = (date: Date) => {
+    return new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59, 999);
+  };
+
+  const handleDateModeChange = (value: "all" | "single" | "range") => {
+    setDateFilterMode(value);
+    if (value !== "single") {
+      setSingleDate(undefined);
+    }
+    if (value !== "range") {
+      setDateRange(undefined);
+    }
+  };
 
 
   const handleOpenEdit = (order: Order) => {
@@ -64,9 +146,43 @@ export default function OrdersTable() {
         customerName.toLowerCase().includes(q) ||
         o.vehicle?.plate?.toLowerCase().includes(q);
       const matchesStatus = filterStatus === "all" || o.status === filterStatus;
-      return matchesSearch && matchesStatus;
+      const matchesCustomer = filterCustomer === "all" || String(o.customer?.id) === filterCustomer;
+      const matchesService =
+        filterService === "all" ||
+        o.items.some((item) => String(item.serviceId) === filterService);
+      const matchesPaymentMethod =
+        filterPaymentMethod === "all" ||
+        (o.paymentMethod?.trim() ?? "") === filterPaymentMethod;
+
+      let matchesDate = true;
+      const registeredDate = new Date(o.registeredAt);
+      if (Number.isNaN(registeredDate.getTime())) {
+        matchesDate = false;
+      } else if (dateFilterMode === "single" && singleDate) {
+        matchesDate = getDateKey(registeredDate) === getDateKey(singleDate);
+      } else if (dateFilterMode === "range" && dateRange?.from && dateRange?.to) {
+        const start = getStartOfDay(dateRange.from);
+        const end = getEndOfDay(dateRange.to);
+        if (start.getTime() > end.getTime()) {
+          matchesDate = false;
+        } else {
+          matchesDate = registeredDate.getTime() >= start.getTime() && registeredDate.getTime() <= end.getTime();
+        }
+      }
+
+      return matchesSearch && matchesStatus && matchesCustomer && matchesService && matchesPaymentMethod && matchesDate;
     });
-  }, [orders, search, filterStatus]);
+  }, [
+    orders,
+    search,
+    filterStatus,
+    filterCustomer,
+    filterService,
+    filterPaymentMethod,
+    dateFilterMode,
+    singleDate,
+    dateRange,
+  ]);
 
   const isExportDisabled = loading || !!error || filtered.length === 0 || isExporting;
 
@@ -125,6 +241,89 @@ export default function OrdersTable() {
               <SelectItem value="Anulado">Anulado</SelectItem>
             </SelectContent>
           </Select>
+
+          <Select value={filterCustomer} onValueChange={setFilterCustomer}>
+            <SelectTrigger className="w-48 bg-background border-border rounded-sm">
+              <SelectValue placeholder="Cliente" />
+            </SelectTrigger>
+            <SelectContent className="bg-background border-border rounded-sm">
+              <SelectItem value="all">Todos los clientes</SelectItem>
+              {customerOptions.map((customer) => (
+                <SelectItem key={customer.id} value={customer.id}>
+                  {customer.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          <Select value={filterService} onValueChange={setFilterService}>
+            <SelectTrigger className="w-44 bg-background border-border rounded-sm">
+              <SelectValue placeholder="Servicio" />
+            </SelectTrigger>
+            <SelectContent className="bg-background border-border rounded-sm">
+              <SelectItem value="all">Todos los servicios</SelectItem>
+              {serviceOptions.map((service) => (
+                <SelectItem key={service.id} value={service.id}>
+                  {service.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          <Select value={filterPaymentMethod} onValueChange={setFilterPaymentMethod}>
+            <SelectTrigger className="w-44 bg-background border-border rounded-sm">
+              <SelectValue placeholder="Método de pago" />
+            </SelectTrigger>
+            <SelectContent className="bg-background border-border rounded-sm">
+              <SelectItem value="all">Todos los métodos</SelectItem>
+              {paymentMethodOptions.map((method) => (
+                <SelectItem key={method} value={method}>
+                  {method}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          <Select value={dateFilterMode} onValueChange={handleDateModeChange}>
+            <SelectTrigger className="w-44 bg-background border-border rounded-sm">
+              <SelectValue placeholder="Fecha" />
+            </SelectTrigger>
+            <SelectContent className="bg-background border-border rounded-sm">
+              <SelectItem value="all">Todas las fechas</SelectItem>
+              <SelectItem value="single">Fecha única</SelectItem>
+              <SelectItem value="range">Rango de fechas</SelectItem>
+            </SelectContent>
+          </Select>
+
+          <div className="flex flex-wrap gap-2">
+            {dateFilterMode === "single" && (
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" className="w-44 justify-start bg-background border-border text-left font-normal">
+                    {singleDate ? getDateLabel(singleDate) : "Seleccionar fecha"}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0 bg-background border-border" align="start">
+                  <DatePickerCalendar mode="single" selected={singleDate} onSelect={setSingleDate} />
+                </PopoverContent>
+              </Popover>
+            )}
+
+            {dateFilterMode === "range" && (
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" className="w-[18rem] justify-start bg-background border-border text-left font-normal">
+                    {dateRange?.from && dateRange?.to
+                      ? `${getDateLabel(dateRange.from)} - ${getDateLabel(dateRange.to)}`
+                      : "Seleccionar rango"}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0 bg-background border-border" align="start">
+                  <DatePickerCalendar mode="range" selected={dateRange} onSelect={setDateRange} />
+                </PopoverContent>
+              </Popover>
+            )}
+          </div>
         </div>
 
         <div className="flex items-center gap-3">
