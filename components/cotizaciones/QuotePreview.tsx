@@ -35,6 +35,7 @@ export function QuotePreview({ data, companyName, profile }: QuotePreviewProps) 
   const displayCompanyName = data.companyName || companyName || "Mi Empresa";
   const logoUrl = data.companyLogoUrl || profile?.logoUrl || null;
   const formattedDate = data.date ? formatQuoteDate(data.date) : "—";
+  const hasLogo = Boolean(logoUrl);
 
   return (
     <div ref={wrapperRef} style={{ height: A4_HEIGHT * scale, overflow: "hidden" }}>
@@ -63,14 +64,31 @@ export function QuotePreview({ data, companyName, profile }: QuotePreviewProps) 
           }}
         />
 
-        <div style={{ padding: "60px 40px 32px" }}>
+        <div style={{ padding: "88px 40px 32px" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 24, position: "relative" }}>
             <div>
-              <div style={{ fontSize: 12, color: "#555", marginBottom: 2 }}>N°. {data.quoteNumber || "—"}</div>
-              <div style={{ fontSize: 12, color: "#555" }}>{formattedDate}</div>
+              {hasLogo ? (
+                <img
+                  src={logoUrl ?? ""}
+                  alt="Logo"
+                  style={{ height: 48, maxWidth: 140, objectFit: "contain" }}
+                />
+              ) : (
+                <>
+                  <div style={{ fontSize: 12, color: "#555", marginBottom: 2 }}>N°. {data.quoteNumber || "—"}</div>
+                  <div style={{ fontSize: 12, color: "#555" }}>{formattedDate}</div>
+                </>
+              )}
             </div>
-            <div style={{ fontSize: 32, fontWeight: 700, letterSpacing: 2, color: "#1a1a1a", paddingRight: 16 }}>
-              COTIZACIÓN
+
+            <div style={{ textAlign: "right", paddingRight: 16 }}>
+              <div style={{ fontSize: 32, fontWeight: 700, letterSpacing: 2, color: "#1a1a1a" }}>COTIZACIÓN</div>
+              {hasLogo && (
+                <div style={{ marginTop: 10 }}>
+                  <div style={{ fontSize: 12, color: "#555", marginBottom: 2 }}>N°. {data.quoteNumber || "—"}</div>
+                  <div style={{ fontSize: 12, color: "#555" }}>{formattedDate}</div>
+                </div>
+              )}
             </div>
           </div>
 
@@ -78,14 +96,7 @@ export function QuotePreview({ data, companyName, profile }: QuotePreviewProps) 
 
           <div style={{ display: "flex", gap: 24, marginBottom: 28 }}>
             <div style={{ flex: 1 }}>
-              {logoUrl && (
-                <img
-                  src={logoUrl}
-                  alt="Logo"
-                  style={{ height: 40, maxWidth: 120, objectFit: "contain", marginBottom: 6 }}
-                />
-              )}
-              <div style={{ fontSize: 9, fontWeight: 700, color: "#888", textTransform: "uppercase", marginBottom: 4, letterSpacing: 1 }}>
+              <div style={{ fontSize: 9, fontWeight: 700, color: "#888", textTransform: "uppercase", marginBottom: 10, letterSpacing: 1 }}>
                 Cotización
               </div>
               <div style={{ fontSize: 15, fontWeight: 700, color, marginBottom: 4 }}>{displayCompanyName}</div>
@@ -101,7 +112,7 @@ export function QuotePreview({ data, companyName, profile }: QuotePreviewProps) 
             </div>
             
             <div style={{ flex: 1, textAlign: "right" }}>
-              <div style={{ fontSize: 9, fontWeight: 700, color: "#888", textTransform: "uppercase", marginBottom: 4, letterSpacing: 1 }}>
+              <div style={{ fontSize: 9, fontWeight: 700, color: "#888", textTransform: "uppercase", marginBottom: 10, letterSpacing: 1 }}>
                 Cliente
               </div>
               {data.clientName ? (

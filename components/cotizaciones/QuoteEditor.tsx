@@ -126,7 +126,7 @@ export function QuoteEditor({ quote, onBack, onCreate, onUpdate, nextQuoteNumber
   async function handleDownloadPdf() {
     const data = watch() as QuoteFormData;
     try {
-      await generateQuotePdf(data);
+      await generateQuotePdf(data, { fallbackLogoUrl: profile?.logoUrl ?? null });
     } catch {
       toast.error("Error al generar el PDF");
     }
