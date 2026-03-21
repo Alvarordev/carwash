@@ -20,3 +20,5 @@ export type {
 export type { Company, UserProfile, UserRole } from "./company";
 export type { ExpenseCategory } from "./expenseCategory";
 export type { Expense } from "./expense";
+export type { Quote, QuoteItem, QuoteStatus } from "./quote";
+export type { CompanyProfile } from "./companyProfile";

@@ -1,9 +1,8 @@
-/* eslint-disable @next/next/no-img-element */
 import { Calendar, Car, Camera, PageSearch, ClockRotateRight, WarningTriangle } from "iconoir-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Order } from "@/lib/types/order";
+import PhotoGallery from "@/components/ordenes/PhotoGallery";
 
 type Props = {
   order: Order;
@@ -86,21 +85,7 @@ export default function OrderDetailLayout({ order }: Props) {
               </div>
               <a className="text-sm text-primary">Ver Todos</a>
             </div>
-            <div className="grid grid-cols-4 gap-3">
-              {order.photos && order.photos.length > 0 ? (
-                order.photos.map((src, i) => (
-                  <div key={i} className="min-h-28 w-full aspect-square rounded-md overflow-hidden bg-card-alt">
-                    <img src={src} alt={`photo-${i}`} className="h-full w-full object-cover" />
-                  </div>
-                ))
-              ) : (
-                Array.from({ length: 4 }).map((_, i) => (
-                  <div key={i} className="h-28 w-full rounded-md border border-dashed border-border flex items-center justify-center">
-                    <Skeleton className="h-full w-full bg-muted" />
-                  </div>
-                ))
-              )}
-            </div>
+            <PhotoGallery photos={order.photos} />
           </section>
         </div>
 

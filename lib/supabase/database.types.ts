@@ -41,6 +41,50 @@ export type Database = {
         }
         Relationships: []
       }
+      company_profiles: {
+        Row: {
+          address: string | null
+          company_id: string
+          created_at: string
+          id: string
+          logo_url: string | null
+          owner_name: string | null
+          phone: string | null
+          ruc: string | null
+          updated_at: string
+        }
+        Insert: {
+          address?: string | null
+          company_id: string
+          created_at?: string
+          id?: string
+          logo_url?: string | null
+          owner_name?: string | null
+          phone?: string | null
+          ruc?: string | null
+          updated_at?: string
+        }
+        Update: {
+          address?: string | null
+          company_id?: string
+          created_at?: string
+          id?: string
+          logo_url?: string | null
+          owner_name?: string | null
+          phone?: string | null
+          ruc?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_profiles_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: true
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       customers: {
         Row: {
           company_id: string
@@ -654,6 +698,149 @@ export type Database = {
           },
         ]
       }
+      quote_items: {
+        Row: {
+          company_id: string
+          created_at: string
+          description: string
+          id: string
+          quantity: number
+          quote_id: string
+          sort_order: number
+          subtotal: number
+          unit_price: number
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          description: string
+          id?: string
+          quantity?: number
+          quote_id: string
+          sort_order?: number
+          subtotal?: number
+          unit_price?: number
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          description?: string
+          id?: string
+          quantity?: number
+          quote_id?: string
+          sort_order?: number
+          subtotal?: number
+          unit_price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quote_items_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quote_items_quote_id_fkey"
+            columns: ["quote_id"]
+            isOneToOne: false
+            referencedRelation: "quotes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quotes: {
+        Row: {
+          client_address: string | null
+          client_doc_number: string | null
+          client_doc_type: string | null
+          client_email: string | null
+          client_name: string | null
+          client_phone: string | null
+          color_theme: string
+          company_address: string | null
+          company_id: string
+          company_logo_url: string | null
+          company_name: string | null
+          company_owner_name: string | null
+          company_phone: string | null
+          company_ruc: string | null
+          created_at: string
+          date: string
+          id: string
+          igv: number
+          notes: string | null
+          payment_method: string | null
+          quote_number: string
+          status: Database["public"]["Enums"]["quote_status"]
+          subtotal: number
+          total: number
+          updated_at: string
+        }
+        Insert: {
+          client_address?: string | null
+          client_doc_number?: string | null
+          client_doc_type?: string | null
+          client_email?: string | null
+          client_name?: string | null
+          client_phone?: string | null
+          color_theme?: string
+          company_address?: string | null
+          company_id: string
+          company_logo_url?: string | null
+          company_name?: string | null
+          company_owner_name?: string | null
+          company_phone?: string | null
+          company_ruc?: string | null
+          created_at?: string
+          date?: string
+          id?: string
+          igv?: number
+          notes?: string | null
+          payment_method?: string | null
+          quote_number: string
+          status?: Database["public"]["Enums"]["quote_status"]
+          subtotal?: number
+          total?: number
+          updated_at?: string
+        }
+        Update: {
+          client_address?: string | null
+          client_doc_number?: string | null
+          client_doc_type?: string | null
+          client_email?: string | null
+          client_name?: string | null
+          client_phone?: string | null
+          color_theme?: string
+          company_address?: string | null
+          company_id?: string
+          company_logo_url?: string | null
+          company_name?: string | null
+          company_owner_name?: string | null
+          company_phone?: string | null
+          company_ruc?: string | null
+          created_at?: string
+          date?: string
+          id?: string
+          igv?: number
+          notes?: string | null
+          payment_method?: string | null
+          quote_number?: string
+          status?: Database["public"]["Enums"]["quote_status"]
+          subtotal?: number
+          total?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quotes_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       service_categories: {
         Row: {
           color: string | null
@@ -1068,7 +1255,7 @@ export type Database = {
           {
             foreignKeyName: "whatsapp_config_company_id_fkey"
             columns: ["company_id"]
-            isOneToOne: false
+            isOneToOne: true
             referencedRelation: "companies"
             referencedColumns: ["id"]
           },
@@ -1303,6 +1490,7 @@ export type Database = {
         | "Anulado"
       payment_status: "pendiente" | "pagado" | "parcial"
       promotion_scope_type: "all" | "service" | "vehicleType"
+      quote_status: "borrador" | "enviada" | "aceptada" | "rechazada"
       service_category: "exterior" | "interior" | "detalle" | "añadido"
       staff_role: "admin" | "washer" | "cashier" | "supervisor"
       status: "active" | "inactive"
@@ -1446,6 +1634,7 @@ export const Constants = {
       ],
       payment_status: ["pendiente", "pagado", "parcial"],
       promotion_scope_type: ["all", "service", "vehicleType"],
+      quote_status: ["borrador", "enviada", "aceptada", "rechazada"],
       service_category: ["exterior", "interior", "detalle", "añadido"],
       staff_role: ["admin", "washer", "cashier", "supervisor"],
       status: ["active", "inactive"],

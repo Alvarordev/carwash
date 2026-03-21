@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { CompanyProfileSection } from "@/components/configuracion/negocio/CompanyProfileSection";
 import { VehicleTypesSection } from "@/components/configuracion/negocio/VehicleTypesSection";
 import { ServiceCategoriesSection } from "@/components/configuracion/negocio/ServiceCategoriesSection";
 import { PaymentMethodsSection } from "@/components/configuracion/negocio/PaymentMethodsSection";
@@ -59,6 +60,7 @@ export default function ConfiguracionPage() {
 
       {activeTab === "business" && (
         <div className="space-y-8">
+          <CompanyProfileSection />
           <VehicleTypesSection />
           <ServiceCategoriesSection />
           <PaymentMethodsSection />
