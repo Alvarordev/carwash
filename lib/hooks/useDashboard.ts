@@ -6,6 +6,7 @@ import {
     buildMonthSeries,
     aggregateTopServices,
     isSameDay,
+    toLocalDateStr,
 } from "@/lib/utils/dashboard";
 import type { Order, OrderItem, OrderStaffAssignment } from "@/lib/types/order";
 import type { Service, ServiceCategory } from "@/lib/types";
@@ -129,9 +130,9 @@ function buildWeekSeries(orders: Order[]): WeekPoint[] {
     return Array.from({ length: 7 }).map((_, i) => {
         const d = new Date();
         d.setDate(d.getDate() - (6 - i));
-        const dayStr = d.toISOString().slice(0, 10);
-        const label = d.toLocaleDateString("es-PE", { weekday: "short" });
-        const dayOrders = orders.filter((o) => o.registeredAt?.startsWith(dayStr));
+        const dayStr = d.toLocaleDateString("en-CA", { timeZone: "America/Lima" });
+        const label = d.toLocaleDateString("es-PE", { weekday: "short", timeZone: "America/Lima" });
+        const dayOrders = orders.filter((o) => o.registeredAt && toLocalDateStr(o.registeredAt) === dayStr);
         return {
             date: label,
             ingresos: dayOrders.reduce((s, o) => s + (o.total || 0), 0),

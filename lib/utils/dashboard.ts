@@ -1,5 +1,11 @@
 import type { Order } from "@/lib/types/order";
 
+const LIMA_TZ = "America/Lima";
+
+export function toLocalDateStr(iso: string): string {
+  return new Date(iso).toLocaleDateString("en-CA", { timeZone: LIMA_TZ });
+}
+
 export function isSameDay(iso: string, date = new Date()) {
   const d = new Date(iso);
   return (
@@ -24,7 +30,7 @@ export function buildMonthSeries(orders: Order[], date = new Date()) {
   const series = Array.from({ length: days }).map((_, i) => {
     const day = i + 1;
     const dayStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-    const dayOrders = orders.filter((o) => o.registeredAt && o.registeredAt.startsWith(dayStr));
+    const dayOrders = orders.filter((o) => o.registeredAt && toLocalDateStr(o.registeredAt) === dayStr);
     const ingresos = dayOrders.reduce((s, o) => s + (o.total || 0), 0);
     return { date: String(day), ingresos, ordenes: dayOrders.length };
   });
