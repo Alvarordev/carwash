@@ -126,14 +126,7 @@ export function QuoteEditor({ quote, onBack, onCreate, onUpdate, nextQuoteNumber
   async function handleDownloadPdf() {
     const data = watch() as QuoteFormData;
     try {
-      await generateQuotePdf(data, {
-        name: data.companyName || companyName,
-        ruc: data.companyRuc || null,
-        ownerName: data.companyOwnerName || null,
-        address: data.companyAddress || null,
-        phone: data.companyPhone || null,
-        logoUrl: data.companyLogoUrl || profile?.logoUrl || null,
-      });
+      await generateQuotePdf(data);
     } catch {
       toast.error("Error al generar el PDF");
     }
@@ -167,15 +160,17 @@ export function QuoteEditor({ quote, onBack, onCreate, onUpdate, nextQuoteNumber
           />
         </form>
 
-        <div className="xl:sticky xl:top-4">
+        <div className="xl:sticky xl:top-4 min-w-0">
           <p className="text-xs text-muted-foreground mb-2 font-medium uppercase tracking-wide">
             Vista previa
           </p>
-          <QuotePreview
-            data={watchedData}
-            companyName={companyName}
-            profile={profile}
-          />
+          <div className="w-full">
+            <QuotePreview
+              data={watchedData}
+              companyName={companyName}
+              profile={profile}
+            />
+          </div>
         </div>
       </div>
     </div>

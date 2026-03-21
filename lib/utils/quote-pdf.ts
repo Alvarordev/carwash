@@ -1,13 +1,5 @@
 import type { QuoteFormData } from "@/lib/schemas/quote";
-
-type CompanyData = {
-  name: string | null;
-  ruc: string | null;
-  ownerName: string | null;
-  address: string | null;
-  phone: string | null;
-  logoUrl: string | null;
-};
+import { shouldShowSimpleTable, calculateQuoteTotals, formatQuoteDate } from "@/lib/utils/quote-helpers";
 
 function hexToRgb(hex: string): [number, number, number] {
   const clean = hex.replace("#", "");
@@ -19,37 +11,19 @@ function hexToRgb(hex: string): [number, number, number] {
 }
 
 function formatCurrency(value: number): string {
-  return `S/ ${value.toFixed(2)}`;
+  return `S/. ${value.toFixed(2)}`;
 }
 
-async function fetchImageAsBase64(url: string): Promise<string | null> {
-  try {
-    const res = await fetch(url);
-    const blob = await res.blob();
-    return await new Promise((resolve) => {
-      const reader = new FileReader();
-      reader.onloadend = () => resolve(reader.result as string);
-      reader.onerror = () => resolve(null);
-      reader.readAsDataURL(blob);
-    });
-  } catch {
-    return null;
-  }
-}
-
-export async function generateQuotePdf(
-  quote: QuoteFormData,
-  company: CompanyData
-): Promise<void> {
+export async function generateQuotePdf(quote: QuoteFormData): Promise<void> {
   const { jsPDF } = await import("jspdf");
 
   const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
 
-  const margin = 14;
+  const margin = 20;
   const pageWidth = 210;
+  const pageHeight = 297;
   const contentWidth = pageWidth - margin * 2;
   const [r, g, b] = hexToRgb(quote.colorTheme);
-  const pageHeight = 297;
 
   let y = 0;
 
@@ -60,196 +34,231 @@ export async function generateQuotePdf(
     }
   };
 
-  // ── Header background ──
-  const headerH = 38;
+  // ── Decorative triangle — top-right ──
   doc.setFillColor(r, g, b);
-  doc.rect(0, 0, pageWidth, headerH, "F");
+  doc.triangle(pageWidth - 60, 0, pageWidth, 0, pageWidth, 40, "F");
 
-  // Logo
-  let logoEndX = margin;
-  if (company.logoUrl) {
-    const base64 = await fetchImageAsBase64(company.logoUrl);
-    if (base64) {
-      try {
-        doc.addImage(base64, "JPEG", margin, 6, 20, 20);
-        logoEndX = margin + 24;
-      } catch {
-        // Logo failed; continue without it
-      }
-    }
-  }
-
-  // Company name
-  doc.setTextColor(255, 255, 255);
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(14);
-  doc.text(company.name ?? "Mi Empresa", logoEndX + 2, 14);
-
+  // ── Quote number + date (left) ──
+  y = 22;
   doc.setFont("helvetica", "normal");
-  doc.setFontSize(8);
-  let companyInfoY = 20;
-  if (company.ruc) {
-    doc.text(`RUC: ${company.ruc}`, logoEndX + 2, companyInfoY);
-    companyInfoY += 4.5;
-  }
-  if (company.ownerName) {
-    doc.text(company.ownerName, logoEndX + 2, companyInfoY);
-    companyInfoY += 4.5;
-  }
-  if (company.address) {
-    doc.text(company.address, logoEndX + 2, companyInfoY);
-    companyInfoY += 4.5;
-  }
-  if (company.phone) {
-    doc.text(company.phone, logoEndX + 2, companyInfoY);
-  }
+  doc.setFontSize(9);
+  doc.setTextColor(90, 90, 90);
+  doc.text(`N°. ${quote.quoteNumber}`, margin, y);
+  y += 5;
+  const formattedDate = quote.date ? formatQuoteDate(quote.date) : "—";
+  doc.text(formattedDate, margin, y);
 
-  // Quote title block (right side of header)
+  // ── COTIZACIÓN title (right) ──
   doc.setFont("helvetica", "bold");
-  doc.setFontSize(18);
-  doc.setTextColor(255, 255, 255);
-  doc.text("COTIZACIÓN", pageWidth - margin, 14, { align: "right" });
+  doc.setFontSize(24);
+  doc.setTextColor(30, 30, 30);
+  doc.text("COTIZACIÓN", pageWidth - margin, 26, { align: "right" });
 
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(8);
-  doc.text(`N° ${quote.quoteNumber}`, pageWidth - margin, 21, { align: "right" });
-  doc.text(`Fecha: ${quote.date}`, pageWidth - margin, 26, { align: "right" });
+  y = 36;
 
-  y = headerH + 8;
+  // ── Horizontal separator ──
+  doc.setDrawColor(200, 200, 200);
+  doc.setLineWidth(0.3);
+  doc.line(margin, y, pageWidth - margin, y);
+  y += 8;
 
-  // ── Client section ──
+  // ── Two-column info: company (left) + client (right) ──
+  const colW = contentWidth / 2 - 4;
+  const rightColX = margin + contentWidth / 2 + 4;
+
+  // Company column
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(7);
+  doc.setTextColor(150, 150, 150);
+  doc.text("COTIZACIÓN", margin, y);
+
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(12);
   doc.setTextColor(r, g, b);
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(9);
-  doc.text("CLIENTE", margin, y);
-  y += 1;
+  doc.text(
+    doc.splitTextToSize(quote.companyName || "Mi Empresa", colW)[0] ?? "Mi Empresa",
+    margin,
+    y + 5
+  );
 
-  doc.setDrawColor(r, g, b);
-  doc.setLineWidth(0.5);
-  doc.line(margin, y, margin + contentWidth, y);
-  y += 4;
-
-  doc.setTextColor(60, 60, 60);
+  let compY = y + 11;
   doc.setFont("helvetica", "normal");
-  doc.setFontSize(9);
-
-  const clientLines: string[] = [];
-  if (quote.clientName) clientLines.push(quote.clientName);
-  if (quote.clientDocType && quote.clientDocNumber)
-    clientLines.push(`${quote.clientDocType}: ${quote.clientDocNumber}`);
-  if (quote.clientPhone) clientLines.push(`Tel: ${quote.clientPhone}`);
-  if (quote.clientEmail) clientLines.push(quote.clientEmail);
-  if (quote.clientAddress) clientLines.push(quote.clientAddress);
-
-  if (clientLines.length === 0) clientLines.push("—");
-
-  for (const line of clientLines) {
-    doc.text(line, margin, y);
-    y += 5;
+  doc.setFontSize(8);
+  doc.setTextColor(60, 60, 60);
+  if (quote.companyOwnerName) {
+    doc.text(quote.companyOwnerName, margin, compY);
+    compY += 4.5;
+  }
+  if (quote.companyRuc) {
+    doc.text(`RUC : ${quote.companyRuc}`, margin, compY);
+    compY += 4.5;
+  }
+  if (quote.companyAddress) {
+    const lines = doc.splitTextToSize(quote.companyAddress, colW);
+    doc.text(lines[0] ?? "", margin, compY);
+    compY += 4.5;
   }
 
-  y += 4;
+  // Client column
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(7);
+  doc.setTextColor(150, 150, 150);
+  doc.text("CLIENTE", rightColX, y);
+
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(12);
+  doc.setTextColor(r, g, b);
+  doc.text(
+    doc.splitTextToSize(quote.clientName || "—", colW)[0] ?? "—",
+    rightColX,
+    y + 5
+  );
+
+  let clientY = y + 11;
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(8);
+  doc.setTextColor(60, 60, 60);
+  if (quote.clientDocType && quote.clientDocNumber) {
+    doc.text(`${quote.clientDocType} : ${quote.clientDocNumber}`, rightColX, clientY);
+    clientY += 4.5;
+  }
+  if (quote.clientPhone) {
+    doc.text(`ATENCION : ${quote.clientPhone}`, rightColX, clientY);
+    clientY += 4.5;
+  }
+  if (quote.clientEmail) {
+    doc.setTextColor(r, g, b);
+    doc.text(`REFERENCIA : ${quote.clientEmail}`, rightColX, clientY);
+    doc.setTextColor(60, 60, 60);
+    clientY += 4.5;
+  }
+
+  y = Math.max(compY, clientY) + 8;
 
   // ── Items table ──
-  const cols = {
-    num: margin,
-    desc: margin + 8,
-    qty: margin + contentWidth * 0.6,
-    price: margin + contentWidth * 0.75,
-    subtotal: margin + contentWidth,
-  };
+  const simple = shouldShowSimpleTable(quote.items);
 
-  // Table header
-  checkPage(10);
+  const colDesc = margin;
+  const colCant = margin + contentWidth * 0.6;
+  const colPrice = margin + contentWidth * 0.78;
+  const colRight = margin + contentWidth;
+
+  const headerH = 7;
+  checkPage(headerH + 6);
+
+  // Header background
   doc.setFillColor(r, g, b);
-  doc.rect(margin, y - 4, contentWidth, 7, "F");
-  doc.setTextColor(255, 255, 255);
+  doc.roundedRect(margin, y, contentWidth, headerH, 1, 1, "F");
+
   doc.setFont("helvetica", "bold");
-  doc.setFontSize(8);
-  doc.text("#", cols.num + 1, y);
-  doc.text("DESCRIPCIÓN", cols.desc, y);
-  doc.text("CANT.", cols.qty, y);
-  doc.text("P. UNIT.", cols.price, y);
-  doc.text("SUBTOTAL", cols.subtotal, y, { align: "right" });
-  y += 5;
+  doc.setFontSize(9);
+  doc.setTextColor(255, 255, 255);
+  doc.text("Descripción", colDesc + 3, y + 4.8);
+  if (!simple) {
+    doc.text("Cant.", colCant, y + 4.8, { align: "center" });
+    doc.text("P. Unit.", colPrice, y + 4.8, { align: "right" });
+  }
+  doc.text(simple ? "Precio" : "Subtotal", colRight, y + 4.8, { align: "right" });
 
-  // Table rows
+  y += headerH;
+
+  // Rows
   doc.setFont("helvetica", "normal");
-  doc.setFontSize(8);
-  let rowIndex = 0;
-  for (const item of quote.items) {
-    const rowSubtotal = item.quantity * item.unitPrice;
-    const rowH = 6;
-    checkPage(rowH);
+  doc.setFontSize(8.5);
 
-    if (rowIndex % 2 === 0) {
-      doc.setFillColor(245, 245, 245);
-      doc.rect(margin, y - 3.5, contentWidth, rowH, "F");
-    }
+  const descWidth = simple ? contentWidth - 30 : colCant - colDesc - 6;
+
+  for (const item of quote.items) {
+    const qty = Number(item.quantity);
+    const price = Number(item.unitPrice);
+    const rowSubtotal = qty * price;
+    const descLines = doc.splitTextToSize(item.description || "—", descWidth);
+    const rowH = Math.max(6, descLines.length * 4.5 + 2);
+
+    checkPage(rowH + 2);
 
     doc.setTextColor(60, 60, 60);
-    doc.text(String(rowIndex + 1), cols.num + 1, y);
+    doc.text(descLines, colDesc + 3, y + 4);
 
-    const descLines = doc.splitTextToSize(item.description, cols.qty - cols.desc - 4);
-    doc.text(descLines[0], cols.desc, y);
-
-    doc.text(String(item.quantity), cols.qty, y);
-    doc.text(formatCurrency(item.unitPrice), cols.price, y);
-    doc.text(formatCurrency(rowSubtotal), cols.subtotal, y, { align: "right" });
+    if (!simple) {
+      doc.text(String(qty), colCant, y + 4, { align: "center" });
+      doc.text(formatCurrency(price), colPrice, y + 4, { align: "right" });
+    }
+    doc.text(formatCurrency(simple ? price : rowSubtotal), colRight, y + 4, { align: "right" });
 
     y += rowH;
-    rowIndex++;
+
+    // Row separator
+    doc.setDrawColor(220, 220, 220);
+    doc.setLineWidth(0.2);
+    doc.line(margin, y, pageWidth - margin, y);
   }
 
-  doc.setDrawColor(r, g, b);
-  doc.setLineWidth(0.3);
-  doc.line(margin, y, margin + contentWidth, y);
-  y += 6;
+  y += 8;
 
   // ── Totals ──
-  const totalsX = pageWidth - margin - 70;
+  const { subtotal, igv, total } = calculateQuoteTotals(quote.items);
+  const totalsBoxW = 70;
+  const totalsBoxX = pageWidth - margin - totalsBoxW;
+  const totalsBoxH = 22;
 
-  const drawTotalRow = (label: string, value: number, bold = false) => {
-    checkPage(6);
-    doc.setFont("helvetica", bold ? "bold" : "normal");
-    doc.setFontSize(9);
-    doc.setTextColor(80, 80, 80);
-    doc.text(label, totalsX, y);
-    doc.setTextColor(bold ? r : 80, bold ? g : 80, bold ? b : 80);
-    doc.text(formatCurrency(value), pageWidth - margin, y, { align: "right" });
-    y += 6;
-  };
+  checkPage(totalsBoxH + 4);
 
-  const subtotal = quote.items.reduce((s, i) => s + i.quantity * i.unitPrice, 0);
-  const igv = Math.round(subtotal * 0.18 * 100) / 100;
-  const total = Math.round((subtotal + igv) * 100) / 100;
+  doc.setFillColor(243, 243, 243);
+  doc.roundedRect(totalsBoxX, y, totalsBoxW, totalsBoxH, 1, 1, "F");
 
-  drawTotalRow("Subtotal:", subtotal);
-  drawTotalRow("IGV (18%):", igv);
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(8.5);
+  doc.setTextColor(90, 90, 90);
+  doc.text("Subtotal", totalsBoxX + 4, y + 5.5);
+  doc.text(formatCurrency(subtotal), pageWidth - margin - 2, y + 5.5, { align: "right" });
 
-  doc.setDrawColor(r, g, b);
-  doc.setLineWidth(0.5);
-  doc.line(totalsX, y - 1, pageWidth - margin, y - 1);
+  doc.text("IGV", totalsBoxX + 4, y + 12);
+  doc.text(formatCurrency(igv), pageWidth - margin - 2, y + 12, { align: "right" });
 
-  drawTotalRow("TOTAL:", total, true);
-  y += 4;
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(9.5);
+  doc.setTextColor(30, 30, 30);
+  doc.text("TOTAL", totalsBoxX + 4, y + 19);
+  doc.text(formatCurrency(total), pageWidth - margin - 2, y + 19, { align: "right" });
 
-  // ── Footer ──
-  if (quote.paymentMethod || quote.notes) {
+  y += totalsBoxH + 10;
+
+  // ── Payment method ──
+  if (quote.paymentMethod) {
     checkPage(14);
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(8.5);
+    doc.setTextColor(30, 30, 30);
+    doc.text("METODO DE PAGO", margin, y);
+    y += 5;
+
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(8);
+    doc.setTextColor(80, 80, 80);
+    doc.text(quote.paymentMethod, margin, y);
+    y += 7;
+  }
+
+  // ── Notes ──
+  if (quote.notes) {
+    checkPage(12);
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(8.5);
+    doc.setTextColor(30, 30, 30);
+    doc.text("NOTAS", margin, y);
+    y += 5;
+
     doc.setFont("helvetica", "normal");
     doc.setFontSize(8);
-    doc.setTextColor(120, 120, 120);
-
-    if (quote.paymentMethod) {
-      doc.text(`Forma de pago: ${quote.paymentMethod}`, margin, y);
-      y += 5;
-    }
-    if (quote.notes) {
-      const noteLines = doc.splitTextToSize(`Notas: ${quote.notes}`, contentWidth);
-      doc.text(noteLines, margin, y);
-    }
+    doc.setTextColor(80, 80, 80);
+    const noteLines = doc.splitTextToSize(quote.notes, contentWidth);
+    doc.text(noteLines, margin, y);
   }
+
+  // ── Decorative triangle — bottom-left ──
+  doc.setFillColor(r, g, b);
+  doc.triangle(0, pageHeight - 30, 0, pageHeight, 50, pageHeight, "F");
 
   doc.save(`cotizacion-${quote.quoteNumber}.pdf`);
 }

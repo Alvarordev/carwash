@@ -105,14 +105,7 @@ export function QuotesList({ quotes, loading, onNew, onEdit, onDelete }: QuotesL
         colorTheme: quote.colorTheme,
         notes: quote.notes ?? "",
       };
-      await generateQuotePdf(formData, {
-        name: quote.companyName,
-        ruc: quote.companyRuc,
-        ownerName: quote.companyOwnerName,
-        address: quote.companyAddress,
-        phone: quote.companyPhone,
-        logoUrl: quote.companyLogoUrl,
-      });
+      await generateQuotePdf(formData);
     } catch {
       toast.error("Error al generar el PDF");
     }
